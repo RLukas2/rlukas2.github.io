@@ -1,7 +1,7 @@
 A modern, responsive developer portfolio built using **Next.js 13**, **TypeScript**, and **Tailwind CSS**.  
 This project is **forked and adapted** from the original work by [hmake98](https://github.com/hmake98/portfolio).
 
-> ✅ View Live: [rlukas2.github.com](https://rlukas2.github.com)
+> ✅ View Live: [rlukas2.github.io](https://rlukas2.github.io)
 
 ## 🏗 Tech Stack
 
