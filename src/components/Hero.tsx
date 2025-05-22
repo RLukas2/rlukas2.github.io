@@ -217,17 +217,17 @@ const Hero: React.FC = () => {
           >
             <div className="relative w-72 h-72 md:w-96 md:h-96">
               {/* Enhanced glow effects */}
-              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 opacity-20 blur-2xl animate-pulse-slow"></div>
+              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 opacity-30 blur-3xl animate-pulse-slow"></div>
               <div
-                className="absolute inset-2 rounded-full bg-gradient-to-r from-indigo-400 to-blue-400 opacity-15 blur-xl animate-pulse-slow"
+                className="absolute inset-2 rounded-full bg-gradient-to-r from-indigo-400 to-blue-400 opacity-20 blur-2xl animate-pulse-slow"
                 style={{ animationDelay: "1s" }}
               ></div>
 
               {/* Improved profile image with border */}
-              <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-white dark:border-gray-800 shadow-xl">
+              <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-white dark:border-gray-800 shadow-xl select-none pointer-events-none">
                 <Image
                   src="/images/profile.jpg"
-                  alt="Harsh Makwana - Senior Backend Engineer"
+                  alt="Ngo Hoang Tuan - Backend Engineer"
                   fill
                   className="object-cover"
                   priority
@@ -260,7 +260,7 @@ const Hero: React.FC = () => {
               </div>
 
               <div
-                className="absolute bottom-1/4 -left-6 w-12 h-12 bg-white dark:bg-gray-800 rounded-full border-2 border-gray-300 dark:border-gray-700 flex items-center justify-center shadow-lg animate-float"
+                className="absolute bottom-1/10 -left-6 w-12 h-12 bg-white dark:bg-gray-800 rounded-full border-2 border-gray-300 dark:border-gray-700 flex items-center justify-center shadow-lg animate-float"
                 style={{ animationDelay: "1.6s" }}
               >
                 <SiGraphql className="text-xl text-pink-600" />
@@ -271,7 +271,7 @@ const Hero: React.FC = () => {
 
         {/* Scroll indicator with better contrast */}
         <motion.div
-          className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center cursor-pointer"
+          className="absolute bottom-2 lg:bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center cursor-pointer"
           onClick={scrollToNext}
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}

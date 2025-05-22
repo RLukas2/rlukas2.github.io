@@ -232,7 +232,7 @@ const Projects: React.FC = () => {
           {/* Horizontal Slider Container */}
           {projects.length === 0 ? (
             <div className="flex flex-col bg-gray-50 dark:bg-gray-900 p-12 rounded-xl shadow-lg items-center">
-              <p className="text-2xl font-semibold text-gray-900 dark:text-white">
+              <p className="text-2xl font-semibold text-gray-900 dark:text-white text-center">
                 No projects available at the moment
               </p>
             </div>
