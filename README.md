@@ -1,10 +1,34 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+A modern, responsive developer portfolio built using **Next.js 13**, **TypeScript**, and **Tailwind CSS**.  
+This project is **forked and adapted** from the original work by [hmake98](https://github.com/hmake98/portfolio).
 
-## Getting Started
+> ✅ View Live: [rlukas2.github.com](https://rlukas2.github.com)
 
-First, run the development server:
+## 🏗 Tech Stack
+
+- **Framework**: [Next.js 13+](https://nextjs.org/)
+- **Language**: TypeScript
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **Icons**: [Lucide](https://lucide.dev/) / SVGs
+- **Fonts**: [Vercel Geist](https://vercel.com/font)
+
+## ⚙️ Getting Started
+
+### Prerequisites
+
+- Node.js (18.x or later recommended)
+- pnpm / yarn / npm
+
+### Installation
 
 ```bash
+# Clone the repo
+git clone https://github.com/RLukas2/rlukas2.github.io.git
+cd portfolio
+
+# Install dependencies
+npm install
+
+# Run the development server
 npm run dev
 # or
 yarn dev
@@ -14,13 +38,36 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Visit `http://localhost:3000` to view the app in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+You can start editing the page by modifying app/page.tsx. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🧩 Folder Structure
 
-## Learn More
+```ruby
+.
+├── public/               # Static files (images, resume, favicons, etc.)
+├── src/
+│   ├── app/              # Next.js 13 app router
+│   │   └── page.tsx      # Entry point
+│   ├── components/       # Reusable UI components
+│   ├── data/             # Content (experience, skills, about, etc.)
+│   └── types/            # TypeScript types
+├── tailwind.config.js
+├── next.config.ts
+└── tsconfig.json
+```
+
+## 🚀 Deploy on Vercel
+
+The easiest way to deploy this project is using [Vercel](https://vercel.com/):
+
+- Push your code to GitHub.
+- Visit [vercel.com/new](https://vercel.com/new) and import the repository.
+- Choose the root directory, and let Vercel detect the framework.
+- Done! You now have a live portfolio.
+
+## 📖 Learn More
 
 To learn more about Next.js, take a look at the following resources:
 
@@ -29,8 +76,7 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
+# 🪄 Acknowledgments
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project is originally forked from [hmake98/portfolio](https://github.com/hmake98/portfolio).
+All credits to the author for the incredible foundation and design inspiration. ❤️
