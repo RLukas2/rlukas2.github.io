@@ -39,7 +39,7 @@ const Contact: React.FC = () => {
 
       // Simulate API response
       try {
-        const response = await fetch("/api", {
+        const response = await fetch("https://formspree.io/f/xgvkblwe", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -245,7 +245,7 @@ const Contact: React.FC = () => {
                       {...register("email", {
                         required: "Email is required",
                         pattern: {
-                          value: /\S+@\S+\.\S+/,
+                          value: /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/,
                           message: "Please enter a valid email",
                         },
                       })}
@@ -304,8 +304,8 @@ const Contact: React.FC = () => {
                     {...register("message", {
                       required: "Message is required",
                       minLength: {
-                        value: 20,
-                        message: "Message should be at least 20 characters",
+                        value: 10,
+                        message: "Message should be at least 10 characters",
                       },
                     })}
                   ></textarea>
