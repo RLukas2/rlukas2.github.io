@@ -10,11 +10,9 @@ import {
   FiChevronDown,
 } from "react-icons/fi";
 import {
-  SiNestjs,
   SiGraphql,
   SiAmazonwebservices,
   SiNodedotjs,
-  SiPostgresql,
   SiDocker,
   SiReact,
 } from "react-icons/si";

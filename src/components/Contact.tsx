@@ -8,7 +8,6 @@ import {
   FiPhone,
   FiLinkedin,
   FiGithub,
-  FiInstagram,
   FiFacebook,
 } from "react-icons/fi";
 
