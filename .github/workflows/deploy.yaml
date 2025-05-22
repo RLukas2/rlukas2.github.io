@@ -31,9 +31,6 @@ jobs:
       - name: 📦 Install dependencies
         run: npm ci --prefer-offline  # Use cached packages when available
 
-      - name: 🔍 Run tests (optional)
-        run: npm test  # Add if you have tests
-
       - name: 🛠 Build static site
         run: npm run build
 
