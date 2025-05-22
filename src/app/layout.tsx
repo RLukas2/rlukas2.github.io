@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     default: "Ngô Hoàng Tuấn | Backend Engineer",
   },
   description:
-    "Senior Backend Engineer specializing in scalable microservices, Node.js, NestJS, GraphQL, and cloud infrastructure with AWS.",
+    "Backend Engineer specializing in scalable microservices, Node.js, NestJS, GraphQL, and cloud infrastructure with AWS.",
   keywords: [
     "software engineer",
     "backend developer",

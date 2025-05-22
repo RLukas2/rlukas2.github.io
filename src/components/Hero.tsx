@@ -16,6 +16,7 @@ import {
   SiNodedotjs,
   SiPostgresql,
   SiDocker,
+  SiReact,
 } from "react-icons/si";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
@@ -56,11 +57,10 @@ const Hero: React.FC = () => {
   };
 
   const techIcons = [
+    { name: "React", icon: <SiReact className="text-blue-600" /> },
     { name: "Node.js", icon: <SiNodedotjs className="text-green-600" /> },
-    { name: "NestJS", icon: <SiNestjs className="text-red-600" /> },
     { name: "GraphQL", icon: <SiGraphql className="text-pink-600" /> },
     { name: "AWS", icon: <SiAmazonwebservices className="text-orange-500" /> },
-    { name: "PostgreSQL", icon: <SiPostgresql className="text-blue-600" /> },
     { name: "Docker", icon: <SiDocker className="text-blue-500" /> },
   ];
 
@@ -104,7 +104,7 @@ const Hero: React.FC = () => {
               variants={itemVariants}
               className="inline-block px-4 py-1.5 mb-4 text-sm font-medium bg-blue-600 text-white rounded-full shadow-sm"
             >
-              Senior Backend Engineer
+              Backend Engineer
             </motion.span>
 
             <motion.h3
@@ -125,17 +125,18 @@ const Hero: React.FC = () => {
               variants={itemVariants}
               className="text-2xl text-gray-800 dark:text-gray-300 mb-6 font-semibold"
             >
-              Building Scalable Backend Solutions
+              Aspiring Backend Develope
             </motion.h2>
 
             <motion.p
               variants={itemVariants}
               className="text-lg text-gray-700 dark:text-gray-400 mb-8 max-w-xl mx-auto lg:mx-0 leading-relaxed"
             >
-              I&apos;m a results-driven Software Engineer with 5+ years of
-              expertise in architecting high-performance backend systems. I
-              specialize in building scalable microservices, GraphQL APIs, and
-              cloud-native applications that solve complex business challenges.
+              I&apos;m a Year 3 Computer Science student at HCMUS with hands-on
+              experience building backend systems through various academic and
+              side projects. I specialize in designing scalable microservices,
+              crafting efficient GraphQL APIs, and deploying cloud-based
+              solutions using AWS.
             </motion.p>
 
             {/* Enhanced Technologies Pills with Icons - Improved contrast */}
@@ -250,14 +251,14 @@ const Hero: React.FC = () => {
                 className="absolute -top-2 -left-2 w-16 h-16 bg-white dark:bg-gray-800 rounded-full border-2 border-gray-300 dark:border-gray-700 flex items-center justify-center shadow-lg animate-float"
                 style={{ animationDelay: "0s" }}
               >
-                <SiNodedotjs className="text-3xl text-green-600" />
+                <SiReact className="text-3xl text-blue-600" />
               </div>
 
               <div
                 className="absolute top-1/4 -right-4 w-14 h-14 bg-white dark:bg-gray-800 rounded-full border-2 border-gray-300 dark:border-gray-700 flex items-center justify-center shadow-lg animate-float"
                 style={{ animationDelay: "0.8s" }}
               >
-                <SiNestjs className="text-2xl text-red-600" />
+                <SiAmazonwebservices className="text-2xl text-yellow-600" />
               </div>
 
               <div
@@ -293,15 +294,17 @@ const Hero: React.FC = () => {
       {/* Add custom styles for grid pattern with improved visibility */}
       <style jsx>{`
         .bg-grid-pattern {
-          background-image:
-            linear-gradient(to right, rgba(0, 0, 0, 0.1) 1px, transparent 1px),
+          background-image: linear-gradient(
+              to right,
+              rgba(0, 0, 0, 0.1) 1px,
+              transparent 1px
+            ),
             linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
           background-size: 24px 24px;
         }
 
         .dark .bg-grid-pattern {
-          background-image:
-            linear-gradient(
+          background-image: linear-gradient(
               to right,
               rgba(255, 255, 255, 0.05) 1px,
               transparent 1px
