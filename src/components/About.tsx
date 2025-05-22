@@ -88,7 +88,7 @@ const About: React.FC = () => {
     professional: (
       <>
         <p className="mb-4">
-          I&apos;m a third-year Advance Program in Computer Science student at
+          I&apos;m a third-year Advanced Program in Computer Science student at
           HCMUS with a strong interest in backend development and system design.
           Through various academic and personal projects, I&apos;ve built and
           deployed backend systems that simulate real-world architectures.
