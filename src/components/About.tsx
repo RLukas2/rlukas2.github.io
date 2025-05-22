@@ -141,8 +141,8 @@ const About: React.FC = () => {
         <p>
           Outside of coding, I enjoy reading about system design, following
           developer communities, and watching tech talks on emerging backend
-          tools. I'm curious by nature and love breaking down how large systems
-          are built and optimized.
+          tools. I&apos;m curious by nature and love breaking down how large
+          systems are built and optimized.
         </p>
       </>
     ),

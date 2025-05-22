@@ -125,7 +125,7 @@ const Hero: React.FC = () => {
               variants={itemVariants}
               className="text-2xl text-gray-800 dark:text-gray-300 mb-6 font-semibold"
             >
-              Aspiring Backend Develope
+              Aspiring Backend Developer
             </motion.h2>
 
             <motion.p
