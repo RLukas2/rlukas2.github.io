@@ -35,6 +35,9 @@ import {
   SiGoogle,
   SiRabbitmq,
 } from "react-icons/si";
+import {
+  FaGolang
+} from "react-icons/fa6";
 import { skills as skillsData } from "@/data/skills";
 
 // Define our local skill type that includes the icon component
@@ -73,20 +76,21 @@ const iconMap: Record<string, React.ReactNode> = {
   SiJest: <SiJest className="text-3xl text-red-700" />,
   SiGoogle: <SiGoogle className="text-3xl text-blue-500" />,
   SiRabbitmq: <SiRabbitmq className="text-3xl text-orange-500" />,
+  FaGolang: <FaGolang className="text-3xl text-blue-400" />,
 };
 
 const categoryDescriptions = {
-  all: "Here's a comprehensive overview of my technical skills across various domains. Each skill represents technologies I've used in professional projects.",
+  all: "This section highlights a broad range of my technical skills. Each one reflects tools and technologies I've worked with during projects and coursework.",
   frontend:
-    "My frontend expertise includes modern frameworks and libraries that enable creating responsive, performant user interfaces with seamless interactions.",
+    "My frontend skills focus on building responsive, accessible interfaces using modern frameworks and libraries to ensure smooth user experiences.",
   backend:
-    "I specialize in scalable backend development, building high-performance APIs and microservices with a focus on maintainability and efficiency.",
+    "I enjoy building scalable and maintainable backend systems, working with APIs, microservices, and key architectural patterns for efficiency.",
   database:
-    "My database skills span both SQL and NoSQL technologies, with experience in designing schemas, optimization, and implementing caching strategies.",
+    "Experienced in both SQL and NoSQL databases, I've worked on designing schemas, optimizing queries, and applying caching for better performance.",
   devops:
-    "I implement CI/CD pipelines and cloud infrastructure, automating deployment processes and ensuring reliable, scalable application delivery.",
+    "I'm familiar with DevOps practices such as setting up CI/CD pipelines, managing deployments, and working with cloud infrastructure for automation and scalability.",
   other:
-    "Additional specialized skills that complement my technical expertise and enhance project delivery capabilities.",
+    "Additional tools and technologies that support and enhance my overall development workflow and technical capabilities.",
 };
 
 const Skills: React.FC = () => {

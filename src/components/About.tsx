@@ -159,7 +159,7 @@ const About: React.FC = () => {
       icon: <FiHeart className="text-red-500" />,
       title: "Quality Craftsmanship",
       description:
-        "Focused on writing clean, maintainable code that’s easy to understand and extend.",
+        "Focused on writing clean, maintainable code that's easy to understand and extend.",
     },
     {
       icon: <FiZap className="text-yellow-500" />,

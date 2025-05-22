@@ -83,6 +83,12 @@ export const skills: Skill[] = [
     icon: "SiRabbitmq",
     category: "backend",
   },
+  {
+    id: 25,
+    name: "Go",
+    icon: "FaGolang",
+    category: "backend",
+  },
 
   // Database
   {

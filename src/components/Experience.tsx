@@ -179,12 +179,12 @@ const Experience: React.FC = () => {
           </motion.div>
 
           {/* Timeline and Content */}
-          {experiences.length === 0 && (
+          {experiences.length === 0 ? (
             <motion.div
               className="text-center text-gray-500 dark:text-gray-400"
               variants={itemVariants}
             >
-              <div className="flex flex-col bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg items-center">
+              <div className="flex flex-col bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg items-center">
                 {/* <img
                   src="/assets/empty-state.svg"
                   alt="No experiences"
@@ -199,8 +199,7 @@ const Experience: React.FC = () => {
                 </p>
               </div>
             </motion.div>
-          )}
-          {experiences.length > 0 && (
+          ) : (
             <div className="lg:grid lg:grid-cols-12 gap-8">
               {/* Left sidebar - Timeline */}
               <motion.div

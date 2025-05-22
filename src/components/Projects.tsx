@@ -230,54 +230,62 @@ const Projects: React.FC = () => {
           </motion.div>
 
           {/* Horizontal Slider Container */}
-          <div className="relative">
-            {/* Navigation Arrows */}
-            <button
-              onClick={() => scrollSlider("left")}
-              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 p-3 rounded-full bg-white/80 dark:bg-gray-800/80 text-gray-900 dark:text-gray-100 shadow-lg backdrop-blur-sm hover:bg-white dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 md:-left-4"
-              aria-label="Scroll left"
-            >
-              <FiChevronLeft size={24} />
-            </button>
-
-            <button
-              onClick={() => scrollSlider("right")}
-              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 p-3 rounded-full bg-white/80 dark:bg-gray-800/80 text-gray-900 dark:text-gray-100 shadow-lg backdrop-blur-sm hover:bg-white dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 md:-right-4"
-              aria-label="Scroll right"
-            >
-              <FiChevronRight size={24} />
-            </button>
-
-            {/* Slider */}
-            <motion.div
-              ref={sliderRef}
-              className="flex overflow-x-auto py-6 px-2 scrollbar-hide scroll-smooth"
-              style={{
-                scrollbarWidth: "none",
-                msOverflowStyle: "none",
-                gap: "16px",
-              }}
-              variants={containerVariants}
-            >
-              {projects.map((project) => (
-                <ProjectCard key={project.id} project={project} />
-              ))}
-            </motion.div>
-
-            {/* Scroll indicator - subtle hint that content is scrollable */}
-            <div className="mt-6 flex justify-center space-x-2">
-              {projects.map((_, index) => (
-                <div
-                  key={index}
-                  className={`h-1 rounded-full transition-all duration-300 ${
-                    index === 0
-                      ? "w-6 bg-blue-500"
-                      : "w-2 bg-gray-300 dark:bg-gray-600"
-                  }`}
-                />
-              ))}
+          {projects.length === 0 ? (
+            <div className="flex flex-col bg-gray-50 dark:bg-gray-900 p-12 rounded-xl shadow-lg items-center">
+              <p className="text-2xl font-semibold text-gray-900 dark:text-white">
+                No projects available at the moment
+              </p>
             </div>
-          </div>
+          ) : (
+            <div className="relative">
+              {/* Navigation Arrows */}
+              <button
+                onClick={() => scrollSlider("left")}
+                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 p-3 rounded-full bg-white/80 dark:bg-gray-800/80 text-gray-900 dark:text-gray-100 shadow-lg backdrop-blur-sm hover:bg-white dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 md:-left-4"
+                aria-label="Scroll left"
+              >
+                <FiChevronLeft size={24} />
+              </button>
+
+              <button
+                onClick={() => scrollSlider("right")}
+                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 p-3 rounded-full bg-white/80 dark:bg-gray-800/80 text-gray-900 dark:text-gray-100 shadow-lg backdrop-blur-sm hover:bg-white dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 md:-right-4"
+                aria-label="Scroll right"
+              >
+                <FiChevronRight size={24} />
+              </button>
+
+              {/* Slider */}
+              <motion.div
+                ref={sliderRef}
+                className="flex overflow-x-auto py-6 px-2 scrollbar-hide scroll-smooth"
+                style={{
+                  scrollbarWidth: "none",
+                  msOverflowStyle: "none",
+                  gap: "16px",
+                }}
+                variants={containerVariants}
+              >
+                {projects.map((project) => (
+                  <ProjectCard key={project.id} project={project} />
+                ))}
+              </motion.div>
+
+              {/* Scroll indicator - subtle hint that content is scrollable */}
+              <div className="mt-6 flex justify-center space-x-2">
+                {projects.map((_, index) => (
+                  <div
+                    key={index}
+                    className={`h-1 rounded-full transition-all duration-300 ${
+                      index === 0
+                        ? "w-6 bg-blue-500"
+                        : "w-2 bg-gray-300 dark:bg-gray-600"
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
         </motion.div>
       </div>
 
