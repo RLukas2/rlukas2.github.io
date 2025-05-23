@@ -2,7 +2,13 @@
 
 import { useState, useRef, useCallback, useMemo, useEffect } from "react";
 import Image from "next/image";
-import { motion, AnimatePresence, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion";
+import {
+  motion,
+  AnimatePresence,
+  useScroll,
+  useMotionValue,
+  useSpring,
+} from "framer-motion";
 import {
   FiGithub,
   FiExternalLink,
@@ -36,7 +42,9 @@ const Projects: React.FC = () => {
     technologies: [],
   });
   const [showFilters, setShowFilters] = useState(false);
-  const [availableTechnologies, setAvailableTechnologies] = useState<string[]>([]);
+  const [availableTechnologies, setAvailableTechnologies] = useState<string[]>(
+    []
+  );
 
   const [ref, inView] = useInView({
     triggerOnce: true,
@@ -68,9 +76,11 @@ const Projects: React.FC = () => {
   useEffect(() => {
     const updateVisibleItems = () => {
       const width = window.innerWidth;
-      if (width < 640) { // sm breakpoint
+      if (width < 640) {
+        // sm breakpoint
         setVisibleItems(1);
-      } else if (width < 1024) { // lg breakpoint
+      } else if (width < 1024) {
+        // lg breakpoint
         setVisibleItems(2);
       } else {
         setVisibleItems(3);
@@ -78,8 +88,8 @@ const Projects: React.FC = () => {
     };
 
     updateVisibleItems();
-    window.addEventListener('resize', updateVisibleItems);
-    return () => window.removeEventListener('resize', updateVisibleItems);
+    window.addEventListener("resize", updateVisibleItems);
+    return () => window.removeEventListener("resize", updateVisibleItems);
   }, []);
 
   // Calculate current slide index
@@ -101,13 +111,22 @@ const Projects: React.FC = () => {
   // Filter projects based on search, status, and technologies
   const filteredProjects = useMemo(() => {
     return projects.filter((project) => {
-      const matchesSearch = project.title.toLowerCase().includes(filterState.search.toLowerCase()) ||
-        project.description.toLowerCase().includes(filterState.search.toLowerCase());
+      const matchesSearch =
+        project.title
+          .toLowerCase()
+          .includes(filterState.search.toLowerCase()) ||
+        project.description
+          .toLowerCase()
+          .includes(filterState.search.toLowerCase());
 
-      const matchesStatus = filterState.status === "all" || project.status === filterState.status;
+      const matchesStatus =
+        filterState.status === "all" || project.status === filterState.status;
 
-      const matchesTechnologies = filterState.technologies.length === 0 ||
-        filterState.technologies.every(tech => project.technologies.includes(tech));
+      const matchesTechnologies =
+        filterState.technologies.length === 0 ||
+        filterState.technologies.every((tech) =>
+          project.technologies.includes(tech)
+        );
 
       return matchesSearch && matchesStatus && matchesTechnologies;
     });
@@ -162,13 +181,13 @@ const Projects: React.FC = () => {
       setMaxScroll(slider.scrollWidth - slider.clientWidth);
     };
 
-    slider.addEventListener('scroll', updateScroll);
-    window.addEventListener('resize', updateScroll);
+    slider.addEventListener("scroll", updateScroll);
+    window.addEventListener("resize", updateScroll);
     updateScroll();
 
     return () => {
-      slider.removeEventListener('scroll', updateScroll);
-      window.removeEventListener('resize', updateScroll);
+      slider.removeEventListener("scroll", updateScroll);
+      window.removeEventListener("resize", updateScroll);
     };
   }, [filteredProjects]);
 
@@ -186,12 +205,12 @@ const Projects: React.FC = () => {
 
     const handleMouseUp = () => {
       setIsDragging(false);
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
     };
 
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
   }, []);
 
   // Handle body scroll when modal opens/closes
@@ -205,32 +224,39 @@ const Projects: React.FC = () => {
   }, [selectedProject]);
 
   // Scroll the slider left or right
-  const scrollSlider = useCallback((direction: "left" | "right") => {
-    if (!sliderRef.current) return;
+  const scrollSlider = useCallback(
+    (direction: "left" | "right") => {
+      if (!sliderRef.current) return;
 
-    const slideWidth = sliderRef.current.clientWidth / visibleItems;
-    const currentScroll = sliderRef.current.scrollLeft;
-    const targetScroll = direction === "left"
-      ? Math.max(0, currentScroll - slideWidth)
-      : Math.min(maxScroll, currentScroll + slideWidth);
+      const slideWidth = sliderRef.current.clientWidth / visibleItems;
+      const currentScroll = sliderRef.current.scrollLeft;
+      const targetScroll =
+        direction === "left"
+          ? Math.max(0, currentScroll - slideWidth)
+          : Math.min(maxScroll, currentScroll + slideWidth);
 
-    sliderRef.current.scrollTo({
-      left: targetScroll,
-      behavior: "smooth",
-    });
-  }, [maxScroll, visibleItems]);
+      sliderRef.current.scrollTo({
+        left: targetScroll,
+        behavior: "smooth",
+      });
+    },
+    [maxScroll, visibleItems]
+  );
 
   // Scroll to specific slide
-  const scrollToSlide = useCallback((index: number) => {
-    if (!sliderRef.current) return;
-    const slideWidth = sliderRef.current.clientWidth / visibleItems;
-    const targetScroll = index * slideWidth;
+  const scrollToSlide = useCallback(
+    (index: number) => {
+      if (!sliderRef.current) return;
+      const slideWidth = sliderRef.current.clientWidth / visibleItems;
+      const targetScroll = index * slideWidth;
 
-    sliderRef.current.scrollTo({
-      left: targetScroll,
-      behavior: "smooth",
-    });
-  }, [visibleItems]);
+      sliderRef.current.scrollTo({
+        left: targetScroll,
+        behavior: "smooth",
+      });
+    },
+    [visibleItems]
+  );
 
   // Project card component with enhanced animations
   const ProjectCard = useCallback(
@@ -287,13 +313,17 @@ const Projects: React.FC = () => {
           </div>
           {project.status && (
             <div className="absolute top-2 right-2">
-              <span className={`px-2 py-1 text-xs rounded-full ${project.status === "completed"
-                  ? "bg-green-500/90 text-white"
-                  : project.status === "in-progress"
+              <span
+                className={`px-2 py-1 text-xs rounded-full ${
+                  project.status === "completed"
+                    ? "bg-green-500/90 text-white"
+                    : project.status === "in-progress"
                     ? "bg-yellow-500/90 text-white"
                     : "bg-blue-500/90 text-white"
-                }`}>
-                {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
+                }`}
+              >
+                {project.status.charAt(0).toUpperCase() +
+                  project.status.slice(1)}
               </span>
             </div>
           )}
@@ -304,7 +334,8 @@ const Projects: React.FC = () => {
             {project.title}
           </h3>
           <p className="text-gray-700 dark:text-gray-300 mb-4 line-clamp-3 text-sm">
-            {project.shortDescription || project.description.substring(0, 120) + "..."}
+            {project.shortDescription ||
+              project.description.substring(0, 120) + "..."}
           </p>
           <div className="flex flex-wrap gap-1 mt-auto">
             {project.technologies.slice(0, 3).map((tech, idx) => (
@@ -371,7 +402,7 @@ const Projects: React.FC = () => {
         transition={{
           duration: 4,
           repeat: Infinity,
-          ease: "easeInOut"
+          ease: "easeInOut",
         }}
       />
       <motion.div
@@ -384,7 +415,7 @@ const Projects: React.FC = () => {
           duration: 5,
           repeat: Infinity,
           ease: "easeInOut",
-          delay: 1
+          delay: 1,
         }}
       />
 
@@ -424,7 +455,12 @@ const Projects: React.FC = () => {
                 <input
                   type="text"
                   value={filterState.search}
-                  onChange={(e) => setFilterState(prev => ({ ...prev, search: e.target.value }))}
+                  onChange={(e) =>
+                    setFilterState((prev) => ({
+                      ...prev,
+                      search: e.target.value,
+                    }))
+                  }
                   placeholder="Search projects..."
                   className="w-full px-4 py-3 pl-12 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
                   aria-label="Search projects"
@@ -461,18 +497,23 @@ const Projects: React.FC = () => {
                         Status
                       </h3>
                       <div className="flex gap-2">
-                        {["all", "completed", "in-progress", "planned"].map((status) => (
-                          <button
-                            key={status}
-                            onClick={() => setFilterState(prev => ({ ...prev, status }))}
-                            className={`px-3 py-1 rounded-full text-sm ${filterState.status === status
-                                ? "bg-blue-500 text-white"
-                                : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
+                        {["all", "completed", "in-progress", "planned"].map(
+                          (status) => (
+                            <button
+                              key={status}
+                              onClick={() =>
+                                setFilterState((prev) => ({ ...prev, status }))
+                              }
+                              className={`px-3 py-1 rounded-full text-sm ${
+                                filterState.status === status
+                                  ? "bg-blue-500 text-white"
+                                  : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
                               }`}
-                          >
-                            {status.charAt(0).toUpperCase() + status.slice(1)}
-                          </button>
-                        ))}
+                            >
+                              {status.charAt(0).toUpperCase() + status.slice(1)}
+                            </button>
+                          )
+                        )}
                       </div>
                     </div>
                     <div>
@@ -484,17 +525,18 @@ const Projects: React.FC = () => {
                           <button
                             key={tech}
                             onClick={() => {
-                              setFilterState(prev => ({
+                              setFilterState((prev) => ({
                                 ...prev,
                                 technologies: prev.technologies.includes(tech)
-                                  ? prev.technologies.filter(t => t !== tech)
-                                  : [...prev.technologies, tech]
+                                  ? prev.technologies.filter((t) => t !== tech)
+                                  : [...prev.technologies, tech],
                               }));
                             }}
-                            className={`px-3 py-1 rounded-full text-sm ${filterState.technologies.includes(tech)
+                            className={`px-3 py-1 rounded-full text-sm ${
+                              filterState.technologies.includes(tech)
                                 ? "bg-blue-500 text-white"
                                 : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
-                              }`}
+                            }`}
                           >
                             {tech}
                           </button>
@@ -549,13 +591,9 @@ const Projects: React.FC = () => {
                   variants={fadeIn}
                 >
                   <p className="text-2xl font-semibold text-gray-900 dark:text-white text-center">
-                    {
-                      projects.length === 0 ? (
-                        "No projects available currently, check back soon!"
-                      ) : (
-                        "No projects found matching your criteria"
-                      )
-                    }
+                    {projects.length === 0
+                      ? "No projects available currently, check back soon!"
+                      : "No projects found matching your criteria"}
                   </p>
                 </motion.div>
               ) : (
@@ -570,13 +608,16 @@ const Projects: React.FC = () => {
             {/* Scroll indicator - Improved for mobile */}
             {filteredProjects.length > 0 && (
               <div className="mt-6 flex justify-center space-x-2 overflow-x-auto py-2 px-4 max-w-full">
-                {Array.from({ length: Math.ceil(filteredProjects.length / visibleItems) }).map((_, index) => (
+                {Array.from({
+                  length: Math.ceil(filteredProjects.length / visibleItems),
+                }).map((_, index) => (
                   <motion.button
                     key={index}
-                    className={`h-1.5 rounded-full transition-all duration-300 ${currentSlideIndex === index
+                    className={`h-1.5 rounded-full transition-all duration-300 ${
+                      currentSlideIndex === index
                         ? "w-8 bg-blue-500"
                         : "w-2 bg-gray-300 dark:bg-gray-600"
-                      }`}
+                    }`}
                     whileHover={{ scale: 1.2 }}
                     onClick={() => scrollToSlide(index)}
                     aria-label={`Go to slide ${index + 1}`}
@@ -587,14 +628,17 @@ const Projects: React.FC = () => {
 
             {/* Mobile Navigation Dots */}
             <div className="sm:hidden flex justify-center mt-4 space-x-2">
-              {Array.from({ length: Math.ceil(filteredProjects.length / visibleItems) }).map((_, index) => (
+              {Array.from({
+                length: Math.ceil(filteredProjects.length / visibleItems),
+              }).map((_, index) => (
                 <button
                   key={index}
                   onClick={() => scrollToSlide(index)}
-                  className={`w-2 h-2 rounded-full transition-all duration-300 ${currentSlideIndex === index
+                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                    currentSlideIndex === index
                       ? "bg-blue-500 scale-125"
                       : "bg-gray-300 dark:bg-gray-600"
-                    }`}
+                  }`}
                   aria-label={`Go to slide ${index + 1}`}
                 />
               ))}
@@ -652,14 +696,16 @@ const Projects: React.FC = () => {
                         {selectedProjectDetails.title}
                       </h2>
                       <div className="flex flex-wrap gap-2 mb-4">
-                        {selectedProjectDetails.technologies.map((tech, idx) => (
-                          <span
-                            key={idx}
-                            className="px-2 py-1 text-xs bg-blue-600/80 text-white rounded-full"
-                          >
-                            {tech}
-                          </span>
-                        ))}
+                        {selectedProjectDetails.technologies.map(
+                          (tech, idx) => (
+                            <span
+                              key={idx}
+                              className="px-2 py-1 text-xs bg-blue-600/80 text-white rounded-full"
+                            >
+                              {tech}
+                            </span>
+                          )
+                        )}
                       </div>
                     </div>
                   </div>
@@ -675,30 +721,35 @@ const Projects: React.FC = () => {
                   </p>
 
                   {/* Feature highlights */}
-                  {selectedProjectDetails.features && selectedProjectDetails.features.length > 0 && (
-                    <div className="mb-8">
-                      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center">
-                        <FiLayers className="mr-2 text-blue-500" />
-                        Key Features
-                      </h3>
-                      <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        {selectedProjectDetails.features.map((feature, idx) => (
-                          <motion.li
-                            key={idx}
-                            className="flex items-start bg-gray-50 dark:bg-gray-700/50 p-3 rounded-md"
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: idx * 0.1 }}
-                          >
-                            <span className="text-blue-500 mr-2 mt-0.5">•</span>
-                            <span className="text-gray-700 dark:text-gray-300">
-                              {feature}
-                            </span>
-                          </motion.li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
+                  {selectedProjectDetails.features &&
+                    selectedProjectDetails.features.length > 0 && (
+                      <div className="mb-8">
+                        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center">
+                          <FiLayers className="mr-2 text-blue-500" />
+                          Key Features
+                        </h3>
+                        <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          {selectedProjectDetails.features.map(
+                            (feature, idx) => (
+                              <motion.li
+                                key={idx}
+                                className="flex items-start bg-gray-50 dark:bg-gray-700/50 p-3 rounded-md"
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: idx * 0.1 }}
+                              >
+                                <span className="text-blue-500 mr-2 mt-0.5">
+                                  •
+                                </span>
+                                <span className="text-gray-700 dark:text-gray-300">
+                                  {feature}
+                                </span>
+                              </motion.li>
+                            )
+                          )}
+                        </ul>
+                      </div>
+                    )}
 
                   {/* Technologies */}
                   <div className="mb-8">
@@ -730,7 +781,9 @@ const Projects: React.FC = () => {
                       </h3>
                       <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
                         <FiCalendar className="text-blue-500" />
-                        <span>Completed: {selectedProjectDetails.completionDate}</span>
+                        <span>
+                          Completed: {selectedProjectDetails.completionDate}
+                        </span>
                       </div>
                     </div>
                   )}

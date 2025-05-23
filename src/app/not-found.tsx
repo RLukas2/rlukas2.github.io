@@ -15,12 +15,15 @@ export default function NotFound() {
         transition={{ duration: 0.5 }}
         className="text-center"
       >
-        <h1 className="text-9xl font-bold text-blue-600 dark:text-blue-400 mb-4">404</h1>
+        <h1 className="text-9xl font-bold text-blue-600 dark:text-blue-400 mb-4">
+          404
+        </h1>
         <h2 className="text-3xl font-semibold text-gray-900 dark:text-white mb-6">
           Page Not Found
         </h2>
         <p className="text-gray-600 dark:text-gray-400 mb-8 max-w-md mx-auto">
-          Oops! The page you're looking for doesn't exist or has been moved.
+          Oops! The page you&apos;re looking for doesn&apos;t exist or has been
+          moved.
         </p>
         <div className="space-x-4">
           <motion.button
@@ -44,4 +47,4 @@ export default function NotFound() {
       </motion.div>
     </div>
   );
-} 
+}

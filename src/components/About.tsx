@@ -51,21 +51,21 @@ const About: React.FC = () => {
 
   const tabVariants = {
     hidden: { opacity: 0, x: -20 },
-    visible: { 
-      opacity: 1, 
+    visible: {
+      opacity: 1,
       x: 0,
       transition: {
         duration: 0.5,
         ease: [0.22, 1, 0.36, 1],
-      }
+      },
     },
-    exit: { 
-      opacity: 0, 
+    exit: {
+      opacity: 0,
       x: 20,
       transition: {
         duration: 0.3,
-      }
-    }
+      },
+    },
   };
 
   const expertiseData = [
@@ -203,29 +203,29 @@ const About: React.FC = () => {
       aria-label="About section"
     >
       {/* Background Elements with improved animations */}
-      <motion.div 
+      <motion.div
         className="absolute top-20 left-0 w-64 h-64 bg-blue-200/30 dark:bg-blue-900/20 rounded-full blur-3xl -z-10"
-        animate={{ 
+        animate={{
           scale: [1, 1.1, 1],
           opacity: [0.3, 0.4, 0.3],
         }}
-        transition={{ 
+        transition={{
           duration: 4,
           repeat: Infinity,
-          ease: "easeInOut"
+          ease: "easeInOut",
         }}
       />
-      <motion.div 
+      <motion.div
         className="absolute bottom-20 right-0 w-80 h-80 bg-purple-200/30 dark:bg-purple-900/20 rounded-full blur-3xl -z-10"
-        animate={{ 
+        animate={{
           scale: [1, 1.2, 1],
           opacity: [0.2, 0.3, 0.2],
         }}
-        transition={{ 
+        transition={{
           duration: 5,
           repeat: Infinity,
           ease: "easeInOut",
-          delay: 1
+          delay: 1,
         }}
       />
 
@@ -325,9 +325,13 @@ const About: React.FC = () => {
                   onHoverStart={() => setIsHovered(value.title)}
                   onHoverEnd={() => setIsHovered(null)}
                 >
-                  <motion.div 
+                  <motion.div
                     className="inline-flex items-center justify-center w-12 h-12 mb-4 bg-blue-100 dark:bg-blue-900/30 rounded-full"
-                    animate={isHovered === value.title ? { rotate: 360 } : { rotate: 0 }}
+                    animate={
+                      isHovered === value.title
+                        ? { rotate: 360 }
+                        : { rotate: 0 }
+                    }
                     transition={{ duration: 0.5 }}
                   >
                     {value.icon}
@@ -365,9 +369,11 @@ const About: React.FC = () => {
                 onHoverEnd={() => setIsHovered(null)}
               >
                 <div className="flex items-center mb-4">
-                  <motion.div 
+                  <motion.div
                     className={`p-3 ${item.iconBg} rounded-full mr-4`}
-                    animate={isHovered === item.id ? { scale: 1.1 } : { scale: 1 }}
+                    animate={
+                      isHovered === item.id ? { scale: 1.1 } : { scale: 1 }
+                    }
                     transition={{ duration: 0.2 }}
                   >
                     {item.icon}
@@ -379,10 +385,14 @@ const About: React.FC = () => {
                 <p className="text-gray-600 dark:text-gray-400">
                   {item.description}
                 </p>
-                <motion.div 
+                <motion.div
                   className="mt-4 flex items-center text-blue-600 dark:text-blue-400 text-sm font-medium"
                   initial={{ opacity: 0, x: -10 }}
-                  animate={isHovered === item.id ? { opacity: 1, x: 0 } : { opacity: 0, x: -10 }}
+                  animate={
+                    isHovered === item.id
+                      ? { opacity: 1, x: 0 }
+                      : { opacity: 0, x: -10 }
+                  }
                   transition={{ duration: 0.2 }}
                 >
                   <span>Learn more</span>

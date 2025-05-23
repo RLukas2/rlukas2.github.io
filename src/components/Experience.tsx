@@ -1,7 +1,12 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import {
+  motion,
+  AnimatePresence,
+  useScroll,
+  useTransform,
+} from "framer-motion";
 import {
   FiCalendar,
   FiMapPin,
@@ -10,7 +15,6 @@ import {
   FiCheck,
   FiTool,
   FiTarget,
-  FiChevronRight,
 } from "react-icons/fi";
 import { useInView } from "react-intersection-observer";
 import { experiences } from "@/data/experiences";
@@ -165,29 +169,29 @@ const Experience: React.FC = () => {
       aria-label="Work Experience section"
     >
       {/* Background Elements with improved animations */}
-      <motion.div 
+      <motion.div
         className="absolute top-20 left-0 w-64 h-64 bg-blue-200/30 dark:bg-blue-900/20 rounded-full blur-3xl -z-10"
-        animate={{ 
+        animate={{
           scale: [1, 1.1, 1],
           opacity: [0.3, 0.4, 0.3],
         }}
-        transition={{ 
+        transition={{
           duration: 4,
           repeat: Infinity,
-          ease: "easeInOut"
+          ease: "easeInOut",
         }}
       />
-      <motion.div 
+      <motion.div
         className="absolute bottom-20 right-0 w-80 h-80 bg-purple-200/30 dark:bg-purple-900/20 rounded-full blur-3xl -z-10"
-        animate={{ 
+        animate={{
           scale: [1, 1.2, 1],
           opacity: [0.2, 0.3, 0.2],
         }}
-        transition={{ 
+        transition={{
           duration: 5,
           repeat: Infinity,
           ease: "easeInOut",
-          delay: 1
+          delay: 1,
         }}
       />
 
@@ -268,7 +272,9 @@ const Experience: React.FC = () => {
                               ? "bg-white/20"
                               : "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
                           }`}
-                          animate={activeTab === exp.id ? { scale: [1, 1.2, 1] } : {}}
+                          animate={
+                            activeTab === exp.id ? { scale: [1, 1.2, 1] } : {}
+                          }
                           transition={{ duration: 0.3 }}
                         >
                           <FiBriefcase size={18} />
@@ -318,11 +324,18 @@ const Experience: React.FC = () => {
                 className="lg:col-span-8 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg overflow-hidden relative"
                 variants={itemVariants}
               >
-                {/* Progress bar */}
+                {/* Progress bar 
                 <motion.div
                   className="absolute top-0 left-0 h-1 bg-blue-500"
-                  style={{ width: useTransform(scrollYProgress, [0, 1], ["0%", "100%"]) }}
+                  style={{
+                    width: useTransform(
+                      scrollYProgress,
+                      [0, 1],
+                      ["0%", "100%"]
+                    ),
+                  }}
                 />
+                */}
 
                 <AnimatePresence mode="wait">
                   {experiences.map(
@@ -346,7 +359,7 @@ const Experience: React.FC = () => {
                             </h4>
 
                             <div className="flex flex-wrap gap-4 text-gray-600 dark:text-gray-300 mb-2">
-                              <motion.div 
+                              <motion.div
                                 className="flex items-center bg-gray-100 dark:bg-gray-700/50 px-3 py-1 rounded-full"
                                 whileHover={{ scale: 1.05 }}
                                 transition={{ duration: 0.2 }}
@@ -354,7 +367,7 @@ const Experience: React.FC = () => {
                                 <FiCalendar className="mr-2 text-blue-600 dark:text-blue-400" />
                                 <span>{exp.duration}</span>
                               </motion.div>
-                              <motion.div 
+                              <motion.div
                                 className="flex items-center bg-gray-100 dark:bg-gray-700/50 px-3 py-1 rounded-full"
                                 whileHover={{ scale: 1.05 }}
                                 transition={{ duration: 0.2 }}
@@ -385,7 +398,7 @@ const Experience: React.FC = () => {
                                   whileHover={{ x: 5 }}
                                   className="flex items-start bg-gray-50 dark:bg-gray-700/30 p-3 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/10 transition-colors group"
                                 >
-                                  <motion.div 
+                                  <motion.div
                                     className="flex-shrink-0 mr-3 mt-0.5"
                                     whileHover={{ rotate: 360 }}
                                     transition={{ duration: 0.5 }}
@@ -435,13 +448,19 @@ const Experience: React.FC = () => {
                                             scale: 1.05,
                                             transition: { duration: 0.2 },
                                           }}
-                                          onHoverStart={() => setIsHovered(tech)}
+                                          onHoverStart={() =>
+                                            setIsHovered(tech)
+                                          }
                                           onHoverEnd={() => setIsHovered(null)}
                                           className="px-3 py-1.5 text-sm bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-full flex items-center shadow-sm transition-all duration-300"
                                         >
-                                          <motion.span 
+                                          <motion.span
                                             className="mr-1.5"
-                                            animate={isHovered === tech ? { rotate: 360 } : { rotate: 0 }}
+                                            animate={
+                                              isHovered === tech
+                                                ? { rotate: 360 }
+                                                : { rotate: 0 }
+                                            }
                                             transition={{ duration: 0.5 }}
                                           >
                                             {getTechIcon(tech)}

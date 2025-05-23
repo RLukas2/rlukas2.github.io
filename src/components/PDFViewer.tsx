@@ -3,7 +3,14 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Document, Page, pdfjs } from "react-pdf";
-import { Download, X, ZoomIn, ZoomOut, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Download,
+  X,
+  ZoomIn,
+  ZoomOut,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 
 // Initialize PDF.js worker with local file
 pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.mjs";
@@ -46,7 +53,10 @@ export default function PDFViewer({ isOpen, onClose, pdfUrl }: PDFViewerProps) {
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+      if (
+        modalRef.current &&
+        !modalRef.current.contains(event.target as Node)
+      ) {
         onClose();
       }
     }
@@ -132,13 +142,13 @@ export default function PDFViewer({ isOpen, onClose, pdfUrl }: PDFViewerProps) {
             </div>
 
             {/* PDF Viewer */}
-            <div 
+            <div
               ref={pdfContainerRef}
               className="flex-1 overflow-auto rounded-lg border bg-blue-50 dark:bg-gray-900 p-4"
               style={{
-                WebkitOverflowScrolling: 'touch',
-                overscrollBehavior: 'contain',
-                scrollBehavior: 'smooth',
+                WebkitOverflowScrolling: "touch",
+                overscrollBehavior: "contain",
+                scrollBehavior: "smooth",
               }}
             >
               {error ? (
@@ -246,4 +256,4 @@ export default function PDFViewer({ isOpen, onClose, pdfUrl }: PDFViewerProps) {
       )}
     </AnimatePresence>
   );
-} 
+}

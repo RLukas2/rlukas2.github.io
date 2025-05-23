@@ -1,6 +1,15 @@
 "use client";
 
-import { FiArrowUp, FiHeart, FiCode, FiGithub, FiLinkedin, FiTwitter, FiMail, FiSend } from "react-icons/fi";
+import {
+  FiArrowUp,
+  FiHeart,
+  FiCode,
+  FiGithub,
+  FiLinkedin,
+  FiTwitter,
+  FiMail,
+  FiSend,
+} from "react-icons/fi";
 import { useEffect, useState, FormEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
@@ -9,7 +18,9 @@ const Footer: React.FC = () => {
   const [showScrollTop, setShowScrollTop] = useState<boolean>(false);
   const [email, setEmail] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [subscriptionStatus, setSubscriptionStatus] = useState<"idle" | "success" | "error">("idle");
+  const [subscriptionStatus, setSubscriptionStatus] = useState<
+    "idle" | "success" | "error"
+  >("idle");
   const currentYear = new Date().getFullYear();
 
   // Detect scroll position
@@ -34,14 +45,15 @@ const Footer: React.FC = () => {
   const handleSubscribe = async (e: FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
     // Simulate API call
     try {
       // Replace with actual API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       setSubscriptionStatus("success");
       setEmail("");
     } catch (error) {
+      console.error("Subscription error:", error);
       setSubscriptionStatus("error");
     } finally {
       setIsSubmitting(false);
@@ -52,10 +64,26 @@ const Footer: React.FC = () => {
 
   // Social media links
   const socialLinks = [
-    { name: "GitHub", icon: <FiGithub size={20} />, url: "https://github.com/RLukas2" },
-    { name: "LinkedIn", icon: <FiLinkedin size={20} />, url: "https://linkedin.com/in/xbrk" },
-    { name: "Twitter", icon: <FiTwitter size={20} />, url: "https://twitter.com/rickielukas" },
-    { name: "Email", icon: <FiMail size={20} />, url: "mailto:iforgotmyemail@gmail.com" },
+    {
+      name: "GitHub",
+      icon: <FiGithub size={20} />,
+      url: "https://github.com/RLukas2",
+    },
+    {
+      name: "LinkedIn",
+      icon: <FiLinkedin size={20} />,
+      url: "https://linkedin.com/in/xbrk",
+    },
+    {
+      name: "Twitter",
+      icon: <FiTwitter size={20} />,
+      url: "https://twitter.com/rickielukas",
+    },
+    {
+      name: "Email",
+      icon: <FiMail size={20} />,
+      url: "mailto:iforgotmyemail@gmail.com",
+    },
   ];
 
   // Quick links
@@ -70,7 +98,7 @@ const Footer: React.FC = () => {
     <footer className="py-20 bg-white dark:bg-gray-900 text-white py-12 relative overflow-hidden">
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent to-gray-800/20 dark:to-gray-900/40 pointer-events-none" />
-      
+
       <div className="container mx-auto px-4 relative z-10">
         {/* Main footer content */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
@@ -78,8 +106,9 @@ const Footer: React.FC = () => {
           <div className="space-y-4">
             <h3 className="text-xl font-bold text-white">About Me</h3>
             <p className="text-gray-400 text-sm">
-              A passionate developer focused on creating beautiful and functional web experiences.
-              Always learning and exploring new technologies.
+              A passionate developer focused on creating beautiful and
+              functional web experiences. Always learning and exploring new
+              technologies.
             </p>
             {/* Social media links */}
             <div className="flex space-x-4 pt-2">
@@ -106,7 +135,7 @@ const Footer: React.FC = () => {
             <ul className="space-y-2">
               {quickLinks.map((link) => (
                 <li key={link.name}>
-                  <Link 
+                  <Link
                     href={link.href}
                     className="text-gray-400 hover:text-primary transition-colors"
                   >

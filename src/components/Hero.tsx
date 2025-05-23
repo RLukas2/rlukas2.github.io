@@ -67,11 +67,31 @@ const Hero: React.FC = () => {
   };
 
   const techIcons = [
-    { name: "React", icon: <SiReact className="text-blue-600" />, color: "bg-blue-100 dark:bg-blue-900/30" },
-    { name: "Node.js", icon: <SiNodedotjs className="text-green-600" />, color: "bg-green-100 dark:bg-green-900/30" },
-    { name: "GraphQL", icon: <SiGraphql className="text-pink-600" />, color: "bg-pink-100 dark:bg-pink-900/30" },
-    { name: "AWS", icon: <SiAmazonwebservices className="text-orange-500" />, color: "bg-orange-100 dark:bg-orange-900/30" },
-    { name: "Docker", icon: <SiDocker className="text-blue-500" />, color: "bg-blue-100 dark:bg-blue-900/30" },
+    {
+      name: "React",
+      icon: <SiReact className="text-blue-600" />,
+      color: "bg-blue-100 dark:bg-blue-900/30",
+    },
+    {
+      name: "Node.js",
+      icon: <SiNodedotjs className="text-green-600" />,
+      color: "bg-green-100 dark:bg-green-900/30",
+    },
+    {
+      name: "GraphQL",
+      icon: <SiGraphql className="text-pink-600" />,
+      color: "bg-pink-100 dark:bg-pink-900/30",
+    },
+    {
+      name: "AWS",
+      icon: <SiAmazonwebservices className="text-orange-500" />,
+      color: "bg-orange-100 dark:bg-orange-900/30",
+    },
+    {
+      name: "Docker",
+      icon: <SiDocker className="text-blue-500" />,
+      color: "bg-blue-100 dark:bg-blue-900/30",
+    },
   ];
 
   const scrollToNext = () => {
@@ -91,48 +111,48 @@ const Hero: React.FC = () => {
       aria-label="Hero section"
     >
       {/* Improved background with better contrast for light mode */}
-      <motion.div 
+      <motion.div
         className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50/30 to-white dark:from-gray-900 dark:via-blue-900/10 dark:to-gray-800 -z-10"
         style={{ y, opacity }}
       />
 
       {/* Enhanced decorative elements with animations */}
-      <motion.div 
+      <motion.div
         className="absolute top-40 left-10 w-72 h-72 bg-blue-300/20 dark:bg-blue-500/10 rounded-full blur-3xl -z-10"
-        animate={{ 
+        animate={{
           scale: [1, 1.1, 1],
           opacity: [0.3, 0.5, 0.3],
         }}
-        transition={{ 
+        transition={{
           duration: 4,
           repeat: Infinity,
-          ease: "easeInOut"
+          ease: "easeInOut",
         }}
       />
       <motion.div
         className="absolute bottom-40 right-10 w-96 h-96 bg-indigo-300/20 dark:bg-indigo-500/10 rounded-full blur-3xl -z-10"
-        animate={{ 
+        animate={{
           scale: [1, 1.2, 1],
           opacity: [0.2, 0.4, 0.2],
         }}
-        transition={{ 
+        transition={{
           duration: 5,
           repeat: Infinity,
           ease: "easeInOut",
-          delay: 1
+          delay: 1,
         }}
       />
-      <motion.div 
+      <motion.div
         className="absolute top-1/4 right-1/4 w-64 h-64 bg-purple-300/10 dark:bg-purple-500/5 rounded-full blur-3xl -z-10"
-        animate={{ 
+        animate={{
           y: [0, -20, 0],
           opacity: [0.1, 0.3, 0.1],
         }}
-        transition={{ 
+        transition={{
           duration: 6,
           repeat: Infinity,
           ease: "easeInOut",
-          delay: 2
+          delay: 2,
         }}
       />
 
@@ -286,29 +306,29 @@ const Hero: React.FC = () => {
           >
             <div className="relative w-72 h-72 md:w-96 md:h-96">
               {/* Enhanced glow effects */}
-              <motion.div 
+              <motion.div
                 className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 opacity-30 blur-3xl"
-                animate={{ 
+                animate={{
                   scale: [1, 1.1, 1],
                   opacity: [0.3, 0.4, 0.3],
                 }}
-                transition={{ 
+                transition={{
                   duration: 4,
                   repeat: Infinity,
-                  ease: "easeInOut"
+                  ease: "easeInOut",
                 }}
               />
               <motion.div
                 className="absolute inset-2 rounded-full bg-gradient-to-r from-indigo-400 to-blue-400 opacity-20 blur-2xl"
-                animate={{ 
+                animate={{
                   scale: [1, 1.2, 1],
                   opacity: [0.2, 0.3, 0.2],
                 }}
-                transition={{ 
+                transition={{
                   duration: 5,
                   repeat: Infinity,
                   ease: "easeInOut",
-                  delay: 1
+                  delay: 1,
                 }}
               />
 
@@ -328,14 +348,14 @@ const Hero: React.FC = () => {
               {/* Tech orbs floating around the profile with better borders */}
               <motion.div
                 className="absolute -top-2 -left-2 w-16 h-16 bg-white dark:bg-gray-800 rounded-full border-2 border-gray-300 dark:border-gray-700 flex items-center justify-center shadow-lg"
-                animate={{ 
+                animate={{
                   y: [0, -10, 0],
                   rotate: [0, 5, 0],
                 }}
-                transition={{ 
+                transition={{
                   duration: 4,
                   repeat: Infinity,
-                  ease: "easeInOut"
+                  ease: "easeInOut",
                 }}
               >
                 <SiReact className="text-3xl text-blue-600" />
@@ -343,15 +363,15 @@ const Hero: React.FC = () => {
 
               <motion.div
                 className="absolute top-1/4 -right-4 w-14 h-14 bg-white dark:bg-gray-800 rounded-full border-2 border-gray-300 dark:border-gray-700 flex items-center justify-center shadow-lg"
-                animate={{ 
+                animate={{
                   y: [0, -15, 0],
                   rotate: [0, -5, 0],
                 }}
-                transition={{ 
+                transition={{
                   duration: 5,
                   repeat: Infinity,
                   ease: "easeInOut",
-                  delay: 0.8
+                  delay: 0.8,
                 }}
               >
                 <SiAmazonwebservices className="text-2xl text-yellow-600" />
@@ -359,15 +379,15 @@ const Hero: React.FC = () => {
 
               <motion.div
                 className="absolute bottom-1/10 -left-6 w-12 h-12 bg-white dark:bg-gray-800 rounded-full border-2 border-gray-300 dark:border-gray-700 flex items-center justify-center shadow-lg"
-                animate={{ 
+                animate={{
                   y: [0, -12, 0],
                   rotate: [0, 5, 0],
                 }}
-                transition={{ 
+                transition={{
                   duration: 6,
                   repeat: Infinity,
                   ease: "easeInOut",
-                  delay: 1.6
+                  delay: 1.6,
                 }}
               >
                 <SiGraphql className="text-xl text-pink-600" />

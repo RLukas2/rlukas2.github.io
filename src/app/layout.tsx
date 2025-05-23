@@ -54,7 +54,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Ngo Hoang Tuan | Portfolio",
-    description: "Backend Engineer with expertise in Node.js, NestJS, GraphQL, and microservices architecture",
+    description:
+      "Backend Engineer with expertise in Node.js, NestJS, GraphQL, and microservices architecture",
     images: ["/og-image.jpg"],
     creator: "@rickielukas",
   },
@@ -70,7 +71,7 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    google: "your-google-site-verification",
+    google: "UZjg3rLNvmdngjzZyQOlUSFmQHAh1XV-SsdN8g7ut_E",
   },
 };
 
@@ -102,12 +103,18 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#3b82f6" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1"
+        />
         <meta name="format-detection" content="telephone=no" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="Ngo Hoang Tuan Portfolio" />
+        <meta
+          name="apple-mobile-web-app-title"
+          content="Ngo Hoang Tuan Portfolio"
+        />
       </head>
       <body className="text-foreground bg-background font-sans antialiased flex flex-col min-h-screen">
         <ErrorBoundary FallbackComponent={ErrorFallback}>

@@ -1,7 +1,11 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import {
+  motion,
+  AnimatePresence,
+  useScroll,
+} from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import {
   FiCode,
@@ -11,7 +15,6 @@ import {
   FiGitBranch,
   FiSearch,
   FiX,
-  FiInfo,
 } from "react-icons/fi";
 import {
   SiJavascript,
@@ -38,12 +41,9 @@ import {
   SiGoogle,
   SiRabbitmq,
 } from "react-icons/si";
-import {
-  FaGolang
-} from "react-icons/fa6";
+import { FaGolang } from "react-icons/fa6";
 import { skills as skillsData } from "@/data/skills";
 import { Skill } from "@/types";
-
 
 interface SkillWithIcon extends Skill {
   iconComponent: React.ReactNode;
@@ -87,41 +87,47 @@ const iconMap: Record<string, React.ReactNode> = {
 };
 
 const categories: Category[] = [
-  { 
-    id: "all", 
-    name: "All", 
+  {
+    id: "all",
+    name: "All",
     icon: <FiCode />,
-    description: "This section highlights a broad range of my technical skills. Each one reflects tools and technologies I've worked with during projects and coursework."
+    description:
+      "This section highlights a broad range of my technical skills. Each one reflects tools and technologies I've worked with during projects and coursework.",
   },
-  { 
-    id: "frontend", 
-    name: "Frontend", 
+  {
+    id: "frontend",
+    name: "Frontend",
     icon: <FiCode />,
-    description: "My frontend skills focus on building responsive, accessible interfaces using modern frameworks and libraries to ensure smooth user experiences."
+    description:
+      "My frontend skills focus on building responsive, accessible interfaces using modern frameworks and libraries to ensure smooth user experiences.",
   },
-  { 
-    id: "backend", 
-    name: "Backend", 
+  {
+    id: "backend",
+    name: "Backend",
     icon: <FiServer />,
-    description: "I enjoy building scalable and maintainable backend systems, working with APIs, microservices, and key architectural patterns for efficiency."
+    description:
+      "I enjoy building scalable and maintainable backend systems, working with APIs, microservices, and key architectural patterns for efficiency.",
   },
-  { 
-    id: "database", 
-    name: "Database", 
+  {
+    id: "database",
+    name: "Database",
     icon: <FiDatabase />,
-    description: "Experienced in both SQL and NoSQL databases, I've worked on designing schemas, optimizing queries, and applying caching for better performance."
+    description:
+      "Experienced in both SQL and NoSQL databases, I've worked on designing schemas, optimizing queries, and applying caching for better performance.",
   },
-  { 
-    id: "devops", 
-    name: "DevOps", 
+  {
+    id: "devops",
+    name: "DevOps",
     icon: <FiCloud />,
-    description: "I'm familiar with DevOps practices such as setting up CI/CD pipelines, managing deployments, and working with cloud infrastructure for automation and scalability."
+    description:
+      "I'm familiar with DevOps practices such as setting up CI/CD pipelines, managing deployments, and working with cloud infrastructure for automation and scalability.",
   },
-  { 
-    id: "other", 
-    name: "Other", 
+  {
+    id: "other",
+    name: "Other",
     icon: <FiGitBranch />,
-    description: "Additional tools and technologies that support and enhance my overall development workflow and technical capabilities."
+    description:
+      "Additional tools and technologies that support and enhance my overall development workflow and technical capabilities.",
   },
 ];
 
@@ -131,7 +137,9 @@ const Skills: React.FC = () => {
   const [filteredSkills, setFilteredSkills] = useState<SkillWithIcon[]>([]);
   const [hoveredSkill, setHoveredSkill] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [selectedSkill, setSelectedSkill] = useState<SkillWithIcon | null>(null);
+  const [selectedSkill, setSelectedSkill] = useState<SkillWithIcon | null>(
+    null
+  );
 
   const [ref, inView] = useInView({
     threshold: 0.1,
@@ -254,29 +262,29 @@ const Skills: React.FC = () => {
       aria-label="Technical Skills section"
     >
       {/* Background Elements with improved animations */}
-      <motion.div 
+      <motion.div
         className="absolute top-0 left-0 w-40 h-40 bg-blue-200/30 dark:bg-blue-900/20 rounded-full blur-3xl -z-10"
-        animate={{ 
+        animate={{
           scale: [1, 1.1, 1],
           opacity: [0.3, 0.4, 0.3],
         }}
-        transition={{ 
+        transition={{
           duration: 4,
           repeat: Infinity,
-          ease: "easeInOut"
+          ease: "easeInOut",
         }}
       />
-      <motion.div 
+      <motion.div
         className="absolute bottom-0 right-0 w-60 h-60 bg-purple-200/30 dark:bg-purple-900/20 rounded-full blur-3xl -z-10"
-        animate={{ 
+        animate={{
           scale: [1, 1.2, 1],
           opacity: [0.2, 0.3, 0.2],
         }}
-        transition={{ 
+        transition={{
           duration: 5,
           repeat: Infinity,
           ease: "easeInOut",
-          delay: 1
+          delay: 1,
         }}
       />
 
@@ -306,15 +314,12 @@ const Skills: React.FC = () => {
               className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto"
               variants={itemVariants}
             >
-              {categories.find(cat => cat.id === activeCategory)?.description}
+              {categories.find((cat) => cat.id === activeCategory)?.description}
             </motion.p>
           </motion.div>
 
           {/* Search Bar */}
-          <motion.div
-            className="max-w-md mx-auto mb-8"
-            variants={itemVariants}
-          >
+          <motion.div className="max-w-md mx-auto mb-8" variants={itemVariants}>
             <div className="relative">
               <input
                 type="text"
@@ -404,7 +409,7 @@ const Skills: React.FC = () => {
                       tabIndex={0}
                       aria-label={`View details for ${skill.name}`}
                     >
-                      <motion.div 
+                      <motion.div
                         className="mb-4 transform transition-transform duration-300"
                         whileHover={{ rotate: 360 }}
                         transition={{ duration: 0.5 }}
@@ -475,7 +480,8 @@ const Skills: React.FC = () => {
                       {selectedSkill.name}
                     </h3>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
-                      {selectedSkill.category.charAt(0).toUpperCase() + selectedSkill.category.slice(1)}
+                      {selectedSkill.category.charAt(0).toUpperCase() +
+                        selectedSkill.category.slice(1)}
                     </p>
                   </div>
                 </div>
@@ -498,7 +504,9 @@ const Skills: React.FC = () => {
               )}
               {selectedSkill.proficiency && (
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-500 dark:text-gray-400">Proficiency:</span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">
+                    Proficiency:
+                  </span>
                   <div className="flex gap-1">
                     {[...Array(5)].map((_, i) => (
                       <div

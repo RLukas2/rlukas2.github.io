@@ -33,7 +33,7 @@ const Contact: React.FC = () => {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isDirty },
+    formState: { errors },
   } = useForm<FormData>();
 
   // Intersection Observer for animations
@@ -47,13 +47,15 @@ const Contact: React.FC = () => {
       { threshold: 0.1 }
     );
 
-    if (formRef.current) {
-      observer.observe(formRef.current);
+    const currentFormRef = formRef.current; // Store the current value of formRef
+
+    if (currentFormRef) {
+      observer.observe(currentFormRef);
     }
 
     return () => {
-      if (formRef.current) {
-        observer.unobserve(formRef.current);
+      if (currentFormRef) {
+        observer.unobserve(currentFormRef); // Use the stored value in cleanup
       }
     };
   }, []);
@@ -86,7 +88,11 @@ const Contact: React.FC = () => {
     } catch (error) {
       console.error("Form submission error:", error);
       setSubmitSuccess(false);
-      setErrorMessage(error instanceof Error ? error.message : "Something went wrong. Please try again later.");
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : "Something went wrong. Please try again later."
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -146,7 +152,7 @@ const Contact: React.FC = () => {
         transition={{
           duration: 4,
           repeat: Infinity,
-          ease: "easeInOut"
+          ease: "easeInOut",
         }}
       />
       <motion.div
@@ -159,7 +165,7 @@ const Contact: React.FC = () => {
           duration: 5,
           repeat: Infinity,
           ease: "easeInOut",
-          delay: 1
+          delay: 1,
         }}
       />
 
@@ -192,7 +198,7 @@ const Contact: React.FC = () => {
 
               <div className="space-y-6">
                 {/* Email Address */}
-                <motion.div 
+                <motion.div
                   className="flex items-start"
                   whileHover={{ x: 5 }}
                   transition={{ type: "spring", stiffness: 300 }}
@@ -214,7 +220,7 @@ const Contact: React.FC = () => {
                 </motion.div>
 
                 {/* Phone Number */}
-                <motion.div 
+                <motion.div
                   className="flex items-start"
                   whileHover={{ x: 5 }}
                   transition={{ type: "spring", stiffness: 300 }}
@@ -236,7 +242,7 @@ const Contact: React.FC = () => {
                 </motion.div>
 
                 {/* Address */}
-                <motion.div 
+                <motion.div
                   className="flex items-start"
                   whileHover={{ x: 5 }}
                   transition={{ type: "spring", stiffness: 300 }}
@@ -288,7 +294,11 @@ const Contact: React.FC = () => {
 
             {/* Contact Form */}
             <motion.div className="md:w-2/3" variants={fadeIn}>
-              <form ref={formRef} onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              <form
+                ref={formRef}
+                onSubmit={handleSubmit(onSubmit)}
+                className="space-y-6"
+              >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label
@@ -439,7 +449,9 @@ const Contact: React.FC = () => {
                     type="submit"
                     disabled={isSubmitting}
                     className={`w-full px-6 py-3 rounded-lg font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 ${
-                      isSubmitting ? "opacity-70 cursor-not-allowed" : "cursor-pointer"
+                      isSubmitting
+                        ? "opacity-70 cursor-not-allowed"
+                        : "cursor-pointer"
                     }`}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}

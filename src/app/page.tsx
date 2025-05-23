@@ -14,22 +14,30 @@ const About = dynamic(() => import("@/components/About"), {
 });
 
 const Experience = dynamic(() => import("@/components/Experience"), {
-  loading: () => <div key="experience-loading" className="h-screen animate-pulse" />,
+  loading: () => (
+    <div key="experience-loading" className="h-screen animate-pulse" />
+  ),
   ssr: true,
 });
 
 const Skills = dynamic(() => import("@/components/Skills"), {
-  loading: () => <div key="skills-loading" className="h-screen animate-pulse" />,
+  loading: () => (
+    <div key="skills-loading" className="h-screen animate-pulse" />
+  ),
   ssr: true,
 });
 
 const Projects = dynamic(() => import("@/components/Projects"), {
-  loading: () => <div key="projects-loading" className="h-screen animate-pulse" />,
+  loading: () => (
+    <div key="projects-loading" className="h-screen animate-pulse" />
+  ),
   ssr: true,
 });
 
 const Contact = dynamic(() => import("@/components/Contact"), {
-  loading: () => <div key="contact-loading" className="h-screen animate-pulse" />,
+  loading: () => (
+    <div key="contact-loading" className="h-screen animate-pulse" />
+  ),
   ssr: true,
 });
 

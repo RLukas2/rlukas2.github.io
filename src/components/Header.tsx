@@ -25,7 +25,7 @@ const Header: React.FC = () => {
   const [activeSection, setActiveSection] = useState<string>("home");
   const [mounted, setMounted] = useState<boolean>(false);
   const { theme, setTheme } = useTheme();
-  const pathname = usePathname();
+  // const pathname = usePathname();
 
   // Set mounted state to prevent hydration mismatch
   useEffect(() => {
@@ -33,9 +33,12 @@ const Header: React.FC = () => {
   }, []);
 
   // Debounced scroll handler
-  const debounce = (func: Function, wait: number) => {
+  const debounce = <T extends (...args: unknown[]) => void>(
+    func: T,
+    wait: number
+  ) => {
     let timeout: NodeJS.Timeout;
-    return (...args: any[]) => {
+    return (...args: Parameters<T>): void => {
       clearTimeout(timeout);
       timeout = setTimeout(() => func(...args), wait);
     };
@@ -81,21 +84,28 @@ const Header: React.FC = () => {
   };
 
   // Close menu when clicking outside
-  const handleClickOutside = useCallback((e: MouseEvent) => {
-    const target = e.target as HTMLElement;
-    if (isOpen && !target.closest('.mobile-menu') && !target.closest('.menu-toggle')) {
-      setIsOpen(false);
-    }
-  }, [isOpen]);
+  const handleClickOutside = useCallback(
+    (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (
+        isOpen &&
+        !target.closest(".mobile-menu") &&
+        !target.closest(".menu-toggle")
+      ) {
+        setIsOpen(false);
+      }
+    },
+    [isOpen]
+  );
 
   useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [handleClickOutside]);
 
   // Toggle theme
   const toggleTheme = () => {
-    const newTheme = theme === 'dark' ? 'light' : 'dark';
+    const newTheme = theme === "dark" ? "light" : "dark";
     setTheme(newTheme);
     localStorage.setItem("theme", newTheme);
     document.documentElement.classList.toggle("dark", newTheme === "dark");
@@ -175,21 +185,22 @@ const Header: React.FC = () => {
 
   // Progress bar for scroll position
   const [scrollProgress, setScrollProgress] = useState(0);
-  
+
   useEffect(() => {
     const handleScrollProgress = () => {
-      const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
+      const totalScroll =
+        document.documentElement.scrollHeight - window.innerHeight;
       const currentProgress = (window.scrollY / totalScroll) * 100;
       setScrollProgress(currentProgress);
     };
-    
-    window.addEventListener('scroll', handleScrollProgress);
-    return () => window.removeEventListener('scroll', handleScrollProgress);
+
+    window.addEventListener("scroll", handleScrollProgress);
+    return () => window.removeEventListener("scroll", handleScrollProgress);
   }, []);
 
   const handleNavClick = (href: string) => {
     setIsOpen(false);
-    
+
     // Wait for menu animation to complete before scrolling
     setTimeout(() => {
       if (href.startsWith("/#")) {
@@ -199,11 +210,12 @@ const Header: React.FC = () => {
           // Add offset for header height
           const headerOffset = 80;
           const elementPosition = element.getBoundingClientRect().top;
-          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+          const offsetPosition =
+            elementPosition + window.pageYOffset - headerOffset;
 
           window.scrollTo({
             top: offsetPosition,
-            behavior: "smooth"
+            behavior: "smooth",
           });
         }
       }
@@ -219,12 +231,12 @@ const Header: React.FC = () => {
       }`}
     >
       {/* Progress bar */}
-      <div 
+      <div
         className="absolute bottom-0 left-0 h-0.5 bg-gray-200 transition-all duration-300"
         style={{ width: `${scrollProgress}%` }}
         aria-hidden="true"
       />
-      
+
       <div className="container mx-auto px-4 flex justify-between items-center">
         {/* Logo */}
         <Link
@@ -259,7 +271,9 @@ const Header: React.FC = () => {
                   ? "text-primary-light bg-primary-900/20 font-bold"
                   : "text-gray-200 hover:text-primary hover:bg-gray-800"
               }`}
-              aria-current={activeSection === link.href.substring(1) ? "page" : undefined}
+              aria-current={
+                activeSection === link.href.substring(1) ? "page" : undefined
+              }
               title={`Go to ${link.name} section`}
             >
               <span className="text-base">{link.icon}</span>
@@ -273,17 +287,19 @@ const Header: React.FC = () => {
               )}
             </Link>
           ))}
-          
+
           {/* Theme toggle button */}
           {mounted && (
             <motion.button
               onClick={toggleTheme}
               className="ml-2 p-2 rounded-md bg-gray-800 text-gray-200 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary"
-              aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+              aria-label={`Switch to ${
+                theme === "dark" ? "light" : "dark"
+              } mode`}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              {theme === 'dark' ? <FiSun size={20} /> : <FiMoon size={20} />}
+              {theme === "dark" ? <FiSun size={20} /> : <FiMoon size={20} />}
             </motion.button>
           )}
         </div>
@@ -295,14 +311,16 @@ const Header: React.FC = () => {
             <motion.button
               onClick={toggleTheme}
               className="p-2 rounded-md bg-gray-800 text-gray-200 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary"
-              aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+              aria-label={`Switch to ${
+                theme === "dark" ? "light" : "dark"
+              } mode`}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              {theme === 'dark' ? <FiSun size={20} /> : <FiMoon size={20} />}
+              {theme === "dark" ? <FiSun size={20} /> : <FiMoon size={20} />}
             </motion.button>
           )}
-          
+
           {/* Menu toggle button */}
           <motion.button
             onClick={toggleMenu}
@@ -329,7 +347,7 @@ const Header: React.FC = () => {
               exit={{ opacity: 0 }}
               onClick={() => setIsOpen(false)}
             />
-            
+
             <motion.div
               id="mobile-menu"
               className="mobile-menu md:hidden mt-4 bg-gray-800 shadow-xl overflow-hidden border-t border-gray-700 z-50 relative"
@@ -352,7 +370,11 @@ const Header: React.FC = () => {
                           ? "bg-primary-900/20 text-primary-light font-medium"
                           : "hover:bg-gray-700 text-gray-200"
                       } transition-colors`}
-                      aria-current={activeSection === link.href.substring(1) ? "page" : undefined}
+                      aria-current={
+                        activeSection === link.href.substring(1)
+                          ? "page"
+                          : undefined
+                      }
                     >
                       <span className="text-lg">{link.icon}</span>
                       <span>{link.name}</span>
