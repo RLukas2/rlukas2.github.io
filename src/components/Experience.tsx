@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import {
   FiCalendar,
   FiMapPin,
@@ -10,18 +10,24 @@ import {
   FiCheck,
   FiTool,
   FiTarget,
+  FiChevronRight,
 } from "react-icons/fi";
 import { useInView } from "react-intersection-observer";
 import { experiences } from "@/data/experiences";
 
 const Experience: React.FC = () => {
   const [activeTab, setActiveTab] = useState<number>(1);
+  const [isHovered, setIsHovered] = useState<string | null>(null);
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1,
   });
 
   const timelineRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: timelineRef,
+    offset: ["start end", "end start"],
+  });
 
   const handleTabClick = (id: number): void => {
     setActiveTab(id);
@@ -33,6 +39,12 @@ const Experience: React.FC = () => {
       });
     }
   };
+
+  // Track tab changes for analytics
+  useEffect(() => {
+    // You can add analytics tracking here
+    console.log(`Experience tab changed to: ${activeTab}`);
+  }, [activeTab]);
 
   // Animation variants
   const containerVariants = {
@@ -66,6 +78,13 @@ const Experience: React.FC = () => {
       transition: {
         duration: 0.5,
         ease: "easeOut",
+      },
+    },
+    exit: {
+      opacity: 0,
+      x: -20,
+      transition: {
+        duration: 0.3,
       },
     },
   };
@@ -143,10 +162,34 @@ const Experience: React.FC = () => {
     <section
       id="experience"
       className="py-24 bg-gradient-to-b from-black via-blue-950/10 to-black relative overflow-hidden"
+      aria-label="Work Experience section"
     >
-      {/* Background Elements */}
-      <div className="absolute top-20 left-0 w-64 h-64 bg-blue-200/30 dark:bg-blue-900/20 rounded-full blur-3xl -z-10"></div>
-      <div className="absolute bottom-20 right-0 w-80 h-80 bg-purple-200/30 dark:bg-purple-900/20 rounded-full blur-3xl -z-10"></div>
+      {/* Background Elements with improved animations */}
+      <motion.div 
+        className="absolute top-20 left-0 w-64 h-64 bg-blue-200/30 dark:bg-blue-900/20 rounded-full blur-3xl -z-10"
+        animate={{ 
+          scale: [1, 1.1, 1],
+          opacity: [0.3, 0.4, 0.3],
+        }}
+        transition={{ 
+          duration: 4,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+      />
+      <motion.div 
+        className="absolute bottom-20 right-0 w-80 h-80 bg-purple-200/30 dark:bg-purple-900/20 rounded-full blur-3xl -z-10"
+        animate={{ 
+          scale: [1, 1.2, 1],
+          opacity: [0.2, 0.3, 0.2],
+        }}
+        transition={{ 
+          duration: 5,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: 1
+        }}
+      />
 
       <div className="container mx-auto px-4">
         <motion.div
@@ -169,7 +212,7 @@ const Experience: React.FC = () => {
             <motion.div
               className="h-1 w-20 bg-blue-500 mx-auto mb-6"
               variants={itemVariants}
-            ></motion.div>
+            />
             <motion.p
               className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto"
               variants={itemVariants}
@@ -185,11 +228,6 @@ const Experience: React.FC = () => {
               variants={itemVariants}
             >
               <div className="flex flex-col bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg items-center">
-                {/* <img
-                  src="/assets/empty-state.svg"
-                  alt="No experiences"
-                  className="w-48 h-48 mb-6"
-                /> */}
                 <p className="text-2xl font-semibold mb-6 text-gray-900 dark:text-white mb-4">
                   No experiences to showcase yet!
                 </p>
@@ -201,7 +239,7 @@ const Experience: React.FC = () => {
             </motion.div>
           ) : (
             <div className="lg:grid lg:grid-cols-12 gap-8">
-              {/* Left sidebar - Timeline */}
+              {/* Left sidebar - Timeline with improved animations */}
               <motion.div
                 className="lg:col-span-4 mb-6 lg:mb-0"
                 variants={itemVariants}
@@ -219,17 +257,22 @@ const Experience: React.FC = () => {
                       whileHover={{ x: activeTab === exp.id ? 0 : 5 }}
                       whileTap={{ scale: 0.98 }}
                       variants={itemVariants}
+                      aria-selected={activeTab === exp.id}
+                      role="tab"
+                      aria-controls={`experience-${exp.id}`}
                     >
                       <div className="mr-4 mt-1">
-                        <div
+                        <motion.div
                           className={`p-2 rounded-full ${
                             activeTab === exp.id
                               ? "bg-white/20"
                               : "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
                           }`}
+                          animate={activeTab === exp.id ? { scale: [1, 1.2, 1] } : {}}
+                          transition={{ duration: 0.3 }}
                         >
                           <FiBriefcase size={18} />
-                        </div>
+                        </motion.div>
                       </div>
                       <div>
                         <span className="block text-lg font-semibold leading-tight">
@@ -256,19 +299,31 @@ const Experience: React.FC = () => {
                         </span>
                       </div>
                       {activeTab === exp.id && (
-                        <FiArrowRight className="ml-auto self-center" />
+                        <motion.div
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <FiArrowRight className="ml-auto self-center" />
+                        </motion.div>
                       )}
                     </motion.button>
                   ))}
                 </div>
               </motion.div>
 
-              {/* Right content - Experience Details */}
+              {/* Right content - Experience Details with improved animations */}
               <motion.div
                 ref={timelineRef}
-                className="lg:col-span-8 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg overflow-hidden"
+                className="lg:col-span-8 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg overflow-hidden relative"
                 variants={itemVariants}
               >
+                {/* Progress bar */}
+                <motion.div
+                  className="absolute top-0 left-0 h-1 bg-blue-500"
+                  style={{ width: useTransform(scrollYProgress, [0, 1], ["0%", "100%"]) }}
+                />
+
                 <AnimatePresence mode="wait">
                   {experiences.map(
                     (exp) =>
@@ -277,8 +332,10 @@ const Experience: React.FC = () => {
                           key={exp.id}
                           initial="hidden"
                           animate="visible"
-                          exit="hidden"
+                          exit="exit"
                           variants={panelVariants}
+                          role="tabpanel"
+                          id={`experience-${exp.id}`}
                         >
                           <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
                             <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
@@ -289,18 +346,26 @@ const Experience: React.FC = () => {
                             </h4>
 
                             <div className="flex flex-wrap gap-4 text-gray-600 dark:text-gray-300 mb-2">
-                              <div className="flex items-center bg-gray-100 dark:bg-gray-700/50 px-3 py-1 rounded-full">
+                              <motion.div 
+                                className="flex items-center bg-gray-100 dark:bg-gray-700/50 px-3 py-1 rounded-full"
+                                whileHover={{ scale: 1.05 }}
+                                transition={{ duration: 0.2 }}
+                              >
                                 <FiCalendar className="mr-2 text-blue-600 dark:text-blue-400" />
                                 <span>{exp.duration}</span>
-                              </div>
-                              <div className="flex items-center bg-gray-100 dark:bg-gray-700/50 px-3 py-1 rounded-full">
+                              </motion.div>
+                              <motion.div 
+                                className="flex items-center bg-gray-100 dark:bg-gray-700/50 px-3 py-1 rounded-full"
+                                whileHover={{ scale: 1.05 }}
+                                transition={{ duration: 0.2 }}
+                              >
                                 <FiMapPin className="mr-2 text-blue-600 dark:text-blue-400" />
                                 <span>{exp.location}</span>
-                              </div>
+                              </motion.div>
                             </div>
                           </div>
 
-                          {/* Key Achievements - Improved UI with categories */}
+                          {/* Key Achievements with improved animations */}
                           <div className="mb-8">
                             <h4 className="text-lg font-semibold mb-6 flex items-center text-gray-900 dark:text-white">
                               <FiTarget className="mr-2 text-blue-600 dark:text-blue-400" />
@@ -317,13 +382,18 @@ const Experience: React.FC = () => {
                                     x: 0,
                                     transition: { delay: idx * 0.1 },
                                   }}
+                                  whileHover={{ x: 5 }}
                                   className="flex items-start bg-gray-50 dark:bg-gray-700/30 p-3 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/10 transition-colors group"
                                 >
-                                  <div className="flex-shrink-0 mr-3 mt-0.5">
+                                  <motion.div 
+                                    className="flex-shrink-0 mr-3 mt-0.5"
+                                    whileHover={{ rotate: 360 }}
+                                    transition={{ duration: 0.5 }}
+                                  >
                                     <div className="inline-flex items-center justify-center w-6 h-6 bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 rounded-full group-hover:bg-blue-200 dark:group-hover:bg-blue-800/50 transition-colors">
                                       <FiCheck size={14} />
                                     </div>
-                                  </div>
+                                  </motion.div>
                                   <p className="text-gray-700 dark:text-gray-300">
                                     {item}
                                   </p>
@@ -332,7 +402,7 @@ const Experience: React.FC = () => {
                             </div>
                           </div>
 
-                          {/* Technologies with categories */}
+                          {/* Technologies with improved animations */}
                           <div>
                             <h4 className="text-lg font-semibold mb-6 flex items-center text-gray-900 dark:text-white">
                               <FiTool className="mr-2 text-blue-600 dark:text-blue-400" />
@@ -362,13 +432,20 @@ const Experience: React.FC = () => {
                                           }}
                                           whileHover={{
                                             y: -3,
+                                            scale: 1.05,
                                             transition: { duration: 0.2 },
                                           }}
+                                          onHoverStart={() => setIsHovered(tech)}
+                                          onHoverEnd={() => setIsHovered(null)}
                                           className="px-3 py-1.5 text-sm bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-full flex items-center shadow-sm transition-all duration-300"
                                         >
-                                          <span className="mr-1.5">
+                                          <motion.span 
+                                            className="mr-1.5"
+                                            animate={isHovered === tech ? { rotate: 360 } : { rotate: 0 }}
+                                            transition={{ duration: 0.5 }}
+                                          >
                                             {getTechIcon(tech)}
-                                          </span>
+                                          </motion.span>
                                           {tech}
                                         </motion.span>
                                       ))}

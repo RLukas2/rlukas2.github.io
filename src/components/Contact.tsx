@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useForm } from "react-hook-form";
 import {
   FiMail,
@@ -10,6 +10,8 @@ import {
   FiGithub,
   FiFacebook,
   FiMapPin,
+  FiCheck,
+  FiAlertCircle,
 } from "react-icons/fi";
 import { IoIosSend } from "react-icons/io";
 
@@ -24,58 +26,67 @@ const Contact: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [submitSuccess, setSubmitSuccess] = useState<boolean | null>(null);
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [isVisible, setIsVisible] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
 
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: { errors, isDirty },
   } = useForm<FormData>();
+
+  // Intersection Observer for animations
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (formRef.current) {
+      observer.observe(formRef.current);
+    }
+
+    return () => {
+      if (formRef.current) {
+        observer.unobserve(formRef.current);
+      }
+    };
+  }, []);
 
   const onSubmit = async (formData: FormData) => {
     setIsSubmitting(true);
+    setErrorMessage("");
 
     try {
-      // Mock form submission - in a real app, you would send this to your API
-      console.log("Form data:", formData);
+      const response = await fetch("https://formspree.io/f/xgvkblwe", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
 
-      // Simulate API response
-      try {
-        const response = await fetch("https://formspree.io/f/xgvkblwe", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        });
+      const data = await response.json();
 
-        const data = await response.json();
-
-        if (response.ok) {
-          // Success handling
-          console.log("Email sent successfully:", data.message);
-          // Reset form or show success message
-        } else {
-          // Error handling
-          console.error("Failed to send email:", data.error);
-          // Show error message
-        }
-      } catch (error) {
-        console.error("Error:", error);
-        // Show network error message
+      if (response.ok) {
+        setSubmitSuccess(true);
+        reset();
+        // Reset success message after 5 seconds
+        setTimeout(() => {
+          setSubmitSuccess(null);
+        }, 5000);
+      } else {
+        throw new Error(data.error || "Failed to send message");
       }
-
-      setSubmitSuccess(true);
-      reset();
-
-      // Reset success message after 5 seconds
-      setTimeout(() => {
-        setSubmitSuccess(null);
-      }, 5000);
-    } catch (error: unknown) {
+    } catch (error) {
       console.error("Form submission error:", error);
       setSubmitSuccess(false);
-      setErrorMessage("Something went wrong. Please try again later.");
+      setErrorMessage(error instanceof Error ? error.message : "Something went wrong. Please try again later.");
     } finally {
       setIsSubmitting(false);
     }
@@ -92,16 +103,71 @@ const Contact: React.FC = () => {
     },
   };
 
+  const staggerContainer = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const socialLinks = [
+    {
+      icon: <FiLinkedin size={20} />,
+      href: "https://linkedin.com/in/xbrk",
+      label: "LinkedIn",
+    },
+    {
+      icon: <FiGithub size={20} />,
+      href: "https://github.com/RLukas2",
+      label: "GitHub",
+    },
+    {
+      icon: <FiFacebook size={20} />,
+      href: "https://fb.com/rickielukas",
+      label: "Facebook",
+    },
+  ];
+
   return (
     <section
       id="contact"
       className="py-24 bg-gradient-to-b from-black to-gray-900 relative overflow-hidden"
     >
+      {/* Background Elements */}
+      <motion.div
+        className="absolute top-0 left-0 w-64 h-64 bg-blue-200/30 dark:bg-blue-900/20 rounded-full blur-3xl -z-10"
+        animate={{
+          scale: [1, 1.1, 1],
+          opacity: [0.3, 0.4, 0.3],
+        }}
+        transition={{
+          duration: 4,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+      />
+      <motion.div
+        className="absolute bottom-0 right-0 w-80 h-80 bg-purple-200/30 dark:bg-purple-900/20 rounded-full blur-3xl -z-10"
+        animate={{
+          scale: [1, 1.2, 1],
+          opacity: [0.2, 0.3, 0.2],
+        }}
+        transition={{
+          duration: 5,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: 1
+        }}
+      />
+
       <div className="container mx-auto px-4">
         <motion.div
           initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
+          animate={isVisible ? "visible" : "hidden"}
+          variants={staggerContainer}
           className="max-w-6xl mx-auto"
         >
           <motion.div className="text-center mb-16" variants={fadeIn}>
@@ -126,7 +192,11 @@ const Contact: React.FC = () => {
 
               <div className="space-y-6">
                 {/* Email Address */}
-                <div className="flex items-start">
+                <motion.div 
+                  className="flex items-start"
+                  whileHover={{ x: 5 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
                   <div className="p-3 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 mr-4">
                     <FiMail size={20} />
                   </div>
@@ -141,10 +211,14 @@ const Contact: React.FC = () => {
                       iforgotmyemailwhatcanido@gmail.com
                     </a>
                   </div>
-                </div>
+                </motion.div>
 
                 {/* Phone Number */}
-                <div className="flex items-start">
+                <motion.div 
+                  className="flex items-start"
+                  whileHover={{ x: 5 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
                   <div className="p-3 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 mr-4">
                     <FiPhone size={20} />
                   </div>
@@ -153,16 +227,20 @@ const Contact: React.FC = () => {
                       Phone
                     </h4>
                     <a
-                      href="tel:+84769720975"
+                      href="tel:+84769702975"
                       className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                     >
-                      +84 769 702975
+                      +84 76 9702975
                     </a>
                   </div>
-                </div>
+                </motion.div>
 
                 {/* Address */}
-                <div className="flex items-start">
+                <motion.div 
+                  className="flex items-start"
+                  whileHover={{ x: 5 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
                   <div className="p-3 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 mr-4">
                     <FiMapPin size={20} />
                   </div>
@@ -179,59 +257,38 @@ const Contact: React.FC = () => {
                       Ho Chi Minh City, Vietnam
                     </a>
                   </div>
-                </div>
+                </motion.div>
               </div>
 
               <h3 className="text-2xl font-bold my-6 text-gray-900 dark:text-white">
                 Social Profiles
               </h3>
 
-              {/* LinkedIn link */}
+              {/* Social Links */}
               <div className="flex gap-4">
-                <a
-                  href="https://linkedin.com/in/xbrk"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-3 rounded-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 transition-colors"
-                  aria-label="LinkedIn"
-                >
-                  <FiLinkedin size={20} />
-                </a>
-                {/* GitHub link */}
-                <a
-                  href="https://github.com/RLukas2"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-3 rounded-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 transition-colors"
-                  aria-label="GitHub"
-                >
-                  <FiGithub size={20} />
-                </a>
-                {/* Instagram link */}
-                {/* <a
-                  href="https://instagram.com/hmake98"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-3 rounded-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 transition-colors"
-                  aria-label="Instagram"
-                >
-                  <FiInstagram size={20} />
-                </a> */}
-                <a
-                  href="https://fb.com/rickielukas"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-3 rounded-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 transition-colors"
-                  aria-label="Facebook"
-                >
-                  <FiFacebook size={20} />
-                </a>
+                {socialLinks.map((link, index) => (
+                  <motion.a
+                    key={link.label}
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-3 rounded-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 transition-colors"
+                    aria-label={link.label}
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    whileTap={{ scale: 0.95 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                  >
+                    {link.icon}
+                  </motion.a>
+                ))}
               </div>
             </motion.div>
 
             {/* Contact Form */}
             <motion.div className="md:w-2/3" variants={fadeIn}>
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              <form ref={formRef} onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label
@@ -240,17 +297,24 @@ const Contact: React.FC = () => {
                     >
                       Your Name
                     </label>
-                    <input
-                      type="text"
-                      id="name"
-                      className={`w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white border ${
-                        errors.name
-                          ? "border-red-500"
-                          : "border-gray-300 dark:border-gray-600"
-                      }`}
-                      placeholder="John Doe"
-                      {...register("name", { required: "Name is required" })}
-                    />
+                    <div className="relative">
+                      <input
+                        type="text"
+                        id="name"
+                        className={`w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white border ${
+                          errors.name
+                            ? "border-red-500"
+                            : "border-gray-300 dark:border-gray-600"
+                        } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
+                        placeholder="John Doe"
+                        {...register("name", { required: "Name is required" })}
+                      />
+                      {errors.name && (
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
+                          <FiAlertCircle size={20} />
+                        </div>
+                      )}
+                    </div>
                     {errors.name && (
                       <p className="mt-1 text-sm text-red-500">
                         {errors.name.message}
@@ -265,23 +329,30 @@ const Contact: React.FC = () => {
                     >
                       Your Email
                     </label>
-                    <input
-                      type="email"
-                      id="email"
-                      className={`w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white border ${
-                        errors.email
-                          ? "border-red-500"
-                          : "border-gray-300 dark:border-gray-600"
-                      }`}
-                      placeholder="john@example.com"
-                      {...register("email", {
-                        required: "Email is required",
-                        pattern: {
-                          value: /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/,
-                          message: "Please enter a valid email",
-                        },
-                      })}
-                    />
+                    <div className="relative">
+                      <input
+                        type="email"
+                        id="email"
+                        className={`w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white border ${
+                          errors.email
+                            ? "border-red-500"
+                            : "border-gray-300 dark:border-gray-600"
+                        } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
+                        placeholder="john@example.com"
+                        {...register("email", {
+                          required: "Email is required",
+                          pattern: {
+                            value: /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/,
+                            message: "Please enter a valid email",
+                          },
+                        })}
+                      />
+                      {errors.email && (
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
+                          <FiAlertCircle size={20} />
+                        </div>
+                      )}
+                    </div>
                     {errors.email && (
                       <p className="mt-1 text-sm text-red-500">
                         {errors.email.message}
@@ -297,19 +368,26 @@ const Contact: React.FC = () => {
                   >
                     Subject
                   </label>
-                  <input
-                    type="text"
-                    id="subject"
-                    className={`w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white border ${
-                      errors.subject
-                        ? "border-red-500"
-                        : "border-gray-300 dark:border-gray-600"
-                    }`}
-                    placeholder="Example Subject"
-                    {...register("subject", {
-                      required: "Subject is required",
-                    })}
-                  />
+                  <div className="relative">
+                    <input
+                      type="text"
+                      id="subject"
+                      className={`w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white border ${
+                        errors.subject
+                          ? "border-red-500"
+                          : "border-gray-300 dark:border-gray-600"
+                      } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
+                      placeholder="Example Subject"
+                      {...register("subject", {
+                        required: "Subject is required",
+                      })}
+                    />
+                    {errors.subject && (
+                      <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
+                        <FiAlertCircle size={20} />
+                      </div>
+                    )}
+                  </div>
                   {errors.subject && (
                     <p className="mt-1 text-sm text-red-500">
                       {errors.subject.message}
@@ -324,24 +402,31 @@ const Contact: React.FC = () => {
                   >
                     Message
                   </label>
-                  <textarea
-                    id="message"
-                    rows={6}
-                    className={`w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white border ${
-                      errors.message
-                        ? "border-red-500"
-                        : "border-gray-300 dark:border-gray-600"
-                    }`}
-                    placeholder="Your message here..."
-                    style={{ minHeight: "100px", resize: "vertical" }}
-                    {...register("message", {
-                      required: "Message is required",
-                      minLength: {
-                        value: 10,
-                        message: "Message should be at least 10 characters",
-                      },
-                    })}
-                  ></textarea>
+                  <div className="relative">
+                    <textarea
+                      id="message"
+                      rows={6}
+                      className={`w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white border ${
+                        errors.message
+                          ? "border-red-500"
+                          : "border-gray-300 dark:border-gray-600"
+                      } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
+                      placeholder="Your message here..."
+                      style={{ minHeight: "100px", resize: "vertical" }}
+                      {...register("message", {
+                        required: "Message is required",
+                        minLength: {
+                          value: 10,
+                          message: "Message should be at least 10 characters",
+                        },
+                      })}
+                    ></textarea>
+                    {errors.message && (
+                      <div className="absolute right-3 top-3 text-red-500">
+                        <FiAlertCircle size={20} />
+                      </div>
+                    )}
+                  </div>
                   {errors.message && (
                     <p className="mt-1 text-sm text-red-500">
                       {errors.message.message}
@@ -350,32 +435,53 @@ const Contact: React.FC = () => {
                 </div>
 
                 <div>
-                  <button
+                  <motion.button
                     type="submit"
                     disabled={isSubmitting}
                     className={`w-full px-6 py-3 rounded-lg font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 ${
                       isSubmitting ? "opacity-70 cursor-not-allowed" : "cursor-pointer"
                     }`}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
                   >
                     {isSubmitting ? (
-                      "Sending..."
+                      <div className="flex items-center justify-center space-x-2">
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        <span>Sending...</span>
+                      </div>
                     ) : (
                       <div className="flex items-center justify-center space-x-2">
                         <IoIosSend className="mx-1" size={25} />
                         Send Message
                       </div>
                     )}
-                  </button>
+                  </motion.button>
 
-                  {submitSuccess === true && (
-                    <p className="mt-3 text-sm text-green-600 dark:text-green-400">
-                      Your message has been sent successfully!
-                    </p>
-                  )}
+                  <AnimatePresence>
+                    {submitSuccess === true && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="mt-3 flex items-center text-sm text-green-600 dark:text-green-400"
+                      >
+                        <FiCheck className="mr-2" />
+                        Your message has been sent successfully!
+                      </motion.div>
+                    )}
 
-                  {submitSuccess === false && (
-                    <p className="mt-3 text-sm text-red-500">{errorMessage}</p>
-                  )}
+                    {submitSuccess === false && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="mt-3 flex items-center text-sm text-red-500"
+                      >
+                        <FiAlertCircle className="mr-2" />
+                        {errorMessage}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               </form>
             </motion.div>
