@@ -575,7 +575,7 @@ const Projects: React.FC = () => {
             {/* Slider */}
             <motion.div
               ref={sliderRef}
-              className="flex overflow-x-auto py-6 px-2 scrollbar-hide scroll-smooth cursor-grab active:cursor-grabbing snap-x snap-mandatory"
+              className="flex overflow-x-auto py-6 scrollbar-hide scroll-smooth cursor-grab active:cursor-grabbing snap-x snap-mandatory"
               style={{
                 scrollbarWidth: "none",
                 msOverflowStyle: "none",
