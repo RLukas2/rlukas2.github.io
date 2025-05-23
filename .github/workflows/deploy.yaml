@@ -25,7 +25,7 @@ jobs:
       - name: ⚙️ Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20.11.1" # Updated to LTS version
+          node-version: 22 # Updated to LTS version
           cache: "npm" # Cache dependencies for faster builds
 
       - name: 📦 Install dependencies
