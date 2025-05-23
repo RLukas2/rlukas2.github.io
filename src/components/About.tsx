@@ -172,7 +172,7 @@ const About: React.FC = () => {
   return (
     <section
       id="about"
-      className="py-24 overflow-hidden bg-gradient-to-b from-gray-900 to-black relative overflow-hidden"
+      className="py-24 bg-gradient-to-b from-gray-900 to-black relative overflow-hidden"
     >
       {/* Background Elements */}
       <div className="absolute top-20 left-0 w-64 h-64 bg-blue-200/30 dark:bg-blue-900/20 rounded-full blur-3xl -z-10"></div>

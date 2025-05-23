@@ -95,7 +95,7 @@ const Contact: React.FC = () => {
   return (
     <section
       id="contact"
-      className="py-24 overflow-hidden bg-gradient-to-b from-black to-gray-900 relative overflow-hidden"
+      className="py-24 bg-gradient-to-b from-black to-gray-900 relative overflow-hidden"
     >
       <div className="container mx-auto px-4">
         <motion.div
@@ -354,7 +354,7 @@ const Contact: React.FC = () => {
                     type="submit"
                     disabled={isSubmitting}
                     className={`w-full px-6 py-3 rounded-lg font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 ${
-                      isSubmitting ? "opacity-70 cursor-not-allowed" : ""
+                      isSubmitting ? "opacity-70 cursor-not-allowed" : "cursor-pointer"
                     }`}
                   >
                     {isSubmitting ? (
