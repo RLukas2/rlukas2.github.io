@@ -134,7 +134,7 @@ const Header: React.FC = () => {
     <header
       className={`fixed w-full top-0 z-50 transition-all duration-300 ${
         isScrolled
-          ? "bg-gray-900/95 backdrop-blur-md shadow-lg py-2"
+          ? "bg-gray-900/80 backdrop-blur-md shadow-lg py-2"
           : "bg-transparent py-4"
       }`}
     >
@@ -163,9 +163,9 @@ const Header: React.FC = () => {
               key={link.name}
               href={link.href}
               onClick={closeMenuOnClick}
-              className={`nav-link relative text-sm font-medium px-3 py-2 rounded-md transition-all duration-200 flex items-center gap-1.5 ${
+              className={`nav-link relative text-normal font-medium px-3 py-2 rounded-md transition-all duration-200 flex items-center gap-1.5 ${
                 activeSection === link.href.substring(1)
-                  ? "text-primary-light bg-primary-900/20 font-semibold"
+                  ? "text-primary-light bg-primary-900/20 font-bold"
                   : "text-gray-200 hover:text-primary hover:bg-gray-800"
               }`}
             >
@@ -174,7 +174,7 @@ const Header: React.FC = () => {
               {activeSection === link.href.substring(1) && (
                 <motion.span
                   layoutId="activeIndicator"
-                  className="absolute bottom-0 left-0 right-0 mx-auto w-1/2 h-0.5 bg-primary-light rounded-full"
+                  className="absolute bottom-0 left-0 right-0 mx-auto w-2/3 h-0.5 bg-white rounded-full"
                   transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                 />
               )}

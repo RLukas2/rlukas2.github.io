@@ -9,7 +9,9 @@ import {
   FiLinkedin,
   FiGithub,
   FiFacebook,
+  FiMapPin,
 } from "react-icons/fi";
+import { IoIosSend } from "react-icons/io";
 
 interface FormData {
   name: string;
@@ -91,7 +93,10 @@ const Contact: React.FC = () => {
   };
 
   return (
-    <section id="contact" className="py-20 bg-white dark:bg-gray-900">
+    <section
+      id="contact"
+      className="py-24 overflow-hidden bg-gradient-to-b from-black to-gray-900 relative overflow-hidden"
+    >
       <div className="container mx-auto px-4">
         <motion.div
           initial="hidden"
@@ -100,7 +105,7 @@ const Contact: React.FC = () => {
           className="max-w-6xl mx-auto"
         >
           <motion.h2
-            className="text-3xl font-bold text-center mb-12 relative"
+            className="text-4xl font-bold text-center mb-12 relative"
             variants={fadeIn}
           >
             Get In Touch
@@ -110,11 +115,12 @@ const Contact: React.FC = () => {
           <div className="flex flex-col md:flex-row gap-12">
             {/* Contact Info */}
             <motion.div className="md:w-1/3" variants={fadeIn}>
-              <h3 className="text-xl font-bold mb-6 text-gray-900 dark:text-white">
+              <h3 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
                 Contact Information
               </h3>
 
               <div className="space-y-6">
+                {/* Email Address */}
                 <div className="flex items-start">
                   <div className="p-3 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 mr-4">
                     <FiMail size={20} />
@@ -132,6 +138,7 @@ const Contact: React.FC = () => {
                   </div>
                 </div>
 
+                {/* Phone Number */}
                 <div className="flex items-start">
                   <div className="p-3 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 mr-4">
                     <FiPhone size={20} />
@@ -148,9 +155,24 @@ const Contact: React.FC = () => {
                     </a>
                   </div>
                 </div>
+
+                {/* Address */}
+                <div className="flex items-start">
+                  <div className="p-3 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 mr-4">
+                    <FiMapPin size={20} />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 dark:text-white">
+                      Address
+                    </h4>
+                    <p className="text-gray-600 dark:text-gray-300">
+                      Ho Chi Minh City, Vietnam
+                    </p>
+                  </div>
+                </div>
               </div>
 
-              <h3 className="text-xl font-bold my-6 text-gray-900 dark:text-white">
+              <h3 className="text-2xl font-bold my-6 text-gray-900 dark:text-white">
                 Social Profiles
               </h3>
 
@@ -204,7 +226,7 @@ const Contact: React.FC = () => {
                   <div>
                     <label
                       htmlFor="name"
-                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                      className="block mb-2 text-normal font-medium text-gray-900 dark:text-white"
                     >
                       Your Name
                     </label>
@@ -229,7 +251,7 @@ const Contact: React.FC = () => {
                   <div>
                     <label
                       htmlFor="email"
-                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                      className="block mb-2 text-normal font-medium text-gray-900 dark:text-white"
                     >
                       Your Email
                     </label>
@@ -261,7 +283,7 @@ const Contact: React.FC = () => {
                 <div>
                   <label
                     htmlFor="subject"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    className="block mb-2 text-normal font-medium text-gray-900 dark:text-white"
                   >
                     Subject
                   </label>
@@ -288,7 +310,7 @@ const Contact: React.FC = () => {
                 <div>
                   <label
                     htmlFor="message"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    className="block mb-2 text-normal font-medium text-gray-900 dark:text-white"
                   >
                     Message
                   </label>
@@ -320,11 +342,18 @@ const Contact: React.FC = () => {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className={`px-6 py-3 rounded-lg font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 ${
+                    className={`w-full px-6 py-3 rounded-lg font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 ${
                       isSubmitting ? "opacity-70 cursor-not-allowed" : ""
                     }`}
                   >
-                    {isSubmitting ? "Sending..." : "Send Message"}
+                    {isSubmitting ? (
+                      "Sending..."
+                    ) : (
+                      <div className="flex items-center justify-center space-x-2">
+                        <IoIosSend className="mx-1" size={25} />
+                        Send Message
+                      </div>
+                    )}
                   </button>
 
                   {submitSuccess === true && (

@@ -72,7 +72,7 @@ const Hero: React.FC = () => {
   return (
     <section
       id="home"
-      className="min-h-screen pt-20 flex flex-col justify-center relative overflow-hidden"
+      className="min-h-screen py-20 flex flex-col justify-center relative overflow-hidden"
     >
       {/* Improved background with better contrast for light mode */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50/30 to-white dark:from-gray-900 dark:via-blue-900/10 dark:to-gray-800 -z-10"></div>
@@ -130,11 +130,11 @@ const Hero: React.FC = () => {
               variants={itemVariants}
               className="text-lg text-gray-700 dark:text-gray-400 mb-8 max-w-xl mx-auto lg:mx-0 leading-relaxed"
             >
-              I&apos;m a Year 3 Computer Science student at HCMUS with hands-on
-              experience building backend systems through various academic and
-              side projects. I specialize in designing scalable microservices,
-              crafting efficient GraphQL APIs, and deploying cloud-based
-              solutions using AWS.
+              I&apos;m a third-year Computer Science student at HCMUS with
+              practical experience in building backend systems through academic
+              and personal projects. I have a strong interest in designing
+              scalable microservices, developing efficient backend, and
+              deploying cloud-based solutions using AWS.
             </motion.p>
 
             {/* Enhanced Technologies Pills with Icons - Improved contrast */}

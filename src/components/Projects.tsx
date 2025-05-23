@@ -194,7 +194,7 @@ const Projects: React.FC = () => {
   return (
     <section
       id="projects"
-      className="py-24 bg-gray-50 dark:bg-gray-800 relative overflow-hidden"
+      className="py-24 sm:py-32 bg-gradient-to-b from-black via-blue-950/10 to-black py-24 sm:py-32 relative overflow-hidden"
     >
       {/* Background Elements - Improved for better performance */}
       <div className="absolute top-0 left-0 w-64 h-64 bg-blue-200/30 dark:bg-blue-900/20 rounded-full blur-3xl -z-10"></div>
@@ -231,7 +231,7 @@ const Projects: React.FC = () => {
 
           {/* Horizontal Slider Container */}
           {projects.length === 0 ? (
-            <div className="flex flex-col bg-gray-50 dark:bg-gray-900 p-12 rounded-xl shadow-lg items-center">
+            <div className="flex flex-col bg-white dark:bg-gray-800 p-12 rounded-xl shadow-lg items-center">
               <p className="text-2xl font-semibold text-gray-900 dark:text-white text-center">
                 No projects available at the moment
               </p>

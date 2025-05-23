@@ -193,7 +193,7 @@ const Skills: React.FC = () => {
   return (
     <section
       id="skills"
-      className="py-24 bg-gray-50 dark:bg-gray-900 relative overflow-hidden"
+      className="py-24 bg-gradient-to-b from-black via-blue-950/10 to-black relative overflow-hidden"
     >
       {/* Background decorative elements */}
       <div className="absolute top-0 left-0 w-40 h-40 bg-blue-200/30 dark:bg-blue-900/20 rounded-full blur-3xl -z-10"></div>

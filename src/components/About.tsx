@@ -172,7 +172,7 @@ const About: React.FC = () => {
   return (
     <section
       id="about"
-      className="py-24 bg-gray-50 dark:bg-gray-900 relative overflow-hidden"
+      className="py-24 sm:py-32 overflow-hidden bg-gradient-to-b from-gray-900 to-black relative overflow-hidden"
     >
       {/* Background Elements */}
       <div className="absolute top-20 left-0 w-64 h-64 bg-blue-200/30 dark:bg-blue-900/20 rounded-full blur-3xl -z-10"></div>
@@ -184,7 +184,7 @@ const About: React.FC = () => {
           initial="hidden"
           animate={isInView ? "visible" : "hidden"}
           variants={staggerContainer}
-          className="max-w-4xl mx-auto"
+          className="max-w-5xl mx-auto"
         >
           <motion.div className="text-center mb-16" variants={fadeIn}>
             <span className="inline-block px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-sm font-medium rounded-full mb-3">
