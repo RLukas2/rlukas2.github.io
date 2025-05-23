@@ -95,13 +95,10 @@ const Footer: React.FC = () => {
   ];
 
   return (
-    <footer className="py-20 bg-white dark:bg-gray-900 text-white py-12 relative overflow-hidden">
-      {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent to-gray-800/20 dark:to-gray-900/40 pointer-events-none" />
-
-      <div className="container mx-auto px-4 relative z-10">
+    <footer className="py-20 bg-white dark:bg-gray-900 text-white py-12 relative">
+      <div className="container mx-auto px-4">
         {/* Main footer content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
           {/* About section */}
           <div className="space-y-4">
             <h3 className="text-xl font-bold text-white">About Me</h3>
@@ -146,8 +143,8 @@ const Footer: React.FC = () => {
             </ul>
           </div>
 
-          {/* Newsletter subscription */}
-          <div className="space-y-4">
+          {/* Newsletter subscription - now spans two columns */}
+          <div className="space-y-4 md:col-span-2">
             <h3 className="text-xl font-bold text-white">Stay Updated</h3>
             <p className="text-gray-400 text-sm">
               Subscribe to my newsletter for the latest updates and insights.
@@ -198,15 +195,6 @@ const Footer: React.FC = () => {
               </AnimatePresence>
             </form>
           </div>
-
-          {/* Contact info */}
-          <div className="space-y-4">
-            <h3 className="text-xl font-bold text-white">Contact</h3>
-            <div className="space-y-2 text-gray-400">
-              <p>Email: iforgotmyemailwhatcanido@gmail.com</p>
-              <p>Location: Ho Chi Minh City, Vietnam</p>
-            </div>
-          </div>
         </div>
 
         {/* Copyright Section */}
@@ -225,7 +213,7 @@ const Footer: React.FC = () => {
         </div>
       </div>
 
-      {/* Scroll to top button with animation */}
+      {/* Scroll to top button */}
       <AnimatePresence>
         {showScrollTop && (
           <motion.button
