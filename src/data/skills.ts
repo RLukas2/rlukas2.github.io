@@ -8,6 +8,8 @@ export const skills: Skill[] = [
     name: "JavaScript",
     icon: "SiJavascript",
     category: "frontend",
+    proficiency: 4,
+    description: "I have a strong understanding of JavaScript and its core concepts, including variables, data types, functions, and objects. I also have experience with ES6+ features such as arrow functions, template literals, and destructuring.",
   },
   {
     id: 2,

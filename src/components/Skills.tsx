@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import {
   FiCode,
@@ -9,6 +9,9 @@ import {
   FiDatabase,
   FiCloud,
   FiGitBranch,
+  FiSearch,
+  FiX,
+  FiInfo,
 } from "react-icons/fi";
 import {
   SiJavascript,
@@ -39,17 +42,21 @@ import {
   FaGolang
 } from "react-icons/fa6";
 import { skills as skillsData } from "@/data/skills";
+import { Skill } from "@/types";
 
-// Define our local skill type that includes the icon component
-interface SkillWithIcon {
-  id: number;
-  name: string;
-  icon: string;
+
+interface SkillWithIcon extends Skill {
   iconComponent: React.ReactNode;
-  category: "frontend" | "backend" | "database" | "devops" | "other";
 }
 
-// Map icon names to actual icon components
+interface Category {
+  id: string;
+  name: string;
+  icon: React.ReactNode;
+  description: string;
+}
+
+// Map icon names to actual icon components with improved typing
 const iconMap: Record<string, React.ReactNode> = {
   SiJavascript: <SiJavascript className="text-3xl text-yellow-400" />,
   SiTypescript: <SiTypescript className="text-3xl text-blue-600" />,
@@ -79,34 +86,66 @@ const iconMap: Record<string, React.ReactNode> = {
   FaGolang: <FaGolang className="text-3xl text-blue-400" />,
 };
 
-const categoryDescriptions = {
-  all: "This section highlights a broad range of my technical skills. Each one reflects tools and technologies I've worked with during projects and coursework.",
-  frontend:
-    "My frontend skills focus on building responsive, accessible interfaces using modern frameworks and libraries to ensure smooth user experiences.",
-  backend:
-    "I enjoy building scalable and maintainable backend systems, working with APIs, microservices, and key architectural patterns for efficiency.",
-  database:
-    "Experienced in both SQL and NoSQL databases, I've worked on designing schemas, optimizing queries, and applying caching for better performance.",
-  devops:
-    "I'm familiar with DevOps practices such as setting up CI/CD pipelines, managing deployments, and working with cloud infrastructure for automation and scalability.",
-  other:
-    "Additional tools and technologies that support and enhance my overall development workflow and technical capabilities.",
-};
+const categories: Category[] = [
+  { 
+    id: "all", 
+    name: "All", 
+    icon: <FiCode />,
+    description: "This section highlights a broad range of my technical skills. Each one reflects tools and technologies I've worked with during projects and coursework."
+  },
+  { 
+    id: "frontend", 
+    name: "Frontend", 
+    icon: <FiCode />,
+    description: "My frontend skills focus on building responsive, accessible interfaces using modern frameworks and libraries to ensure smooth user experiences."
+  },
+  { 
+    id: "backend", 
+    name: "Backend", 
+    icon: <FiServer />,
+    description: "I enjoy building scalable and maintainable backend systems, working with APIs, microservices, and key architectural patterns for efficiency."
+  },
+  { 
+    id: "database", 
+    name: "Database", 
+    icon: <FiDatabase />,
+    description: "Experienced in both SQL and NoSQL databases, I've worked on designing schemas, optimizing queries, and applying caching for better performance."
+  },
+  { 
+    id: "devops", 
+    name: "DevOps", 
+    icon: <FiCloud />,
+    description: "I'm familiar with DevOps practices such as setting up CI/CD pipelines, managing deployments, and working with cloud infrastructure for automation and scalability."
+  },
+  { 
+    id: "other", 
+    name: "Other", 
+    icon: <FiGitBranch />,
+    description: "Additional tools and technologies that support and enhance my overall development workflow and technical capabilities."
+  },
+];
 
 const Skills: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState<string>("all");
   const [processedSkills, setProcessedSkills] = useState<SkillWithIcon[]>([]);
   const [filteredSkills, setFilteredSkills] = useState<SkillWithIcon[]>([]);
   const [hoveredSkill, setHoveredSkill] = useState<number | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [selectedSkill, setSelectedSkill] = useState<SkillWithIcon | null>(null);
 
   const [ref, inView] = useInView({
     threshold: 0.1,
     triggerOnce: true,
   });
 
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"],
+  });
+
   // Process skills data on component mount
   useEffect(() => {
-    // Transform the imported skills data to include the actual icon components
     const processed = skillsData.map((skill) => ({
       ...skill,
       iconComponent: iconMap[skill.icon] || (
@@ -121,30 +160,34 @@ const Skills: React.FC = () => {
     }));
 
     setProcessedSkills(processed);
-    setFilteredSkills(processed); // Initially show all skills
+    setFilteredSkills(processed);
   }, []);
 
-  // Update filtered skills when category changes
-  useEffect(() => {
-    if (activeCategory === "all") {
-      setFilteredSkills(processedSkills);
-    } else {
-      const filtered = processedSkills.filter(
-        (skill) => skill.category === activeCategory
-      );
-      setFilteredSkills(filtered);
+  // Filter skills based on category and search query
+  const filterSkills = useCallback(() => {
+    let filtered = processedSkills;
+
+    if (activeCategory !== "all") {
+      filtered = filtered.filter((skill) => skill.category === activeCategory);
     }
-  }, [activeCategory, processedSkills]);
 
-  const categories = [
-    { id: "all", name: "All", icon: <FiCode /> },
-    { id: "frontend", name: "Frontend", icon: <FiCode /> },
-    { id: "backend", name: "Backend", icon: <FiServer /> },
-    { id: "database", name: "Database", icon: <FiDatabase /> },
-    { id: "devops", name: "DevOps", icon: <FiCloud /> },
-    { id: "other", name: "Other", icon: <FiGitBranch /> },
-  ];
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(
+        (skill) =>
+          skill.name.toLowerCase().includes(query) ||
+          skill.category.toLowerCase().includes(query)
+      );
+    }
 
+    setFilteredSkills(filtered);
+  }, [activeCategory, searchQuery, processedSkills]);
+
+  useEffect(() => {
+    filterSkills();
+  }, [filterSkills]);
+
+  // Animation variants
   const sectionVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -190,14 +233,52 @@ const Skills: React.FC = () => {
     },
   };
 
+  const modalVariants = {
+    hidden: { opacity: 0, scale: 0.8 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: { duration: 0.3, ease: "easeOut" },
+    },
+    exit: {
+      opacity: 0,
+      scale: 0.8,
+      transition: { duration: 0.2 },
+    },
+  };
+
   return (
     <section
       id="skills"
       className="py-24 bg-gradient-to-b from-black via-blue-950/10 to-black relative overflow-hidden"
+      aria-label="Technical Skills section"
     >
-      {/* Background decorative elements */}
-      <div className="absolute top-0 left-0 w-40 h-40 bg-blue-200/30 dark:bg-blue-900/20 rounded-full blur-3xl -z-10"></div>
-      <div className="absolute bottom-0 right-0 w-60 h-60 bg-purple-200/30 dark:bg-purple-900/20 rounded-full blur-3xl -z-10"></div>
+      {/* Background Elements with improved animations */}
+      <motion.div 
+        className="absolute top-0 left-0 w-40 h-40 bg-blue-200/30 dark:bg-blue-900/20 rounded-full blur-3xl -z-10"
+        animate={{ 
+          scale: [1, 1.1, 1],
+          opacity: [0.3, 0.4, 0.3],
+        }}
+        transition={{ 
+          duration: 4,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+      />
+      <motion.div 
+        className="absolute bottom-0 right-0 w-60 h-60 bg-purple-200/30 dark:bg-purple-900/20 rounded-full blur-3xl -z-10"
+        animate={{ 
+          scale: [1, 1.2, 1],
+          opacity: [0.2, 0.3, 0.2],
+        }}
+        transition={{ 
+          duration: 5,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: 1
+        }}
+      />
 
       <div className="container mx-auto px-4">
         <motion.div
@@ -220,20 +301,43 @@ const Skills: React.FC = () => {
             <motion.div
               className="h-1 w-20 bg-blue-500 mx-auto mb-6"
               variants={itemVariants}
-            ></motion.div>
+            />
             <motion.p
               className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto"
               variants={itemVariants}
             >
-              {
-                categoryDescriptions[
-                  activeCategory as keyof typeof categoryDescriptions
-                ]
-              }
+              {categories.find(cat => cat.id === activeCategory)?.description}
             </motion.p>
           </motion.div>
 
-          {/* Category Filters */}
+          {/* Search Bar */}
+          <motion.div
+            className="max-w-md mx-auto mb-8"
+            variants={itemVariants}
+          >
+            <div className="relative">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search skills..."
+                className="w-full px-4 py-3 pl-12 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+                aria-label="Search skills"
+              />
+              <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                  aria-label="Clear search"
+                >
+                  <FiX />
+                </button>
+              )}
+            </div>
+          </motion.div>
+
+          {/* Category Filters with improved animations */}
           <motion.div
             className="flex flex-wrap justify-center gap-3 mb-12"
             variants={itemVariants}
@@ -251,6 +355,8 @@ const Skills: React.FC = () => {
                   scale: activeCategory === category.id ? 1.05 : 1.05,
                 }}
                 whileTap={{ scale: 0.98 }}
+                aria-selected={activeCategory === category.id}
+                role="tab"
               >
                 {category.icon}
                 {category.name}
@@ -258,8 +364,15 @@ const Skills: React.FC = () => {
             ))}
           </motion.div>
 
-          {/* Skills Grid */}
-          <div className="relative min-h-[400px]">
+          {/* Skills Grid with improved animations */}
+          <div className="relative min-h-[400px]" ref={containerRef}>
+            {/* Progress bar 
+            <motion.div
+              className="absolute top-0 left-0 h-1 bg-blue-500"
+              style={{ width: useTransform(scrollYProgress, [0, 1], ["0%", "100%"]) }}
+            />
+            */}
+
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeCategory}
@@ -273,7 +386,7 @@ const Skills: React.FC = () => {
                   filteredSkills.map((skill) => (
                     <motion.div
                       key={skill.id}
-                      className={`bg-white dark:bg-gray-800 rounded-lg p-6 flex flex-col items-center justify-center text-center shadow-sm hover:shadow-lg transition-all ${
+                      className={`bg-white dark:bg-gray-800 rounded-lg p-6 flex flex-col items-center justify-center text-center shadow-sm hover:shadow-lg transition-all cursor-pointer ${
                         hoveredSkill === skill.id
                           ? "ring-2 ring-blue-400 dark:ring-blue-500 shadow-lg"
                           : ""
@@ -281,17 +394,40 @@ const Skills: React.FC = () => {
                       variants={skillVariants}
                       onMouseEnter={() => setHoveredSkill(skill.id)}
                       onMouseLeave={() => setHoveredSkill(null)}
+                      onClick={() => setSelectedSkill(skill)}
                       whileHover={{
                         y: -8,
+                        scale: 1.05,
                         transition: { duration: 0.2 },
                       }}
+                      role="button"
+                      tabIndex={0}
+                      aria-label={`View details for ${skill.name}`}
                     >
-                      <div className="mb-4 transform transition-transform duration-300 group-hover:scale-110">
+                      <motion.div 
+                        className="mb-4 transform transition-transform duration-300"
+                        whileHover={{ rotate: 360 }}
+                        transition={{ duration: 0.5 }}
+                      >
                         {skill.iconComponent}
-                      </div>
+                      </motion.div>
                       <h3 className="font-medium text-gray-800 dark:text-gray-200">
                         {skill.name}
                       </h3>
+                      {skill.proficiency && (
+                        <div className="mt-2 flex gap-1">
+                          {[...Array(5)].map((_, i) => (
+                            <div
+                              key={i}
+                              className={`w-1.5 h-1.5 rounded-full ${
+                                i < skill.proficiency!
+                                  ? "bg-blue-500"
+                                  : "bg-gray-200 dark:bg-gray-700"
+                              }`}
+                            />
+                          ))}
+                        </div>
+                      )}
                     </motion.div>
                   ))
                 ) : (
@@ -302,7 +438,7 @@ const Skills: React.FC = () => {
                     <div className="text-5xl mb-4 opacity-30 flex justify-center">
                       <FiCode />
                     </div>
-                    <p>No skills found in this category.</p>
+                    <p>No skills found matching your search.</p>
                   </motion.div>
                 )}
               </motion.div>
@@ -310,6 +446,77 @@ const Skills: React.FC = () => {
           </div>
         </motion.div>
       </div>
+
+      {/* Skill Details Modal */}
+      <AnimatePresence>
+        {selectedSkill && (
+          <motion.div
+            className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSelectedSkill(null)}
+          >
+            <motion.div
+              className="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-md w-full"
+              variants={modalVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex justify-between items-start mb-4">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                    {selectedSkill.iconComponent}
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                      {selectedSkill.name}
+                    </h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      {selectedSkill.category.charAt(0).toUpperCase() + selectedSkill.category.slice(1)}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setSelectedSkill(null)}
+                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                  aria-label="Close modal"
+                >
+                  <FiX size={24} />
+                </button>
+              </div>
+              {selectedSkill.description ? (
+                <p className="text-gray-600 dark:text-gray-300 mb-4">
+                  {selectedSkill.description}
+                </p>
+              ) : (
+                <p className="text-gray-500 dark:text-gray-400 italic mb-4">
+                  No description available.
+                </p>
+              )}
+              {selectedSkill.proficiency && (
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-gray-500 dark:text-gray-400">Proficiency:</span>
+                  <div className="flex gap-1">
+                    {[...Array(5)].map((_, i) => (
+                      <div
+                        key={i}
+                        className={`w-2 h-2 rounded-full ${
+                          i < selectedSkill.proficiency!
+                            ? "bg-blue-500"
+                            : "bg-gray-200 dark:bg-gray-700"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 };
