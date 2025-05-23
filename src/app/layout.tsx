@@ -13,14 +13,16 @@ import ErrorFallback from "@/components/ErrorFallback";
 
 // Define metadata for better SEO
 export const metadata: Metadata = {
-  metadataBase: new URL("https://rlukas2.github.com"),
+  metadataBase: new URL("https://rlukas2.github.io"),
   title: {
     template: "%s | Ngo Hoang Tuan",
-    default: "Ngô Hoàng Tuấn | Backend Engineer",
+    default: "Ngô Hoàng Tuấn | Portfolio",
   },
   description:
     "Backend Engineer specializing in scalable microservices, Node.js, NestJS, GraphQL, and cloud infrastructure with AWS.",
   keywords: [
+    "rlukas2",
+    "ngô hoàng tuấn",
     "software engineer",
     "backend developer",
     "node.js",
@@ -35,6 +37,8 @@ export const metadata: Metadata = {
   authors: [{ name: "Ngo Hoang Tuan" }],
   creator: "Ngo Hoang Tuan",
   publisher: "Ngo Hoang Tuan",
+  themeColor: "#0d1117",
+  category: "technology",
   openGraph: {
     type: "website",
     locale: "en_US",
@@ -45,7 +49,7 @@ export const metadata: Metadata = {
     siteName: "Ngo Hoang Tuan Portfolio",
     images: [
       {
-        url: "/og-image.jpg",
+        url: new URL("https://rlukas2.github.io/og-image.jpg"),
         width: 1200,
         height: 630,
         alt: "Ngo Hoang Tuan Portfolio",

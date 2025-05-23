@@ -1,8 +1,11 @@
 {
-  "name": "Ngo Hoang Tuan | Backend Engineer",
+  "id": "/",
+  "name": "Ngo Hoang Tuan | Portfolio",
   "short_name": "Ngo Hoang Tuan",
+  "lang": "en",
   "description": "Backend Engineer specializing in scalable microservices, Node.js, NestJS, GraphQL, and cloud infrastructure with AWS.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#0f172a",
   "theme_color": "#0f172a",
