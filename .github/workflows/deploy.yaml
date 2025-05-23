@@ -4,32 +4,32 @@ on:
   push:
     branches:
       - source
-  workflow_dispatch:  # Allow manual triggering
+  workflow_dispatch: # Allow manual triggering
 
 permissions:
   contents: write
-  pages: write        # Required for GitHub Pages
-  id-token: write     # Required for GitHub Pages with Actions
+  pages: write # Required for GitHub Pages
+  id-token: write # Required for GitHub Pages with Actions
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    environment:      # Optional: Track deployments in environments
+    environment: # Optional: Track deployments in environments
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
       - name: 📥 Checkout source code
-        uses: actions/checkout@v4  # Updated to latest version
+        uses: actions/checkout@v4 # Updated to latest version
 
       - name: ⚙️ Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20  # Updated to LTS version
-          cache: 'npm'      # Cache dependencies for faster builds
+          node-version: "20.11.1" # Updated to LTS version
+          cache: "npm" # Cache dependencies for faster builds
 
       - name: 📦 Install dependencies
-        run: npm ci --prefer-offline  # Use cached packages when available
+        run: npm ci --prefer-offline # Use cached packages when available
 
       - name: 🛠 Build static site
         run: npm run build
@@ -39,6 +39,6 @@ jobs:
         with:
           branch: main
           folder: out
-          clean: true  # Remove old files before deploying
-          single-commit: true  # Keep history clean
-        id: deployment  # For environment URL
+          clean: true # Remove old files before deploying
+          single-commit: true # Keep history clean
+        id: deployment # For environment URL
