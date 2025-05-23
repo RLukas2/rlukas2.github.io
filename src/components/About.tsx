@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { useState, useRef, useEffect } from "react";
+import { motion, useInView, AnimatePresence } from "framer-motion";
 import {
   FiDatabase,
   FiServer,
@@ -12,12 +12,20 @@ import {
   FiHeart,
   FiZap,
   FiRefreshCw,
+  FiChevronRight,
 } from "react-icons/fi";
 
 const About: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>("professional");
+  const [isHovered, setIsHovered] = useState<string | null>(null);
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
+
+  // Track tab changes for analytics
+  useEffect(() => {
+    // You can add analytics tracking here
+    console.log(`Tab changed to: ${activeTab}`);
+  }, [activeTab]);
 
   const fadeIn = {
     hidden: { opacity: 0, y: 20 },
@@ -26,6 +34,7 @@ const About: React.FC = () => {
       y: 0,
       transition: {
         duration: 0.6,
+        ease: [0.22, 1, 0.36, 1],
       },
     },
   };
@@ -38,6 +47,25 @@ const About: React.FC = () => {
         staggerChildren: 0.2,
       },
     },
+  };
+
+  const tabVariants = {
+    hidden: { opacity: 0, x: -20 },
+    visible: { 
+      opacity: 1, 
+      x: 0,
+      transition: {
+        duration: 0.5,
+        ease: [0.22, 1, 0.36, 1],
+      }
+    },
+    exit: { 
+      opacity: 0, 
+      x: 20,
+      transition: {
+        duration: 0.3,
+      }
+    }
   };
 
   const expertiseData = [
@@ -82,7 +110,6 @@ const About: React.FC = () => {
         "Developed a strong foundation in designing scalable, maintainable, and fault-tolerant systems through coursework and projects. Comfortable applying architectural patterns and optimizing system performance to meet evolving requirements.",
     },
   ];
-
 
   const tabContent = {
     professional: (
@@ -173,10 +200,34 @@ const About: React.FC = () => {
     <section
       id="about"
       className="py-24 bg-gradient-to-b from-gray-900 to-black relative overflow-hidden"
+      aria-label="About section"
     >
-      {/* Background Elements */}
-      <div className="absolute top-20 left-0 w-64 h-64 bg-blue-200/30 dark:bg-blue-900/20 rounded-full blur-3xl -z-10"></div>
-      <div className="absolute bottom-20 right-0 w-80 h-80 bg-purple-200/30 dark:bg-purple-900/20 rounded-full blur-3xl -z-10"></div>
+      {/* Background Elements with improved animations */}
+      <motion.div 
+        className="absolute top-20 left-0 w-64 h-64 bg-blue-200/30 dark:bg-blue-900/20 rounded-full blur-3xl -z-10"
+        animate={{ 
+          scale: [1, 1.1, 1],
+          opacity: [0.3, 0.4, 0.3],
+        }}
+        transition={{ 
+          duration: 4,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+      />
+      <motion.div 
+        className="absolute bottom-20 right-0 w-80 h-80 bg-purple-200/30 dark:bg-purple-900/20 rounded-full blur-3xl -z-10"
+        animate={{ 
+          scale: [1, 1.2, 1],
+          opacity: [0.2, 0.3, 0.2],
+        }}
+        transition={{ 
+          duration: 5,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: 1
+        }}
+      />
 
       <div className="container mx-auto px-4">
         <motion.div
@@ -199,10 +250,10 @@ const About: React.FC = () => {
             <motion.div
               className="h-1 w-20 bg-blue-500 mx-auto mb-6"
               variants={fadeIn}
-            ></motion.div>
+            />
           </motion.div>
 
-          {/* Tab Navigation */}
+          {/* Enhanced Tab Navigation with better animations */}
           <motion.div className="flex justify-center mb-8" variants={fadeIn}>
             <div className="inline-flex bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
               {[
@@ -222,7 +273,7 @@ const About: React.FC = () => {
                   icon: <FiAward className="mr-2" />,
                 },
               ].map((tab) => (
-                <button
+                <motion.button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center px-4 py-2 text-sm font-medium rounded-md transition-all ${
@@ -230,22 +281,36 @@ const About: React.FC = () => {
                       ? "bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm"
                       : "text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
                   }`}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  aria-selected={activeTab === tab.id}
+                  role="tab"
+                  aria-controls={`${tab.id}-panel`}
                 >
                   {tab.icon}
                   {tab.label}
-                </button>
+                </motion.button>
               ))}
             </div>
           </motion.div>
 
-          <motion.div
-            className="mb-16 text-lg text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 p-8 rounded-xl shadow-sm [text-align:justify]"
-            variants={fadeIn}
-          >
-            {tabContent[activeTab as keyof typeof tabContent]}
-          </motion.div>
+          {/* Enhanced Tab Content with smooth transitions */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              variants={tabVariants}
+              className="mb-16 text-lg text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 p-8 rounded-xl shadow-sm [text-align:justify]"
+              role="tabpanel"
+              id={`${activeTab}-panel`}
+            >
+              {tabContent[activeTab as keyof typeof tabContent]}
+            </motion.div>
+          </AnimatePresence>
 
-          {/* Core Values Section */}
+          {/* Enhanced Core Values Section with better animations */}
           <motion.div variants={fadeIn} className="mb-16">
             <h3 className="text-2xl font-bold text-center mb-8 text-gray-900 dark:text-white">
               Core Values
@@ -256,11 +321,17 @@ const About: React.FC = () => {
                   key={index}
                   className="bg-white dark:bg-gray-800 p-6 rounded-lg text-center shadow-sm hover:shadow-md transition-all duration-300"
                   variants={fadeIn}
-                  whileHover={{ y: -5 }}
+                  whileHover={{ y: -5, scale: 1.02 }}
+                  onHoverStart={() => setIsHovered(value.title)}
+                  onHoverEnd={() => setIsHovered(null)}
                 >
-                  <div className="inline-flex items-center justify-center w-12 h-12 mb-4 bg-blue-100 dark:bg-blue-900/30 rounded-full">
+                  <motion.div 
+                    className="inline-flex items-center justify-center w-12 h-12 mb-4 bg-blue-100 dark:bg-blue-900/30 rounded-full"
+                    animate={isHovered === value.title ? { rotate: 360 } : { rotate: 0 }}
+                    transition={{ duration: 0.5 }}
+                  >
                     {value.icon}
-                  </div>
+                  </motion.div>
                   <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">
                     {value.title}
                   </h4>
@@ -272,7 +343,7 @@ const About: React.FC = () => {
             </div>
           </motion.div>
 
-          {/* Key Expertise Areas */}
+          {/* Enhanced Key Expertise Areas with better animations */}
           <motion.h3
             className="text-2xl font-bold text-center mb-8 text-gray-900 dark:text-white"
             variants={fadeIn}
@@ -289,12 +360,18 @@ const About: React.FC = () => {
                 key={item.id}
                 className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-all duration-300"
                 variants={fadeIn}
-                whileHover={{ y: -5 }}
+                whileHover={{ y: -5, scale: 1.02 }}
+                onHoverStart={() => setIsHovered(item.id)}
+                onHoverEnd={() => setIsHovered(null)}
               >
                 <div className="flex items-center mb-4">
-                  <div className={`p-3 ${item.iconBg} rounded-full mr-4`}>
+                  <motion.div 
+                    className={`p-3 ${item.iconBg} rounded-full mr-4`}
+                    animate={isHovered === item.id ? { scale: 1.1 } : { scale: 1 }}
+                    transition={{ duration: 0.2 }}
+                  >
                     {item.icon}
-                  </div>
+                  </motion.div>
                   <h3 className={`text-xl font-semibold ${item.color}`}>
                     {item.title}
                   </h3>
@@ -302,6 +379,15 @@ const About: React.FC = () => {
                 <p className="text-gray-600 dark:text-gray-400">
                   {item.description}
                 </p>
+                <motion.div 
+                  className="mt-4 flex items-center text-blue-600 dark:text-blue-400 text-sm font-medium"
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={isHovered === item.id ? { opacity: 1, x: 0 } : { opacity: 0, x: -10 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <span>Learn more</span>
+                  <FiChevronRight className="ml-1" />
+                </motion.div>
               </motion.div>
             ))}
           </motion.div>
