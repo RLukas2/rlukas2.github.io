@@ -13,6 +13,7 @@ import ErrorFallback from "@/components/ErrorFallback";
 
 // Define metadata for better SEO
 export const metadata: Metadata = {
+  metadataBase: new URL("https://rlukas2.github.com"),
   title: {
     template: "%s | Ngo Hoang Tuan",
     default: "Ngô Hoàng Tuấn | Backend Engineer",
