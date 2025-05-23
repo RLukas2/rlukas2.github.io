@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 
 // Initialize PDF.js worker with local file
-pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.mjs";
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 interface PDFViewerProps {
   isOpen: boolean;
