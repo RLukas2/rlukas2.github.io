@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Document, Page, pdfjs } from "react-pdf";
 import {
   Download,
   X,
@@ -12,8 +11,10 @@ import {
   ChevronRight,
 } from "lucide-react";
 
-// Initialize PDF.js worker with local file
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.mjs`;
+// Remove the immediate worker initialization
+let pdfjs: any = null;
+let Document: any = null;
+let Page: any = null;
 
 interface PDFViewerProps {
   isOpen: boolean;
@@ -27,8 +28,54 @@ export default function PDFViewer({ isOpen, onClose, pdfUrl }: PDFViewerProps) {
   const [scale, setScale] = useState<number>(1.0);
   const [error, setError] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [isCompatible, setIsCompatible] = useState(true);
+  const [isPdfLoaded, setIsPdfLoaded] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
   const pdfContainerRef = useRef<HTMLDivElement>(null);
+
+  // Check device compatibility
+  useEffect(() => {
+    const checkCompatibility = () => {
+      // Check for modern CSS features
+      const supportsModernCSS = CSS.supports('backdrop-filter', 'blur(1px)') &&
+                              CSS.supports('overscroll-behavior', 'contain') &&
+                              CSS.supports('scroll-behavior', 'smooth');
+
+      // Check for iOS version
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      const iosVersion = isIOS ? parseInt(navigator.userAgent.match(/OS (\d+)_/)?.[1] || '0') : 0;
+      
+      // iOS 14 and below are considered incompatible
+      const isCompatibleIOS = !isIOS || iosVersion >= 15;
+
+      setIsCompatible(supportsModernCSS && isCompatibleIOS);
+    };
+
+    checkCompatibility();
+  }, []);
+
+  // Lazy load PDF.js only when needed
+  useEffect(() => {
+    if (isOpen && isCompatible && !isPdfLoaded) {
+      const loadPdfJs = async () => {
+        try {
+          const pdfjsModule = await import('react-pdf');
+          pdfjs = pdfjsModule.pdfjs;
+          Document = pdfjsModule.Document;
+          Page = pdfjsModule.Page;
+          
+          // Initialize worker after module is loaded
+          pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.mjs`;
+          setIsPdfLoaded(true);
+        } catch (error) {
+          console.error('Failed to load PDF.js:', error);
+          setError('Failed to load PDF viewer. Please try downloading instead.');
+        }
+      };
+      
+      loadPdfJs();
+    }
+  }, [isOpen, isCompatible, isPdfLoaded]);
 
   // Check if device is mobile
   useEffect(() => {
@@ -102,7 +149,16 @@ export default function PDFViewer({ isOpen, onClose, pdfUrl }: PDFViewerProps) {
     setPageNumber((prev) => Math.min(prev + 1, numPages));
   };
 
+  // If device is not compatible, trigger download and close
+  useEffect(() => {
+    if (isOpen && !isCompatible) {
+      handleDownload();
+      onClose();
+    }
+  }, [isOpen, isCompatible]);
+
   if (!isOpen) return null;
+  if (!isCompatible) return null;
 
   return (
     <AnimatePresence>
@@ -152,6 +208,10 @@ export default function PDFViewer({ isOpen, onClose, pdfUrl }: PDFViewerProps) {
             {error ? (
               <div className="flex h-full items-center justify-center">
                 <p className="text-red-500">{error}</p>
+              </div>
+            ) : !isPdfLoaded ? (
+              <div className="flex h-full items-center justify-center">
+                <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
               </div>
             ) : (
               <div className="min-h-full w-full flex items-center justify-center">
