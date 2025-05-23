@@ -142,7 +142,7 @@ const Experience: React.FC = () => {
   return (
     <section
       id="experience"
-      className="py-24 sm:py-32 bg-gradient-to-b from-black via-blue-950/10 to-black relative overflow-hidden"
+      className="py-24 bg-gradient-to-b from-black via-blue-950/10 to-black relative overflow-hidden"
     >
       {/* Background Elements */}
       <div className="absolute top-20 left-0 w-64 h-64 bg-blue-200/30 dark:bg-blue-900/20 rounded-full blur-3xl -z-10"></div>
@@ -161,7 +161,7 @@ const Experience: React.FC = () => {
               Career Path
             </span>
             <motion.h2
-              className="text-4xl font-bold text-gray-900 dark:text-white mb-4"
+              className="text-5xl font-bold text-gray-900 dark:text-white mb-4"
               variants={itemVariants}
             >
               Work Experience

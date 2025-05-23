@@ -104,13 +104,18 @@ const Contact: React.FC = () => {
           viewport={{ once: true, margin: "-100px" }}
           className="max-w-6xl mx-auto"
         >
-          <motion.h2
-            className="text-4xl font-bold text-center mb-12 relative"
-            variants={fadeIn}
-          >
-            Get In Touch
-            <span className="block w-20 h-1 bg-blue-500 mx-auto mt-4"></span>
-          </motion.h2>
+          <motion.div className="text-center mb-16">
+            <span className="inline-block px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-sm font-medium rounded-full mb-3">
+              Contact Me
+            </span>
+            <motion.h2
+              className="text-5xl font-bold text-center mb-12 relative"
+              variants={fadeIn}
+            >
+              Get In Touch
+              <span className="block w-20 h-1 bg-blue-500 mx-auto mt-4"></span>
+            </motion.h2>
+          </motion.div>
 
           <div className="flex flex-col md:flex-row gap-12">
             {/* Contact Info */}
@@ -151,7 +156,7 @@ const Contact: React.FC = () => {
                       href="tel:+84769720975"
                       className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                     >
-                      +84 769 720975
+                      +84 769 7020975
                     </a>
                   </div>
                 </div>
@@ -165,9 +170,14 @@ const Contact: React.FC = () => {
                     <h4 className="font-semibold text-gray-900 dark:text-white">
                       Address
                     </h4>
-                    <p className="text-gray-600 dark:text-gray-300">
+                    <a
+                      href="https://www.google.com/maps/place/Ho+Chi+Minh+City,+Vietnam"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                    >
                       Ho Chi Minh City, Vietnam
-                    </p>
+                    </a>
                   </div>
                 </div>
               </div>
@@ -323,6 +333,7 @@ const Contact: React.FC = () => {
                         : "border-gray-300 dark:border-gray-600"
                     }`}
                     placeholder="Your message here..."
+                    style={{ minHeight: "100px", resize: "vertical" }}
                     {...register("message", {
                       required: "Message is required",
                       minLength: {

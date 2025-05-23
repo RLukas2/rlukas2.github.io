@@ -172,7 +172,7 @@ const About: React.FC = () => {
   return (
     <section
       id="about"
-      className="py-24 sm:py-32 overflow-hidden bg-gradient-to-b from-gray-900 to-black relative overflow-hidden"
+      className="py-24 overflow-hidden bg-gradient-to-b from-gray-900 to-black relative overflow-hidden"
     >
       {/* Background Elements */}
       <div className="absolute top-20 left-0 w-64 h-64 bg-blue-200/30 dark:bg-blue-900/20 rounded-full blur-3xl -z-10"></div>
@@ -191,7 +191,7 @@ const About: React.FC = () => {
               Get to Know Me
             </span>
             <motion.h2
-              className="text-4xl font-bold text-gray-900 dark:text-white mb-4"
+              className="text-5xl font-bold text-gray-900 dark:text-white mb-4"
               variants={fadeIn}
             >
               About Me

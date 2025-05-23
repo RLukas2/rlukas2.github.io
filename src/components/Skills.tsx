@@ -212,7 +212,7 @@ const Skills: React.FC = () => {
               My Expertise
             </span>
             <motion.h2
-              className="text-4xl font-bold text-gray-900 dark:text-white mb-4"
+              className="text-5xl font-bold text-gray-900 dark:text-white mb-4"
               variants={itemVariants}
             >
               Technical Skills

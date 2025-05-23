@@ -194,7 +194,7 @@ const Projects: React.FC = () => {
   return (
     <section
       id="projects"
-      className="py-24 sm:py-32 bg-gradient-to-b from-black via-blue-950/10 to-black py-24 sm:py-32 relative overflow-hidden"
+      className="py-24 bg-gradient-to-b from-black via-blue-950/10 to-black relative overflow-hidden"
     >
       {/* Background Elements - Improved for better performance */}
       <div className="absolute top-0 left-0 w-64 h-64 bg-blue-200/30 dark:bg-blue-900/20 rounded-full blur-3xl -z-10"></div>
@@ -212,7 +212,7 @@ const Projects: React.FC = () => {
               My Work
             </span>
             <motion.h2
-              className="text-4xl font-bold text-gray-900 dark:text-white mb-4"
+              className="text-5xl font-bold text-gray-900 dark:text-white mb-4"
               variants={fadeIn}
             >
               Featured Projects
