@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import {
   motion,
   AnimatePresence,
@@ -86,7 +86,68 @@ const iconMap: Record<string, React.ReactNode> = {
   FaGolang: <FaGolang className="text-3xl text-blue-400" />,
 };
 
-const categories: Category[] = [
+// Animation variants
+const sectionVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      duration: 0.6,
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, ease: "easeOut" },
+  },
+};
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.04,
+      delayChildren: 0.3,
+    },
+  },
+};
+
+const skillVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.3, ease: "easeOut" },
+  },
+  exit: {
+    opacity: 0,
+    y: -10,
+    transition: { duration: 0.2 },
+  },
+};
+
+const modalVariants = {
+  hidden: { opacity: 0, scale: 0.8 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: { duration: 0.3, ease: "easeOut" },
+  },
+  exit: {
+    opacity: 0,
+    scale: 0.8,
+    transition: { duration: 0.2 },
+  },
+};
+
+// Memoize categories to prevent unnecessary re-renders
+const categories = [
   {
     id: "all",
     name: "All",
@@ -133,13 +194,9 @@ const categories: Category[] = [
 
 const Skills: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState<string>("all");
-  const [processedSkills, setProcessedSkills] = useState<SkillWithIcon[]>([]);
-  const [filteredSkills, setFilteredSkills] = useState<SkillWithIcon[]>([]);
-  const [hoveredSkill, setHoveredSkill] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [selectedSkill, setSelectedSkill] = useState<SkillWithIcon | null>(
-    null
-  );
+  const [selectedSkill, setSelectedSkill] = useState<SkillWithIcon | null>(null);
+  const [hoveredSkill, setHoveredSkill] = useState<number | null>(null);
 
   const [ref, inView] = useInView({
     threshold: 0.1,
@@ -152,9 +209,9 @@ const Skills: React.FC = () => {
     offset: ["start end", "end start"],
   });
 
-  // Process skills data on component mount
-  useEffect(() => {
-    const processed = skillsData.map((skill) => ({
+  // Memoize processed skills
+  const processedSkills = useMemo(() => {
+    return skillsData.map((skill) => ({
       ...skill,
       iconComponent: iconMap[skill.icon] || (
         <FiCode className="text-3xl text-gray-500" />
@@ -166,13 +223,10 @@ const Skills: React.FC = () => {
         | "devops"
         | "other",
     }));
-
-    setProcessedSkills(processed);
-    setFilteredSkills(processed);
   }, []);
 
-  // Filter skills based on category and search query
-  const filterSkills = useCallback(() => {
+  // Memoize filtered skills
+  const filteredSkills = useMemo(() => {
     let filtered = processedSkills;
 
     if (activeCategory !== "all") {
@@ -188,72 +242,40 @@ const Skills: React.FC = () => {
       );
     }
 
-    setFilteredSkills(filtered);
+    return filtered;
   }, [activeCategory, searchQuery, processedSkills]);
 
-  useEffect(() => {
-    filterSkills();
-  }, [filterSkills]);
+  // Debounced search handler
+  const debouncedSetSearchQuery = useCallback((value: string) => {
+    setSearchQuery(value);
+  }, []);
 
-  // Animation variants
-  const sectionVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        duration: 0.6,
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.4, ease: "easeOut" },
-    },
-  };
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.04,
-        delayChildren: 0.3,
-      },
-    },
-  };
-
-  const skillVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.3, ease: "easeOut" },
-    },
-    exit: {
-      opacity: 0,
-      y: -10,
-      transition: { duration: 0.2 },
-    },
-  };
-
-  const modalVariants = {
-    hidden: { opacity: 0, scale: 0.8 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: { duration: 0.3, ease: "easeOut" },
-    },
-    exit: {
-      opacity: 0,
-      scale: 0.8,
-      transition: { duration: 0.2 },
-    },
-  };
+  // Memoize category buttons
+  const categoryButtons = useMemo(() => (
+    <motion.div
+      className="flex flex-wrap justify-center gap-3 mb-12"
+      variants={itemVariants}
+    >
+      {categories.map((category) => (
+        <motion.button
+          key={category.id}
+          onClick={() => setActiveCategory(category.id)}
+          className={`px-5 py-3 rounded-lg text-sm font-medium transition-all duration-300 flex items-center gap-2 ${
+            activeCategory === category.id
+              ? "bg-blue-600 text-white shadow-md scale-105"
+              : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 shadow-sm"
+          }`}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.98 }}
+          aria-selected={activeCategory === category.id}
+          role="tab"
+        >
+          {category.icon}
+          {category.name}
+        </motion.button>
+      ))}
+    </motion.div>
+  ), [activeCategory]);
 
   return (
     <section
@@ -261,32 +283,9 @@ const Skills: React.FC = () => {
       className="py-24 bg-gradient-to-b from-black via-blue-950/10 to-black relative overflow-hidden"
       aria-label="Technical Skills section"
     >
-      {/* Background Elements with improved animations */}
-      <motion.div
-        className="absolute top-0 left-0 w-40 h-40 bg-blue-200/30 dark:bg-blue-900/20 rounded-full blur-3xl -z-10"
-        animate={{
-          scale: [1, 1.1, 1],
-          opacity: [0.3, 0.4, 0.3],
-        }}
-        transition={{
-          duration: 4,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-      />
-      <motion.div
-        className="absolute bottom-0 right-0 w-60 h-60 bg-purple-200/30 dark:bg-purple-900/20 rounded-full blur-3xl -z-10"
-        animate={{
-          scale: [1, 1.2, 1],
-          opacity: [0.2, 0.3, 0.2],
-        }}
-        transition={{
-          duration: 5,
-          repeat: Infinity,
-          ease: "easeInOut",
-          delay: 1,
-        }}
-      />
+      {/* Static background elements */}
+      <div className="absolute top-0 left-0 w-40 h-40 bg-blue-200/30 dark:bg-blue-900/20 rounded-full blur-3xl -z-10" />
+      <div className="absolute bottom-0 right-0 w-60 h-60 bg-purple-200/30 dark:bg-purple-900/20 rounded-full blur-3xl -z-10" />
 
       <div className="container mx-auto px-4">
         <motion.div
@@ -324,7 +323,7 @@ const Skills: React.FC = () => {
               <input
                 type="text"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => debouncedSetSearchQuery(e.target.value)}
                 placeholder="Search skills..."
                 className="w-full px-4 py-3 pl-12 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
                 aria-label="Search skills"
@@ -342,42 +341,11 @@ const Skills: React.FC = () => {
             </div>
           </motion.div>
 
-          {/* Category Filters with improved animations */}
-          <motion.div
-            className="flex flex-wrap justify-center gap-3 mb-12"
-            variants={itemVariants}
-          >
-            {categories.map((category) => (
-              <motion.button
-                key={category.id}
-                onClick={() => setActiveCategory(category.id)}
-                className={`px-5 py-3 rounded-lg text-sm font-medium transition-all duration-300 flex items-center gap-2 ${
-                  activeCategory === category.id
-                    ? "bg-blue-600 text-white shadow-md scale-105"
-                    : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 shadow-sm"
-                }`}
-                whileHover={{
-                  scale: activeCategory === category.id ? 1.05 : 1.05,
-                }}
-                whileTap={{ scale: 0.98 }}
-                aria-selected={activeCategory === category.id}
-                role="tab"
-              >
-                {category.icon}
-                {category.name}
-              </motion.button>
-            ))}
-          </motion.div>
+          {/* Category Filters */}
+          {categoryButtons}
 
-          {/* Skills Grid with improved animations */}
+          {/* Skills Grid */}
           <div className="relative min-h-[400px]" ref={containerRef}>
-            {/* Progress bar 
-            <motion.div
-              className="absolute top-0 left-0 h-1 bg-blue-500"
-              style={{ width: useTransform(scrollYProgress, [0, 1], ["0%", "100%"]) }}
-            />
-            */}
-
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeCategory}

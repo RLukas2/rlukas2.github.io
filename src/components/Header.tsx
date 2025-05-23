@@ -267,18 +267,18 @@ const Header: React.FC = () => {
                 handleNavClick(link.href);
               }}
               className={`nav-link relative text-normal font-medium px-3 py-2 rounded-md transition-all duration-200 flex items-center gap-1.5 ${
-                activeSection === link.href.substring(1)
+                activeSection === link.href.substring(2)
                   ? "text-primary-light bg-primary-900/20 font-bold"
                   : "text-gray-200 hover:text-primary hover:bg-gray-800"
               }`}
               aria-current={
-                activeSection === link.href.substring(1) ? "page" : undefined
+                activeSection === link.href.substring(2) ? "page" : undefined
               }
               title={`Go to ${link.name} section`}
             >
               <span className="text-base">{link.icon}</span>
               <span>{link.name}</span>
-              {activeSection === link.href.substring(1) && (
+              {activeSection === link.href.substring(2) && (
                 <motion.span
                   layoutId="activeIndicator"
                   className="absolute bottom-0 left-0 right-0 mx-auto w-2/3 h-0.5 bg-white rounded-full"
@@ -366,12 +366,12 @@ const Header: React.FC = () => {
                         handleNavClick(link.href);
                       }}
                       className={`py-3 px-6 flex items-center space-x-3 ${
-                        activeSection === link.href.substring(1)
+                        activeSection === link.href.substring(2)
                           ? "bg-primary-900/20 text-primary-light font-medium"
                           : "hover:bg-gray-700 text-gray-200"
                       } transition-colors`}
                       aria-current={
-                        activeSection === link.href.substring(1)
+                        activeSection === link.href.substring(2)
                           ? "page"
                           : undefined
                       }
