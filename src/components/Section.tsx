@@ -16,9 +16,13 @@ const LoadingSpinner = memo(() => (
   </div>
 ));
 
-LoadingSpinner.displayName = 'LoadingSpinner';
+LoadingSpinner.displayName = "LoadingSpinner";
 
-const Section = memo(function Section({ id, children, className = "" }: SectionProps) {
+const Section = memo(function Section({
+  id,
+  children,
+  className = "",
+}: SectionProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const controls = useAnimation();
@@ -95,6 +99,6 @@ const Section = memo(function Section({ id, children, className = "" }: SectionP
   );
 });
 
-Section.displayName = 'Section';
+Section.displayName = "Section";
 
-export default Section; 
+export default Section;

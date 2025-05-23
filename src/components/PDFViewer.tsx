@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Download,
@@ -37,14 +37,17 @@ export default function PDFViewer({ isOpen, onClose, pdfUrl }: PDFViewerProps) {
   useEffect(() => {
     const checkCompatibility = () => {
       // Check for modern CSS features
-      const supportsModernCSS = CSS.supports('backdrop-filter', 'blur(1px)') &&
-                              CSS.supports('overscroll-behavior', 'contain') &&
-                              CSS.supports('scroll-behavior', 'smooth');
+      const supportsModernCSS =
+        CSS.supports("backdrop-filter", "blur(1px)") &&
+        CSS.supports("overscroll-behavior", "contain") &&
+        CSS.supports("scroll-behavior", "smooth");
 
       // Check for iOS version
       const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-      const iosVersion = isIOS ? parseInt(navigator.userAgent.match(/OS (\d+)_/)?.[1] || '0') : 0;
-      
+      const iosVersion = isIOS
+        ? parseInt(navigator.userAgent.match(/OS (\d+)_/)?.[1] || "0")
+        : 0;
+
       // iOS 14 and below are considered incompatible
       const isCompatibleIOS = !isIOS || iosVersion >= 15;
 
@@ -59,20 +62,22 @@ export default function PDFViewer({ isOpen, onClose, pdfUrl }: PDFViewerProps) {
     if (isOpen && isCompatible && !isPdfLoaded) {
       const loadPdfJs = async () => {
         try {
-          const pdfjsModule = await import('react-pdf');
+          const pdfjsModule = await import("react-pdf");
           pdfjs = pdfjsModule.pdfjs;
           Document = pdfjsModule.Document;
           Page = pdfjsModule.Page;
-          
+
           // Initialize worker after module is loaded
           pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.mjs`;
           setIsPdfLoaded(true);
         } catch (error) {
-          console.error('Failed to load PDF.js:', error);
-          setError('Failed to load PDF viewer. Please try downloading instead.');
+          console.error("Failed to load PDF.js:", error);
+          setError(
+            "Failed to load PDF viewer. Please try downloading instead."
+          );
         }
       };
-      
+
       loadPdfJs();
     }
   }, [isOpen, isCompatible, isPdfLoaded]);
@@ -100,7 +105,10 @@ export default function PDFViewer({ isOpen, onClose, pdfUrl }: PDFViewerProps) {
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+      if (
+        modalRef.current &&
+        !modalRef.current.contains(event.target as Node)
+      ) {
         onClose();
       }
     }
@@ -114,40 +122,45 @@ export default function PDFViewer({ isOpen, onClose, pdfUrl }: PDFViewerProps) {
     };
   }, [isOpen, onClose]);
 
-  function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
-    setNumPages(numPages);
-    setError(null);
-  }
-
-  function onDocumentLoadError(error: Error) {
-    setError("Failed to load PDF. Please try again later.");
-    console.error("Error loading PDF:", error);
-  }
-
-  const handleDownload = () => {
+  // Memoize handlers
+  const handleDownload = useCallback(() => {
     const link = document.createElement("a");
     link.href = pdfUrl;
     link.download = "resume.pdf";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-  };
+  }, [pdfUrl]);
 
-  const handleZoomIn = () => {
+  const handleZoomIn = useCallback(() => {
     setScale((prev) => Math.min(prev + 0.1, 2));
-  };
+  }, []);
 
-  const handleZoomOut = () => {
+  const handleZoomOut = useCallback(() => {
     setScale((prev) => Math.max(prev - 0.1, 0.5));
-  };
+  }, []);
 
-  const handlePrevPage = () => {
+  const handlePrevPage = useCallback(() => {
     setPageNumber((prev) => Math.max(prev - 1, 1));
-  };
+  }, []);
 
-  const handleNextPage = () => {
+  const handleNextPage = useCallback(() => {
     setPageNumber((prev) => Math.min(prev + 1, numPages));
-  };
+  }, [numPages]);
+
+  const onDocumentLoadSuccess = useCallback(
+    ({ numPages }: { numPages: number }) => {
+      setNumPages(numPages);
+      setError(null);
+    },
+    []
+  );
+
+  const onDocumentLoadError = useCallback((error: Error) => {
+    setError("Failed to load PDF. Please try again later.");
+    console.error("Error loading PDF:", error);
+  }, []);
+
 
   // If device is not compatible, trigger download and close
   useEffect(() => {
@@ -155,7 +168,7 @@ export default function PDFViewer({ isOpen, onClose, pdfUrl }: PDFViewerProps) {
       handleDownload();
       onClose();
     }
-  }, [isOpen, isCompatible]);
+  }, [isOpen, isCompatible, handleDownload, onClose]);
 
   if (!isOpen) return null;
   if (!isCompatible) return null;
