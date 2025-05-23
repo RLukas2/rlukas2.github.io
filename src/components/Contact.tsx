@@ -104,7 +104,7 @@ const Contact: React.FC = () => {
           viewport={{ once: true, margin: "-100px" }}
           className="max-w-6xl mx-auto"
         >
-          <motion.div className="text-center mb-16">
+          <motion.div className="text-center mb-16" variants={fadeIn}>
             <span className="inline-block px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-sm font-medium rounded-full mb-3">
               Contact Me
             </span>
