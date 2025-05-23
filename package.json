@@ -2,6 +2,12 @@
   "name": "portfolio",
   "version": "0.1.0",
   "private": true,
+  "browserslist": [
+    "defaults",
+    "iOS >= 15",
+    "last 2 versions",
+    "not dead"
+  ],
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
@@ -23,13 +29,16 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
-    "@tailwindcss/postcss": "^4",
+    "@tailwindcss/postcss": "^4.1.7",
     "@types/node": "^20.17.30",
     "@types/nodemailer": "^6.4.17",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
+    "autoprefixer": "^10.4.21",
     "eslint": "^9",
     "eslint-config-next": "15.3.0",
+    "postcss": "^8.5.3",
+    "postcss-preset-env": "^10.1.6",
     "tailwindcss": "^4.1.4",
     "typescript": "^5"
   }
