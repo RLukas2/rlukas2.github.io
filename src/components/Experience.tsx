@@ -168,33 +168,6 @@ const Experience: React.FC = () => {
       className="py-24 bg-gradient-to-b from-black via-blue-950/10 to-black relative overflow-hidden"
       aria-label="Work Experience section"
     >
-      {/* Background Elements with improved animations */}
-      <motion.div
-        className="absolute top-20 left-0 w-64 h-64 bg-blue-200/30 dark:bg-blue-900/20 rounded-full blur-3xl -z-10"
-        animate={{
-          scale: [1, 1.1, 1],
-          opacity: [0.3, 0.4, 0.3],
-        }}
-        transition={{
-          duration: 4,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-      />
-      <motion.div
-        className="absolute bottom-20 right-0 w-80 h-80 bg-purple-200/30 dark:bg-purple-900/20 rounded-full blur-3xl -z-10"
-        animate={{
-          scale: [1, 1.2, 1],
-          opacity: [0.2, 0.3, 0.2],
-        }}
-        transition={{
-          duration: 5,
-          repeat: Infinity,
-          ease: "easeInOut",
-          delay: 1,
-        }}
-      />
-
       <div className="container mx-auto px-4">
         <motion.div
           ref={ref}

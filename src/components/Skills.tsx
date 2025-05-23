@@ -1,11 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
-import {
-  motion,
-  AnimatePresence,
-  useScroll,
-} from "framer-motion";
+import { motion, AnimatePresence, useScroll } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import {
   FiCode,
@@ -195,7 +191,9 @@ const categories = [
 const Skills: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [selectedSkill, setSelectedSkill] = useState<SkillWithIcon | null>(null);
+  const [selectedSkill, setSelectedSkill] = useState<SkillWithIcon | null>(
+    null
+  );
   const [hoveredSkill, setHoveredSkill] = useState<number | null>(null);
 
   const [ref, inView] = useInView({
@@ -251,31 +249,34 @@ const Skills: React.FC = () => {
   }, []);
 
   // Memoize category buttons
-  const categoryButtons = useMemo(() => (
-    <motion.div
-      className="flex flex-wrap justify-center gap-3 mb-12"
-      variants={itemVariants}
-    >
-      {categories.map((category) => (
-        <motion.button
-          key={category.id}
-          onClick={() => setActiveCategory(category.id)}
-          className={`px-5 py-3 rounded-lg text-sm font-medium transition-all duration-300 flex items-center gap-2 ${
-            activeCategory === category.id
-              ? "bg-blue-600 text-white shadow-md scale-105"
-              : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 shadow-sm"
-          }`}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.98 }}
-          aria-selected={activeCategory === category.id}
-          role="tab"
-        >
-          {category.icon}
-          {category.name}
-        </motion.button>
-      ))}
-    </motion.div>
-  ), [activeCategory]);
+  const categoryButtons = useMemo(
+    () => (
+      <motion.div
+        className="flex flex-wrap justify-center gap-3 mb-12"
+        variants={itemVariants}
+      >
+        {categories.map((category) => (
+          <motion.button
+            key={category.id}
+            onClick={() => setActiveCategory(category.id)}
+            className={`px-5 py-3 rounded-lg text-sm font-medium transition-all duration-300 flex items-center gap-2 ${
+              activeCategory === category.id
+                ? "bg-blue-600 text-white shadow-md scale-105"
+                : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 shadow-sm"
+            }`}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.98 }}
+            aria-selected={activeCategory === category.id}
+            role="tab"
+          >
+            {category.icon}
+            {category.name}
+          </motion.button>
+        ))}
+      </motion.div>
+    ),
+    [activeCategory]
+  );
 
   return (
     <section
@@ -283,10 +284,6 @@ const Skills: React.FC = () => {
       className="py-24 bg-gradient-to-b from-black via-blue-950/10 to-black relative overflow-hidden"
       aria-label="Technical Skills section"
     >
-      {/* Static background elements */}
-      <div className="absolute top-0 left-0 w-40 h-40 bg-blue-200/30 dark:bg-blue-900/20 rounded-full blur-3xl -z-10" />
-      <div className="absolute bottom-0 right-0 w-60 h-60 bg-purple-200/30 dark:bg-purple-900/20 rounded-full blur-3xl -z-10" />
-
       <div className="container mx-auto px-4">
         <motion.div
           ref={ref}
