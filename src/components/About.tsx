@@ -13,7 +13,7 @@ import {
 import { ExpertiseData, TabContent, CoreValues } from "@/data/about";
 
 // Lazy load the modal content
-const ModalContent = lazy(() => import('./ModalContent'));
+const ModalContent = lazy(() => import('./about/ModalContent'));
 
 const About: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>("professional");
