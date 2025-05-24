@@ -20,7 +20,7 @@ import { useTheme } from "next-themes";
 
 const Header: React.FC = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [isScrolled, setIsScrolled] = useState<boolean>(false);
+  // const [isScrolled, setIsScrolled] = useState<boolean>(false);
   const [activeSection, setActiveSection] = useState<string>("home");
   const [mounted, setMounted] = useState<boolean>(false);
   const { theme, setTheme } = useTheme();
@@ -31,6 +31,19 @@ const Header: React.FC = () => {
   }, []);
 
   // Header scroll effect and active section detection
+  // useEffect(() => {
+  //   const handleScroll = () => {
+  //     const scrollPosition = window.scrollY;
+  //     setIsScrolled(scrollPosition > 20); // Adjust this value to control when the effect triggers
+  //   };
+
+  //   window.addEventListener('scroll', handleScroll);
+  //   // Set initial state
+  //   handleScroll();
+
+  //   return () => window.removeEventListener('scroll', handleScroll);
+  // }, []);
+
   useEffect(() => {
     const sections = document.querySelectorAll("section[id]");
     const observer = new IntersectionObserver(
@@ -209,7 +222,7 @@ const Header: React.FC = () => {
   return (
     <header
       className={`fixed w-full top-0 z-50 transition-all duration-300 ${
-        isScrolled
+        activeSection === "home"
           ? "bg-gray-900/80 backdrop-blur-md shadow-lg py-2"
           : "bg-transparent py-4"
       }`}
