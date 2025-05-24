@@ -238,9 +238,10 @@ const About: React.FC = () => {
             {memoizedExpertiseData.map((item) => (
               <motion.div
                 key={item.id}
-                className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-all duration-300"
+                className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer"
                 variants={fadeIn}
                 whileHover={{ y: -5, scale: 1.02 }}
+                onClick={() => setSelectedExpertise(item)}
                 onHoverStart={() => setIsHovered(item.id)}
                 onHoverEnd={() => setIsHovered(null)}
               >
@@ -261,20 +262,19 @@ const About: React.FC = () => {
                 <p className="text-gray-600 dark:text-gray-400">
                   {item.description}
                 </p>
-                <motion.button
-                  onClick={() => setSelectedExpertise(item)}
-                  className="mt-4 flex items-center text-blue-600 dark:text-blue-400 text-sm font-medium hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+                <motion.div
+                  className="mt-4 flex items-center text-blue-600 dark:text-blue-400 text-sm font-medium"
                   initial={{ opacity: 0, x: -10 }}
                   animate={
                     isHovered === item.id
                       ? { opacity: 1, x: 0 }
-                      : { opacity: 0, x: -10 }
+                      : { opacity: 0.8, x: 0 }
                   }
                   transition={{ duration: 0.2 }}
                 >
                   <span>Learn more</span>
                   <FiChevronRight className="ml-1" />
-                </motion.button>
+                </motion.div>
               </motion.div>
             ))}
           </motion.div>
