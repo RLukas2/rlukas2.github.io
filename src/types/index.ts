@@ -1,5 +1,28 @@
 // src/types/index.ts
 
+import { JSX } from "react";
+
+export interface Expertise {
+  id: string;
+  title: string;
+  icon: JSX.Element; // Using JSX.Element for React icons
+  iconBg: string;
+  color: string;
+  description: string;
+}
+
+export interface TabContentData {
+  professional: JSX.Element;
+  education: JSX.Element;
+  personal: JSX.Element;
+}
+
+export interface CoreValue {
+  icon: JSX.Element;
+  title: string;
+  description: string;
+}
+
 export interface Experience {
   id: number;
   company: string;
