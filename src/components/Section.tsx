@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, memo } from "react";
+import { useEffect, useState, memo, useCallback } from "react";
 import { motion, useAnimation } from "framer-motion";
 
 interface SectionProps {
@@ -23,51 +23,41 @@ const Section = memo(function Section({
   children,
   className = "",
 }: SectionProps) {
-  const [isVisible, setIsVisible] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const controls = useAnimation();
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const observerRef = useRef<IntersectionObserver | null>(null);
+  const [hasIntersected, setHasIntersected] = useState(false);
 
-  useEffect(() => {
-    // Create observer only once
-    if (!observerRef.current) {
-      observerRef.current = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) {
-            setIsVisible(true);
-            controls.start("visible");
-            observerRef.current?.unobserve(entry.target);
+  // Use a callback ref to observe the section element
+  const setSectionRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (node && !hasIntersected) {
+        const observer = new IntersectionObserver(
+          ([entry]) => {
+            if (entry.isIntersecting) {
+              setHasIntersected(true);
+              controls.start("visible");
+              observer.disconnect();
+            }
+          },
+          {
+            rootMargin: "50px",
+            threshold: 0.1,
           }
-        },
-        {
-          root: null,
-          rootMargin: "50px", // Start loading slightly before the section is visible
-          threshold: 0.1,
-        }
-      );
-    }
-
-    const currentRef = sectionRef.current;
-    if (currentRef) {
-      observerRef.current.observe(currentRef);
-    }
-
-    return () => {
-      if (currentRef && observerRef.current) {
-        observerRef.current.unobserve(currentRef);
+        );
+        observer.observe(node);
       }
-    };
-  }, [controls]);
+    },
+    [controls, hasIntersected]
+  );
 
+  // Once the section is visible, set isLoaded using requestAnimationFrame
   useEffect(() => {
-    if (isVisible) {
-      // Use requestAnimationFrame for smoother loading
+    if (hasIntersected) {
       requestAnimationFrame(() => {
         setIsLoaded(true);
       });
     }
-  }, [isVisible]);
+  }, [hasIntersected]);
 
   const variants = {
     hidden: { opacity: 0, y: 20 },
@@ -84,7 +74,7 @@ const Section = memo(function Section({
   return (
     <motion.section
       id={id}
-      ref={sectionRef}
+      ref={setSectionRef}
       initial="hidden"
       animate={controls}
       variants={variants}
