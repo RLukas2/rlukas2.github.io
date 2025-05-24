@@ -10,7 +10,7 @@ import {
   FiMail,
   FiSend,
 } from "react-icons/fi";
-import { useEffect, useState, FormEvent } from "react";
+import { useEffect, useState, FormEvent, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 
@@ -25,24 +25,31 @@ const Footer: React.FC = () => {
 
   // Detect scroll position
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      setShowScrollTop(window.scrollY > 500);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setShowScrollTop(window.scrollY > 500);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   // Scroll to top function
-  const scrollToTop = () => {
+  const scrollToTop = useCallback(() => {
     window.scrollTo({
       top: 0,
       behavior: "smooth",
     });
-  };
+  }, []);
 
   // Handle newsletter subscription
-  const handleSubscribe = async (e: FormEvent) => {
+  const handleSubscribe = useCallback(async (e: FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
@@ -60,7 +67,7 @@ const Footer: React.FC = () => {
       // Reset status after 3 seconds
       setTimeout(() => setSubscriptionStatus("idle"), 3000);
     }
-  };
+  }, []);
 
   // Social media links
   const socialLinks = [
