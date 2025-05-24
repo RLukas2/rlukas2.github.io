@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, JSX, useCallback } from "react";
+import { useState, useEffect, JSX, useCallback, useMemo } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -17,7 +17,6 @@ import {
 } from "react-icons/fi";
 import { NavLink } from "@/types";
 import { useTheme } from "next-themes";
-import { usePathname } from "next/navigation";
 
 const Header: React.FC = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -25,52 +24,30 @@ const Header: React.FC = () => {
   const [activeSection, setActiveSection] = useState<string>("home");
   const [mounted, setMounted] = useState<boolean>(false);
   const { theme, setTheme } = useTheme();
-  // const pathname = usePathname();
 
   // Set mounted state to prevent hydration mismatch
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Debounced scroll handler
-  const debounce = <T extends (...args: unknown[]) => void>(
-    func: T,
-    wait: number
-  ) => {
-    let timeout: NodeJS.Timeout;
-    return (...args: Parameters<T>): void => {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => func(...args), wait);
-    };
-  };
-
   // Header scroll effect and active section detection
   useEffect(() => {
-    const handleScroll = (): void => {
-      // Update scrolled state for header styling
-      setIsScrolled(window.scrollY > 20);
+    const sections = document.querySelectorAll("section[id]");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        });
+      },
+      { threshold: 0.4 }
+    );
 
-      // Determine active section for navigation highlighting
-      const sections = document.querySelectorAll("section[id]");
-      const scrollPosition = window.scrollY + 100; // Offset for header height
-
-      sections.forEach((section) => {
-        const sectionId = section.getAttribute("id") || "";
-        const sectionTop = (section as HTMLElement).offsetTop;
-        const sectionHeight = (section as HTMLElement).offsetHeight;
-
-        if (
-          scrollPosition >= sectionTop &&
-          scrollPosition < sectionTop + sectionHeight
-        ) {
-          setActiveSection(sectionId);
-        }
-      });
+    sections.forEach((section) => observer.observe(section));
+    return () => {
+      sections.forEach((section) => observer.unobserve(section));
     };
-
-    const debouncedHandleScroll = debounce(handleScroll, 10);
-    window.addEventListener("scroll", debouncedHandleScroll);
-    return () => window.removeEventListener("scroll", debouncedHandleScroll);
   }, []);
 
   // Menu toggle
@@ -112,34 +89,41 @@ const Header: React.FC = () => {
   };
 
   // Navigation links with icons
-  const navLinks: (NavLink & { icon: JSX.Element })[] = [
-    { name: "Home", href: "/#home", icon: <FiHome className="text-primary" /> },
-    {
-      name: "About",
-      href: "/#about",
-      icon: <FiUser className="text-primary" />,
-    },
-    {
-      name: "Experience",
-      href: "/#experience",
-      icon: <FiBriefcase className="text-primary" />,
-    },
-    {
-      name: "Skills",
-      href: "/#skills",
-      icon: <FiCode className="text-primary" />,
-    },
-    {
-      name: "Projects",
-      href: "/#projects",
-      icon: <FiFolder className="text-primary" />,
-    },
-    {
-      name: "Contact",
-      href: "/#contact",
-      icon: <FiMail className="text-primary" />,
-    },
-  ];
+  const navLinks = useMemo<(NavLink & { icon: JSX.Element })[]>(
+    () => [
+      {
+        name: "Home",
+        href: "/#home",
+        icon: <FiHome className="text-primary" />,
+      },
+      {
+        name: "About",
+        href: "/#about",
+        icon: <FiUser className="text-primary" />,
+      },
+      {
+        name: "Experience",
+        href: "/#experience",
+        icon: <FiBriefcase className="text-primary" />,
+      },
+      {
+        name: "Skills",
+        href: "/#skills",
+        icon: <FiCode className="text-primary" />,
+      },
+      {
+        name: "Projects",
+        href: "/#projects",
+        icon: <FiFolder className="text-primary" />,
+      },
+      {
+        name: "Contact",
+        href: "/#contact",
+        icon: <FiMail className="text-primary" />,
+      },
+    ],
+    []
+  );
 
   // Animation variants
   const mobileMenuVariants = {
@@ -230,12 +214,13 @@ const Header: React.FC = () => {
           : "bg-transparent py-4"
       }`}
     >
-      {/* Progress bar */}
+      {/* Progress bar 
       <div
         className="absolute bottom-0 left-0 h-0.5 bg-gray-200 transition-all duration-300"
         style={{ width: `${scrollProgress}%` }}
         aria-hidden="true"
       />
+      */}
 
       <div className="container mx-auto px-4 flex justify-between items-center">
         {/* Logo */}
