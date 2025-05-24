@@ -227,17 +227,17 @@ export default function PDFViewer({ isOpen, onClose, pdfUrl }: PDFViewerProps) {
                 <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
               </div>
             ) : (
-              <div className="min-h-full w-full flex items-center justify-center">
+              <div className="min-h-full w-full flex items-center">
                 <Document
                   file={pdfUrl}
                   onLoadSuccess={onDocumentLoadSuccess}
                   onLoadError={onDocumentLoadError}
+                  className="flex flex-col items-start"
                   loading={
                     <div className="flex h-full items-center justify-center">
                       <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
                     </div>
                   }
-                  className="flex flex-col items-center"
                 >
                   <div className="relative">
                     <Page
