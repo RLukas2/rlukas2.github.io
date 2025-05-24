@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useRef, useEffect, useMemo, Suspense, lazy } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import {
   FiBookOpen,
@@ -8,15 +8,19 @@ import {
   FiTrendingUp,
   FiChevronRight,
   FiX,
+  FiLoader,
 } from "react-icons/fi";
 import { ExpertiseData, TabContent, CoreValues } from "@/data/about";
+
+// Lazy load the modal content
+const ModalContent = lazy(() => import('./ModalContent'));
 
 const About: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>("professional");
   const [isHovered, setIsHovered] = useState<string | null>(null);
-  const [selectedExpertise, setSelectedExpertise] = useState<
-    (typeof ExpertiseData)[0] | null
-  >(null);
+  const [selectedExpertise, setSelectedExpertise] = useState<typeof ExpertiseData[0] | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const modalRef = useRef<HTMLDivElement>(null);
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
@@ -30,6 +34,60 @@ const About: React.FC = () => {
     // You can add analytics tracking here
     console.log(`Tab changed to: ${activeTab}`);
   }, [activeTab]);
+
+  // Handle escape key press
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && selectedExpertise) {
+        setSelectedExpertise(null);
+      }
+    };
+
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [selectedExpertise]);
+
+  // Handle focus trap in modal
+  useEffect(() => {
+    if (selectedExpertise && modalRef.current) {
+      const focusableElements = modalRef.current.querySelectorAll(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      const firstElement = focusableElements[0] as HTMLElement;
+      const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
+
+      const handleTabKey = (e: KeyboardEvent) => {
+        if (e.key === 'Tab') {
+          if (e.shiftKey) {
+            if (document.activeElement === firstElement) {
+              e.preventDefault();
+              lastElement.focus();
+            }
+          } else {
+            if (document.activeElement === lastElement) {
+              e.preventDefault();
+              firstElement.focus();
+            }
+          }
+        }
+      };
+
+      modalRef.current.addEventListener('keydown', handleTabKey);
+      firstElement.focus();
+
+      return () => {
+        modalRef.current?.removeEventListener('keydown', handleTabKey);
+      };
+    }
+  }, [selectedExpertise]);
+
+  // Handle expertise selection with loading state
+  const handleExpertiseSelect = (expertise: typeof ExpertiseData[0]) => {
+    setIsLoading(true);
+    setSelectedExpertise(expertise);
+    // Simulate loading for better UX
+    setTimeout(() => setIsLoading(false), 300);
+  };
 
   const fadeIn = {
     hidden: { opacity: 0, y: 20 },
@@ -238,12 +296,15 @@ const About: React.FC = () => {
             {memoizedExpertiseData.map((item) => (
               <motion.div
                 key={item.id}
-                className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer"
+                className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer active:scale-95"
                 variants={fadeIn}
                 whileHover={{ y: -5, scale: 1.02 }}
-                onClick={() => setSelectedExpertise(item)}
+                onClick={() => handleExpertiseSelect(item)}
                 onHoverStart={() => setIsHovered(item.id)}
                 onHoverEnd={() => setIsHovered(null)}
+                role="button"
+                tabIndex={0}
+                aria-label={`Learn more about ${item.title}`}
               >
                 <div className="flex items-center mb-4">
                   <motion.div
@@ -281,7 +342,7 @@ const About: React.FC = () => {
         </motion.div>
       </div>
 
-      {/* Expertise Modal */}
+      {/* Enhanced Modal with loading state and accessibility */}
       <AnimatePresence>
         {selectedExpertise && (
           <>
@@ -292,22 +353,26 @@ const About: React.FC = () => {
               animate="visible"
               exit="exit"
               onClick={() => setSelectedExpertise(null)}
+              aria-hidden="true"
             />
             <motion.div
+              ref={modalRef}
               className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white dark:bg-gray-800 rounded-xl shadow-xl z-50 p-6 m-4"
               variants={modalVariants}
               initial="hidden"
               animate="visible"
               exit="exit"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="modal-title"
             >
               <div className="flex justify-between items-start mb-6">
                 <div className="flex items-center">
-                  <div
-                    className={`p-3 ${selectedExpertise.iconBg} rounded-full mr-4`}
-                  >
+                  <div className={`p-3 ${selectedExpertise.iconBg} rounded-full mr-4`}>
                     {selectedExpertise.icon}
                   </div>
-                  <h3
+                  <h3 
+                    id="modal-title"
                     className={`text-2xl font-bold ${selectedExpertise.color}`}
                   >
                     {selectedExpertise.title}
@@ -315,72 +380,25 @@ const About: React.FC = () => {
                 </div>
                 <button
                   onClick={() => setSelectedExpertise(null)}
-                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  aria-label="Close modal"
                 >
                   <FiX className="text-gray-500 dark:text-gray-400" size={24} />
                 </button>
               </div>
 
-              {selectedExpertise.detailedInfo ? (
-                <div className="space-y-6">
-                  <div>
-                    <h4 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">
-                      Technologies
-                    </h4>
-                    <div className="flex flex-wrap gap-2">
-                      {selectedExpertise.detailedInfo.technologies.map(
-                        (tech, index) => (
-                          <span
-                            key={index}
-                            className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-sm"
-                          >
-                            {tech}
-                          </span>
-                        )
-                      )}
-                    </div>
-                  </div>
-
-                  <div>
-                    <h4 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">
-                      Key Skills
-                    </h4>
-                    <ul className="list-disc list-inside space-y-2 text-gray-600 dark:text-gray-400">
-                      {selectedExpertise.detailedInfo.keySkills.map(
-                        (skill, index) => (
-                          <li key={index}>{skill}</li>
-                        )
-                      )}
-                    </ul>
-                  </div>
-
-                  <div>
-                    <h4 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">
-                      Notable Projects
-                    </h4>
-                    <div className="space-y-4">
-                      {selectedExpertise.detailedInfo.projects.map(
-                        (project, index) => (
-                          <div
-                            key={index}
-                            className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg"
-                          >
-                            <h5 className="font-medium text-gray-900 dark:text-white mb-1">
-                              {project.name}
-                            </h5>
-                            <p className="text-gray-600 dark:text-gray-400 text-sm">
-                              {project.description}
-                            </p>
-                          </div>
-                        )
-                      )}
-                    </div>
-                  </div>
+              {isLoading ? (
+                <div className="flex items-center justify-center py-8">
+                  <FiLoader className="animate-spin text-blue-500" size={32} />
                 </div>
               ) : (
-                <p className="text-gray-600 dark:text-gray-400">
-                  {selectedExpertise.description}
-                </p>
+                <Suspense fallback={
+                  <div className="flex items-center justify-center py-8">
+                    <FiLoader className="animate-spin text-blue-500" size={32} />
+                  </div>
+                }>
+                  <ModalContent expertise={selectedExpertise} />
+                </Suspense>
               )}
             </motion.div>
           </>
