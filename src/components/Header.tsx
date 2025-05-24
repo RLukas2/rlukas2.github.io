@@ -222,7 +222,7 @@ const Header: React.FC = () => {
   return (
     <header
       className={`fixed w-full top-0 z-50 transition-all duration-300 ${
-        activeSection === "home"
+        activeSection !== "home"
           ? "bg-gray-900/80 backdrop-blur-md shadow-lg py-2"
           : "bg-transparent py-4"
       }`}
