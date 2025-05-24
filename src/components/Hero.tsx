@@ -19,14 +19,24 @@ import {
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useRef, useState, JSX } from "react";
 import PDFViewer from "./PDFViewer";
+import ErrorFallback from "./ErrorFallback";
+import { ErrorBoundary } from "react-error-boundary";
+
+interface SocialLink {
+  href: string;
+  icon: JSX.Element;
+  label: string;
+}
 
 const Hero: React.FC = () => {
+  const [error, setError] = useState<Error | null>(null);
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1,
   });
+
 
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -102,6 +112,35 @@ const Hero: React.FC = () => {
   };
 
   const [isPDFViewerOpen, setIsPDFViewerOpen] = useState(false);
+
+  const socialLinks: SocialLink[] = [
+    {
+      href: "https://github.com/RLukas2",
+      icon: <FiGithub size={20} />,
+      label: "GitHub",
+    },
+    {
+      href: "https://linkedin.com/in/xbrk",
+      icon: <FiLinkedin size={20} />,
+      label: "LinkedIn",
+    },
+    {
+      href: "mailto:iforgotmyemailwhatcanido@gmail.com",
+      icon: <FiMail size={20} />,
+      label: "Email",
+    },
+  ];
+
+  if (error) {
+    return (
+      <ErrorBoundary
+        FallbackComponent={ErrorFallback}
+        onReset={() => setError(null)}
+      >
+        <ErrorFallback error={error} resetErrorBoundary={() => setError(null)} />
+      </ErrorBoundary>
+    );
+  }
 
   return (
     <section
@@ -222,40 +261,21 @@ const Hero: React.FC = () => {
               role="list"
               aria-label="Social media links"
             >
-              <motion.a
-                href="https://github.com/RLukas2"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-3 rounded-full bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 shadow-md hover:shadow-lg border border-gray-300 dark:border-gray-700 transition-all hover:scale-110 hover:-translate-y-1"
-                aria-label="GitHub"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                role="listitem"
-              >
-                <FiGithub size={20} />
-              </motion.a>
-              <motion.a
-                href="https://linkedin.com/in/xbrk"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-3 rounded-full bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 shadow-md hover:shadow-lg border border-gray-300 dark:border-gray-700 transition-all hover:scale-110 hover:-translate-y-1"
-                aria-label="LinkedIn"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                role="listitem"
-              >
-                <FiLinkedin size={20} />
-              </motion.a>
-              <motion.a
-                href="mailto:iforgotmyemailwhatcanido@gmail.com"
-                className="p-3 rounded-full bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 shadow-md hover:shadow-lg border border-gray-300 dark:border-gray-700 transition-all hover:scale-110 hover:-translate-y-1"
-                aria-label="Email"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                role="listitem"
-              >
-                <FiMail size={20} />
-              </motion.a>
+              {socialLinks.map((social, index) => (
+                <motion.a
+                  key={index}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-3 rounded-full bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 shadow-md hover:shadow-lg border border-gray-300 dark:border-gray-700 transition-all hover:scale-110 hover:-translate-y-1"
+                  aria-label={social.label}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  role="listitem"
+                >
+                  {social.icon}
+                </motion.a>
+              ))}
             </motion.div>
           </motion.div>
 
