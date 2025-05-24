@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useForm } from "react-hook-form";
 import {
@@ -22,12 +22,91 @@ interface FormData {
   message: string;
 }
 
+// Animation variants moved outside component
+const fadeIn = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+    },
+  },
+};
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+// Social links moved outside component
+const socialLinks = [
+  {
+    icon: <FiLinkedin size={20} />,
+    href: "https://linkedin.com/in/xbrk",
+    label: "LinkedIn",
+  },
+  {
+    icon: <FiGithub size={20} />,
+    href: "https://github.com/RLukas2",
+    label: "GitHub",
+  },
+  {
+    icon: <FiFacebook size={20} />,
+    href: "https://fb.com/rickielukas",
+    label: "Facebook",
+  },
+];
+
+// Form validation rules
+const formValidationRules = {
+  name: {
+    required: "Name is required",
+    maxLength: {
+      value: 50,
+      message: "Name cannot exceed 50 characters",
+    },
+  },
+  email: {
+    required: "Email is required",
+    pattern: {
+      value: /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/,
+      message: "Please enter a valid email",
+    },
+  },
+  subject: {
+    required: "Subject is required",
+    maxLength: {
+      value: 100,
+      message: "Subject cannot exceed 100 characters",
+    },
+  },
+  message: {
+    required: "Message is required",
+    minLength: {
+      value: 10,
+      message: "Message should be at least 10 characters",
+    },
+    maxLength: {
+      value: 1000,
+      message: "Message cannot exceed 1000 characters",
+    },
+  },
+};
+
 const Contact: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [submitSuccess, setSubmitSuccess] = useState<boolean | null>(null);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [isVisible, setIsVisible] = useState(false);
+  const [isRateLimited, setIsRateLimited] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
+  const lastSubmissionTime = useRef<number>(0);
 
   const {
     register,
@@ -35,6 +114,32 @@ const Contact: React.FC = () => {
     reset,
     formState: { errors },
   } = useForm<FormData>();
+
+  // Memoize form validation rules
+  const memoizedValidationRules = useMemo(() => formValidationRules, []);
+
+  // Save form data to localStorage
+  const saveFormData = useCallback((data: Partial<FormData>) => {
+    localStorage.setItem('contactFormData', JSON.stringify(data));
+  }, []);
+
+  // Load form data from localStorage
+  useEffect(() => {
+    const savedData = localStorage.getItem('contactFormData');
+    if (savedData) {
+      try {
+        const parsedData = JSON.parse(savedData) as Partial<FormData>;
+        Object.entries(parsedData).forEach(([key, value]) => {
+          const input = document.getElementById(key) as HTMLInputElement;
+          if (input) {
+            input.value = value as string;
+          }
+        });
+      } catch (error) {
+        console.error('Error loading saved form data:', error);
+      }
+    }
+  }, []);
 
   // Intersection Observer for animations
   useEffect(() => {
@@ -47,7 +152,7 @@ const Contact: React.FC = () => {
       { threshold: 0.1 }
     );
 
-    const currentFormRef = formRef.current; // Store the current value of formRef
+    const currentFormRef = formRef.current;
 
     if (currentFormRef) {
       observer.observe(currentFormRef);
@@ -55,14 +160,24 @@ const Contact: React.FC = () => {
 
     return () => {
       if (currentFormRef) {
-        observer.unobserve(currentFormRef); // Use the stored value in cleanup
+        observer.unobserve(currentFormRef);
       }
     };
   }, []);
 
   const onSubmit = async (formData: FormData) => {
+    // Rate limiting check (1 submission per 30 seconds)
+    const now = Date.now();
+    if (now - lastSubmissionTime.current < 30000) {
+      setIsRateLimited(true);
+      setErrorMessage("Please wait 30 seconds before submitting again");
+      return;
+    }
+
     setIsSubmitting(true);
     setErrorMessage("");
+    setIsRateLimited(false);
+    lastSubmissionTime.current = now;
 
     try {
       const response = await fetch("https://formspree.io/f/xgvkblwe", {
@@ -78,6 +193,7 @@ const Contact: React.FC = () => {
       if (response.ok) {
         setSubmitSuccess(true);
         reset();
+        localStorage.removeItem('contactFormData'); // Clear saved form data
         // Reset success message after 5 seconds
         setTimeout(() => {
           setSubmitSuccess(null);
@@ -98,49 +214,21 @@ const Contact: React.FC = () => {
     }
   };
 
-  const fadeIn = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.5,
-      },
-    },
-  };
-
-  const staggerContainer = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const socialLinks = [
-    {
-      icon: <FiLinkedin size={20} />,
-      href: "https://linkedin.com/in/xbrk",
-      label: "LinkedIn",
-    },
-    {
-      icon: <FiGithub size={20} />,
-      href: "https://github.com/RLukas2",
-      label: "GitHub",
-    },
-    {
-      icon: <FiFacebook size={20} />,
-      href: "https://fb.com/rickielukas",
-      label: "Facebook",
-    },
-  ];
+  // Auto-save form data on change
+  const handleFormChange = useCallback((e: React.FormEvent<HTMLFormElement>) => {
+    const formData = new FormData(e.currentTarget);
+    const data: Partial<FormData> = {};
+    formData.forEach((value, key) => {
+      data[key as keyof FormData] = value as string;
+    });
+    saveFormData(data);
+  }, [saveFormData]);
 
   return (
     <section
       id="contact"
       className="py-24 bg-gradient-to-b from-black to-gray-900 relative overflow-hidden"
+      aria-label="Contact Section"
     >
       <div className="container mx-auto px-4">
         <motion.div
@@ -270,7 +358,9 @@ const Contact: React.FC = () => {
               <form
                 ref={formRef}
                 onSubmit={handleSubmit(onSubmit)}
+                onChange={handleFormChange}
                 className="space-y-6"
+                noValidate
               >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
@@ -290,7 +380,9 @@ const Contact: React.FC = () => {
                             : "border-gray-300 dark:border-gray-600"
                         } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
                         placeholder="John Doe"
-                        {...register("name", { required: "Name is required" })}
+                        {...register("name", memoizedValidationRules.name)}
+                        aria-invalid={errors.name ? "true" : "false"}
+                        aria-describedby={errors.name ? "name-error" : undefined}
                       />
                       {errors.name && (
                         <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
@@ -322,13 +414,9 @@ const Contact: React.FC = () => {
                             : "border-gray-300 dark:border-gray-600"
                         } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
                         placeholder="john@example.com"
-                        {...register("email", {
-                          required: "Email is required",
-                          pattern: {
-                            value: /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/,
-                            message: "Please enter a valid email",
-                          },
-                        })}
+                        {...register("email", memoizedValidationRules.email)}
+                        aria-invalid={errors.email ? "true" : "false"}
+                        aria-describedby={errors.email ? "email-error" : undefined}
                       />
                       {errors.email && (
                         <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
@@ -361,9 +449,9 @@ const Contact: React.FC = () => {
                           : "border-gray-300 dark:border-gray-600"
                       } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
                       placeholder="Example Subject"
-                      {...register("subject", {
-                        required: "Subject is required",
-                      })}
+                      {...register("subject", memoizedValidationRules.subject)}
+                      aria-invalid={errors.subject ? "true" : "false"}
+                      aria-describedby={errors.subject ? "subject-error" : undefined}
                     />
                     {errors.subject && (
                       <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
@@ -396,13 +484,9 @@ const Contact: React.FC = () => {
                       } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
                       placeholder="Your message here..."
                       style={{ minHeight: "100px", resize: "vertical" }}
-                      {...register("message", {
-                        required: "Message is required",
-                        minLength: {
-                          value: 10,
-                          message: "Message should be at least 10 characters",
-                        },
-                      })}
+                      {...register("message", memoizedValidationRules.message)}
+                      aria-invalid={errors.message ? "true" : "false"}
+                      aria-describedby={errors.message ? "message-error" : undefined}
                     ></textarea>
                     {errors.message && (
                       <div className="absolute right-3 top-3 text-red-500">
@@ -420,20 +504,23 @@ const Contact: React.FC = () => {
                 <div>
                   <motion.button
                     type="submit"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || isRateLimited}
                     className={`w-full px-6 py-3 rounded-lg font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 ${
-                      isSubmitting
+                      (isSubmitting || isRateLimited)
                         ? "opacity-70 cursor-not-allowed"
                         : "cursor-pointer"
                     }`}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
+                    aria-busy={isSubmitting}
                   >
                     {isSubmitting ? (
                       <div className="flex items-center justify-center space-x-2">
-                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" role="status" aria-label="Loading"></div>
                         <span>Sending...</span>
                       </div>
+                    ) : isRateLimited ? (
+                      <span>Please wait before submitting again</span>
                     ) : (
                       <div className="flex items-center justify-center space-x-2">
                         <IoIosSend className="mx-1" size={25} />
