@@ -20,6 +20,26 @@ export const ExpertiseData: Expertise[] = [
     color: "text-blue-600 dark:text-blue-400",
     description:
       "Experienced in building backend systems using Node.js, NestJS, Express.js, and GraphQL. Focused on developing scalable APIs, microservices, and event-driven applications that can efficiently handle increasing user demands.",
+    detailedInfo: {
+      technologies: ["Node.js", "NestJS", "Express.js", "GraphQL", "TypeScript"],
+      keySkills: [
+        "RESTful API Design",
+        "Microservices Architecture",
+        "Event-Driven Programming",
+        "Authentication & Authorization",
+        "API Documentation"
+      ],
+      projects: [
+        {
+          name: "Orantio",
+          description: "A real-time messaging platform with server-channel hierarchy"
+        },
+        {
+          name: "Skybox",
+          description: "Cloud storage platform with file management and sharing capabilities"
+        }
+      ]
+    }
   },
   {
     id: "database",
@@ -29,6 +49,26 @@ export const ExpertiseData: Expertise[] = [
     color: "text-green-600 dark:text-green-400",
     description:
       "Familiar with MongoDB, and Redis through academic and personal projects. Skilled in designing optimized schemas, creating indexes, and implementing caching to improve data retrieval and application responsiveness.",
+    detailedInfo: {
+      technologies: ["MongoDB", "Redis", "Mongoose", "Indexing", "Caching"],
+      keySkills: [
+        "Database Schema Design",
+        "Query Optimization",
+        "Data Modeling",
+        "Caching Strategies",
+        "Data Migration"
+      ],
+      projects: [
+        {
+          name: "E-commerce Platform",
+          description: "Implemented Redis caching for product catalog and user sessions"
+        },
+        {
+          name: "Social Media API",
+          description: "Designed MongoDB schemas for user profiles and content management"
+        }
+      ]
+    }
   },
   {
     id: "devops",
@@ -38,6 +78,27 @@ export const ExpertiseData: Expertise[] = [
     color: "text-purple-600 dark:text-purple-400",
     description:
       "Knowledgeable in containerization with Docker and basic Kubernetes concepts. Hands-on experience with AWS services such as S3 and Lambda. Interested in automating deployments and managing cloud infrastructure efficiently.",
+    detailedInfo: null, // No detailed info provided for DevOps & Cloud
+    // detailedInfo: {
+    //   technologies: ["Docker", "Kubernetes", "AWS", "CI/CD", "Terraform"],
+    //   keySkills: [
+    //     "Container Orchestration",
+    //     "Cloud Infrastructure",
+    //     "Automated Deployments",
+    //     "Monitoring & Logging",
+    //     "Infrastructure as Code"
+    //   ],
+    //   projects: [
+    //     {
+    //       name: "Microservices Deployment",
+    //       description: "Containerized and deployed microservices using Docker and Kubernetes"
+    //     },
+    //     {
+    //       name: "Cloud Migration",
+    //       description: "Migrated legacy applications to AWS cloud infrastructure"
+    //     }
+    //   ]
+    // }
   },
   {
     id: "architecture",
@@ -47,6 +108,27 @@ export const ExpertiseData: Expertise[] = [
     color: "text-orange-600 dark:text-orange-400",
     description:
       "Developed a strong foundation in designing scalable, maintainable, and fault-tolerant systems through coursework and projects. Comfortable applying architectural patterns and optimizing system performance to meet evolving requirements.",
+    detailedInfo: null, 
+    // detailedInfo: {
+    //   technologies: ["System Design", "Design Patterns", "SOLID Principles", "Clean Architecture"],
+    //   keySkills: [
+    //     "System Design",
+    //     "Performance Optimization",
+    //     "Scalability Planning",
+    //     "Fault Tolerance",
+    //     "Technical Documentation"
+    //   ],
+    //   projects: [
+    //     {
+    //       name: "Distributed System",
+    //       description: "Designed and implemented a fault-tolerant distributed system"
+    //     },
+    //     {
+    //       name: "API Gateway",
+    //       description: "Architected a scalable API gateway with load balancing"
+    //     }
+    //   ]
+    // }
   },
 ];
 

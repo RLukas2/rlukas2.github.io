@@ -2,6 +2,17 @@
 
 import { JSX } from "react";
 
+export interface ProjectInfo {
+  name: string;
+  description: string;
+}
+
+export interface DetailedInfo {
+  technologies: string[];
+  keySkills: string[];
+  projects: ProjectInfo[];
+}
+
 export interface Expertise {
   id: string;
   title: string;
@@ -9,6 +20,7 @@ export interface Expertise {
   iconBg: string;
   color: string;
   description: string;
+  detailedInfo?: DetailedInfo | null;
 }
 
 export interface TabContentData {

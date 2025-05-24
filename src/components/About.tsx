@@ -7,12 +7,16 @@ import {
   FiAward,
   FiTrendingUp,
   FiChevronRight,
+  FiX,
 } from "react-icons/fi";
 import { ExpertiseData, TabContent, CoreValues } from "@/data/about";
 
 const About: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>("professional");
   const [isHovered, setIsHovered] = useState<string | null>(null);
+  const [selectedExpertise, setSelectedExpertise] = useState<
+    (typeof ExpertiseData)[0] | null
+  >(null);
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
@@ -66,6 +70,32 @@ const About: React.FC = () => {
         duration: 0.3,
       },
     },
+  };
+
+  const modalVariants = {
+    hidden: { opacity: 0, scale: 0.8 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: {
+        duration: 0.3,
+        ease: "easeOut",
+      },
+    },
+    exit: {
+      opacity: 0,
+      scale: 0.8,
+      transition: {
+        duration: 0.2,
+        ease: "easeIn",
+      },
+    },
+  };
+
+  const backdropVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1 },
+    exit: { opacity: 0 },
   };
 
   return (
@@ -231,8 +261,9 @@ const About: React.FC = () => {
                 <p className="text-gray-600 dark:text-gray-400">
                   {item.description}
                 </p>
-                <motion.div
-                  className="mt-4 flex items-center text-blue-600 dark:text-blue-400 text-sm font-medium"
+                <motion.button
+                  onClick={() => setSelectedExpertise(item)}
+                  className="mt-4 flex items-center text-blue-600 dark:text-blue-400 text-sm font-medium hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
                   initial={{ opacity: 0, x: -10 }}
                   animate={
                     isHovered === item.id
@@ -243,12 +274,118 @@ const About: React.FC = () => {
                 >
                   <span>Learn more</span>
                   <FiChevronRight className="ml-1" />
-                </motion.div>
+                </motion.button>
               </motion.div>
             ))}
           </motion.div>
         </motion.div>
       </div>
+
+      {/* Expertise Modal */}
+      <AnimatePresence>
+        {selectedExpertise && (
+          <>
+            <motion.div
+              className="fixed inset-0 bg-black/50 z-50"
+              variants={backdropVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              onClick={() => setSelectedExpertise(null)}
+            />
+            <motion.div
+              className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white dark:bg-gray-800 rounded-xl shadow-xl z-50 p-6 m-4"
+              variants={modalVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+            >
+              <div className="flex justify-between items-start mb-6">
+                <div className="flex items-center">
+                  <div
+                    className={`p-3 ${selectedExpertise.iconBg} rounded-full mr-4`}
+                  >
+                    {selectedExpertise.icon}
+                  </div>
+                  <h3
+                    className={`text-2xl font-bold ${selectedExpertise.color}`}
+                  >
+                    {selectedExpertise.title}
+                  </h3>
+                </div>
+                <button
+                  onClick={() => setSelectedExpertise(null)}
+                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+                >
+                  <FiX className="text-gray-500 dark:text-gray-400" size={24} />
+                </button>
+              </div>
+
+              {selectedExpertise.detailedInfo ? (
+                <div className="space-y-6">
+                  <div>
+                    <h4 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">
+                      Technologies
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedExpertise.detailedInfo.technologies.map(
+                        (tech, index) => (
+                          <span
+                            key={index}
+                            className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-sm"
+                          >
+                            {tech}
+                          </span>
+                        )
+                      )}
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">
+                      Key Skills
+                    </h4>
+                    <ul className="list-disc list-inside space-y-2 text-gray-600 dark:text-gray-400">
+                      {selectedExpertise.detailedInfo.keySkills.map(
+                        (skill, index) => (
+                          <li key={index}>{skill}</li>
+                        )
+                      )}
+                    </ul>
+                  </div>
+
+                  <div>
+                    <h4 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">
+                      Notable Projects
+                    </h4>
+                    <div className="space-y-4">
+                      {selectedExpertise.detailedInfo.projects.map(
+                        (project, index) => (
+                          <div
+                            key={index}
+                            className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg"
+                          >
+                            <h5 className="font-medium text-gray-900 dark:text-white mb-1">
+                              {project.name}
+                            </h5>
+                            <p className="text-gray-600 dark:text-gray-400 text-sm">
+                              {project.description}
+                            </p>
+                          </div>
+                        )
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-gray-600 dark:text-gray-400">
+                  {selectedExpertise.description}
+                </p>
+              )}
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </section>
   );
 };
