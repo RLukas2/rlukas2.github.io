@@ -19,7 +19,7 @@ import {
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import Link from "next/link";
-import { useRef, useState, JSX } from "react";
+import { useRef, useState, JSX, useCallback, useMemo } from "react";
 import PDFViewer from "./PDFViewer";
 import ErrorFallback from "./ErrorFallback";
 import { ErrorBoundary } from "react-error-boundary";
@@ -30,13 +30,111 @@ interface SocialLink {
   label: string;
 }
 
+interface TechIcon {
+  name: string;
+  icon: JSX.Element;
+  color: string;
+}
+
+const TECH_ICONS: TechIcon[] = [
+  {
+    name: "React",
+    icon: <SiReact className="text-blue-600" />,
+    color: "bg-blue-100 dark:bg-blue-900/30",
+  },
+  {
+    name: "Node.js",
+    icon: <SiNodedotjs className="text-green-600" />,
+    color: "bg-green-100 dark:bg-green-900/30",
+  },
+  {
+    name: "GraphQL",
+    icon: <SiGraphql className="text-pink-600" />,
+    color: "bg-pink-100 dark:bg-pink-900/30",
+  },
+  {
+    name: "AWS",
+    icon: <SiAmazonwebservices className="text-orange-500" />,
+    color: "bg-orange-100 dark:bg-orange-900/30",
+  },
+  {
+    name: "Docker",
+    icon: <SiDocker className="text-blue-500" />,
+    color: "bg-blue-100 dark:bg-blue-900/30",
+  },
+];
+
+const SOCIAL_LINKS: SocialLink[] = [
+  {
+    href: "https://github.com/RLukas2",
+    icon: <FiGithub size={20} />,
+    label: "GitHub",
+  },
+  {
+    href: "https://linkedin.com/in/xbrk",
+    icon: <FiLinkedin size={20} />,
+    label: "LinkedIn",
+  },
+  {
+    href: "mailto:iforgotmyemailwhatcanido@gmail.com",
+    icon: <FiMail size={20} />,
+    label: "Email",
+  },
+];
+
+const ANIMATION_VARIANTS = {
+  container: {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2,
+      },
+    },
+  },
+  item: {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
+    },
+  },
+  image: {
+    hidden: { opacity: 0, scale: 0.8 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.3 },
+    },
+  },
+};
+
+// Floating orb component
+const FloatingTechOrb = ({
+  className,
+  icon,
+  animateProps,
+}: {
+  className: string;
+  icon: JSX.Element;
+  animateProps: any;
+}) => (
+  <motion.div
+    className={`absolute bg-white dark:bg-gray-800 rounded-full border-2 border-gray-300 dark:border-gray-700 flex items-center justify-center shadow-lg ${className}`}
+    animate={animateProps.animate}
+    transition={animateProps.transition}
+  >
+    {icon}
+  </motion.div>
+);
+
 const Hero: React.FC = () => {
   const [error, setError] = useState<Error | null>(null);
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1,
   });
-
 
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -48,88 +146,59 @@ const Hero: React.FC = () => {
   const y = useTransform(scrollYProgress, [0, 1], [0, 100]);
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
-    },
-  };
-
-  const imageVariants = {
-    hidden: { opacity: 0, scale: 0.8 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.3 },
-    },
-  };
-
-  const techIcons = [
-    {
-      name: "React",
-      icon: <SiReact className="text-blue-600" />,
-      color: "bg-blue-100 dark:bg-blue-900/30",
-    },
-    {
-      name: "Node.js",
-      icon: <SiNodedotjs className="text-green-600" />,
-      color: "bg-green-100 dark:bg-green-900/30",
-    },
-    {
-      name: "GraphQL",
-      icon: <SiGraphql className="text-pink-600" />,
-      color: "bg-pink-100 dark:bg-pink-900/30",
-    },
-    {
-      name: "AWS",
-      icon: <SiAmazonwebservices className="text-orange-500" />,
-      color: "bg-orange-100 dark:bg-orange-900/30",
-    },
-    {
-      name: "Docker",
-      icon: <SiDocker className="text-blue-500" />,
-      color: "bg-blue-100 dark:bg-blue-900/30",
-    },
-  ];
-
-  const scrollToNext = () => {
+  // Memoize scroll handler
+  const scrollToNext = useCallback(() => {
     const aboutSection = document.getElementById("about");
-    if (aboutSection) {
-      aboutSection.scrollIntoView({ behavior: "smooth" });
-    }
-  };
+    aboutSection?.scrollIntoView({ behavior: "smooth" });
+  }, []);
 
   const [isPDFViewerOpen, setIsPDFViewerOpen] = useState(false);
 
-  const socialLinks: SocialLink[] = [
-    {
-      href: "https://github.com/RLukas2",
-      icon: <FiGithub size={20} />,
-      label: "GitHub",
-    },
-    {
-      href: "https://linkedin.com/in/xbrk",
-      icon: <FiLinkedin size={20} />,
-      label: "LinkedIn",
-    },
-    {
-      href: "mailto:iforgotmyemailwhatcanido@gmail.com",
-      icon: <FiMail size={20} />,
-      label: "Email",
-    },
-  ];
+  // Memoize PDF viewer handlers
+  const openPDFViewer = useCallback(() => setIsPDFViewerOpen(true), []);
+  const closePDFViewer = useCallback(() => setIsPDFViewerOpen(false), []);
+  const resetError = useCallback(() => setError(null), []);
+
+  // Memoize floating orbs data to prevent recreation
+  const floatingOrbs = useMemo(
+    () => [
+      {
+        className: "-top-2 -left-2 w-16 h-16",
+        icon: <SiReact className="text-3xl text-blue-600" />,
+        animateProps: {
+          animate: { y: [0, -10, 0], rotate: [0, 5, 0] },
+          transition: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+        },
+      },
+      {
+        className: "top-1/4 -right-4 w-14 h-14",
+        icon: <SiAmazonwebservices className="text-2xl text-yellow-600" />,
+        animateProps: {
+          animate: { y: [0, -15, 0], rotate: [0, -5, 0] },
+          transition: {
+            duration: 5,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 0.8,
+          },
+        },
+      },
+      {
+        className: "bottom-1/10 -left-6 w-12 h-12",
+        icon: <SiGraphql className="text-xl text-pink-600" />,
+        animateProps: {
+          animate: { y: [0, -12, 0], rotate: [0, 5, 0] },
+          transition: {
+            duration: 6,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 1.6,
+          },
+        },
+      },
+    ],
+    []
+  );
 
   if (error) {
     return (
@@ -137,7 +206,10 @@ const Hero: React.FC = () => {
         FallbackComponent={ErrorFallback}
         onReset={() => setError(null)}
       >
-        <ErrorFallback error={error} resetErrorBoundary={() => setError(null)} />
+        <ErrorFallback
+          error={error}
+          resetErrorBoundary={() => setError(null)}
+        />
       </ErrorBoundary>
     );
   }
@@ -149,19 +221,19 @@ const Hero: React.FC = () => {
       className="min-h-screen py-20 flex flex-col justify-center relative overflow-hidden"
       aria-label="Hero section"
     >
-      {/* Improved background with better contrast for light mode */}
+      {/* Background with parallax */}
       <motion.div
         className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50/30 to-white dark:from-gray-900 dark:via-blue-900/10 dark:to-gray-800 -z-10"
         style={{ y, opacity }}
       />
 
-      {/* Subtle grid pattern overlay with better visibility in light mode */}
+      {/* Grid Pattern Overlay */}
       <div className="absolute inset-0 bg-grid-pattern opacity-[0.03] dark:opacity-[0.03] -z-10" />
 
       <div className="container mx-auto px-4 py-12">
         <motion.div
           ref={ref}
-          variants={containerVariants}
+          variants={ANIMATION_VARIANTS.container}
           initial="hidden"
           animate={inView ? "visible" : "hidden"}
           className="flex flex-col lg:flex-row items-center justify-between gap-10 lg:gap-16"
@@ -169,7 +241,7 @@ const Hero: React.FC = () => {
           {/* Text Content - Enhanced with better contrast for light mode */}
           <motion.div className="lg:w-1/2 text-center lg:text-left z-10">
             <motion.span
-              variants={itemVariants}
+              variants={ANIMATION_VARIANTS.item}
               className="inline-block px-4 py-1.5 mb-4 text-sm font-medium bg-blue-600 text-white rounded-full shadow-sm"
               role="text"
               aria-label="Role: Backend Engineer"
@@ -178,28 +250,28 @@ const Hero: React.FC = () => {
             </motion.span>
 
             <motion.h3
-              variants={itemVariants}
+              variants={ANIMATION_VARIANTS.item}
               className="text-xl mb-3 text-blue-600 dark:text-blue-400 font-medium tracking-wide"
             >
               Hello, I&apos;m
             </motion.h3>
 
             <motion.h1
-              variants={itemVariants}
+              variants={ANIMATION_VARIANTS.item}
               className="text-5xl md:text-6xl font-bold mb-4 text-gray-900 dark:text-white tracking-tight"
             >
               Ngô Hoàng Tuấn
             </motion.h1>
 
             <motion.h2
-              variants={itemVariants}
+              variants={ANIMATION_VARIANTS.item}
               className="text-2xl text-gray-800 dark:text-gray-300 mb-6 font-semibold"
             >
               Aspiring Backend Developer
             </motion.h2>
 
             <motion.p
-              variants={itemVariants}
+              variants={ANIMATION_VARIANTS.item}
               className="text-lg text-gray-700 dark:text-gray-400 mb-8 max-w-xl mx-auto lg:mx-0 leading-relaxed"
             >
               I&apos;m a third-year Computer Science student at HCMUS with
@@ -209,14 +281,14 @@ const Hero: React.FC = () => {
               deploying cloud-based solutions using AWS.
             </motion.p>
 
-            {/* Enhanced Technologies Pills with Icons - Improved contrast */}
+            {/* Technologies Pills with Icons */}
             <motion.div
-              variants={itemVariants}
+              variants={ANIMATION_VARIANTS.item}
               className="flex flex-wrap gap-3 mb-8 justify-center lg:justify-start"
               role="list"
               aria-label="Technologies I work with"
             >
-              {techIcons.map((tech, index) => (
+              {TECH_ICONS.map((tech, index) => (
                 <motion.span
                   key={index}
                   className={`px-3 py-1.5 flex items-center gap-2 text-sm ${tech.color} text-gray-800 dark:text-gray-200 rounded-full shadow-sm hover:shadow transition-all hover:-translate-y-1 border border-gray-300 dark:border-gray-700`}
@@ -230,9 +302,9 @@ const Hero: React.FC = () => {
               ))}
             </motion.div>
 
-            {/* Enhanced CTA Buttons with better contrast */}
+            {/* CTA Buttons */}
             <motion.div
-              variants={itemVariants}
+              variants={ANIMATION_VARIANTS.item}
               className="flex flex-wrap gap-4 justify-center lg:justify-start mb-8"
             >
               <Link
@@ -254,14 +326,14 @@ const Hero: React.FC = () => {
               </button>
             </motion.div>
 
-            {/* Enhanced Social Icons with better visibility */}
+            {/* Social Icons */}
             <motion.div
-              variants={itemVariants}
+              variants={ANIMATION_VARIANTS.item}
               className="flex gap-4 justify-center lg:justify-start"
               role="list"
               aria-label="Social media links"
             >
-              {socialLinks.map((social, index) => (
+              {SOCIAL_LINKS.map((social, index) => (
                 <motion.a
                   key={index}
                   href={social.href}
@@ -279,13 +351,13 @@ const Hero: React.FC = () => {
             </motion.div>
           </motion.div>
 
-          {/* Enhanced Profile Image with better contrasting elements */}
+          {/* Profile Image */}
           <motion.div
-            variants={imageVariants}
+            variants={ANIMATION_VARIANTS.image}
             className="lg:w-1/2 flex justify-center"
           >
             <div className="relative w-72 h-72 md:w-96 md:h-96">
-              {/* Enhanced glow effects */}
+              {/* Glow effects */}
               <motion.div
                 className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 opacity-30 blur-3xl"
                 animate={{
@@ -312,7 +384,7 @@ const Hero: React.FC = () => {
                 }}
               />
 
-              {/* Improved profile image with border */}
+              {/* Profile image */}
               <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-white dark:border-gray-800 shadow-xl select-none pointer-events-none">
                 <Image
                   src="/images/profile.jpg"
@@ -325,58 +397,20 @@ const Hero: React.FC = () => {
                 />
               </div>
 
-              {/* Tech orbs floating around the profile with better borders */}
-              <motion.div
-                className="absolute -top-2 -left-2 w-16 h-16 bg-white dark:bg-gray-800 rounded-full border-2 border-gray-300 dark:border-gray-700 flex items-center justify-center shadow-lg"
-                animate={{
-                  y: [0, -10, 0],
-                  rotate: [0, 5, 0],
-                }}
-                transition={{
-                  duration: 4,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-              >
-                <SiReact className="text-3xl text-blue-600" />
-              </motion.div>
-
-              <motion.div
-                className="absolute top-1/4 -right-4 w-14 h-14 bg-white dark:bg-gray-800 rounded-full border-2 border-gray-300 dark:border-gray-700 flex items-center justify-center shadow-lg"
-                animate={{
-                  y: [0, -15, 0],
-                  rotate: [0, -5, 0],
-                }}
-                transition={{
-                  duration: 5,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: 0.8,
-                }}
-              >
-                <SiAmazonwebservices className="text-2xl text-yellow-600" />
-              </motion.div>
-
-              <motion.div
-                className="absolute bottom-1/10 -left-6 w-12 h-12 bg-white dark:bg-gray-800 rounded-full border-2 border-gray-300 dark:border-gray-700 flex items-center justify-center shadow-lg"
-                animate={{
-                  y: [0, -12, 0],
-                  rotate: [0, 5, 0],
-                }}
-                transition={{
-                  duration: 6,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: 1.6,
-                }}
-              >
-                <SiGraphql className="text-xl text-pink-600" />
-              </motion.div>
+              {/* Floating Orbs */}
+              {floatingOrbs.map((orb, index) => (
+                <FloatingTechOrb
+                  key={index}
+                  className={orb.className}
+                  icon={orb.icon}
+                  animateProps={orb.animateProps}
+                />
+              ))}
             </div>
           </motion.div>
         </motion.div>
 
-        {/* Scroll indicator with better contrast */}
+        {/* Scroll indicator */}
         <motion.button
           className="absolute bottom-2 lg:bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center cursor-pointer"
           onClick={scrollToNext}
@@ -399,7 +433,7 @@ const Hero: React.FC = () => {
 
       <PDFViewer
         isOpen={isPDFViewerOpen}
-        onClose={() => setIsPDFViewerOpen(false)}
+        onClose={closePDFViewer}
         pdfUrl="/resume.pdf"
       />
 
