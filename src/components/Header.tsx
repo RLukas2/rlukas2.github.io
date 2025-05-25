@@ -216,7 +216,7 @@ const Header: React.FC = () => {
           });
         }
       }
-    }, 300); // Match this with your menu close animation duration
+    }, 100); // Match this with your menu close animation duration
   };
 
   return (
