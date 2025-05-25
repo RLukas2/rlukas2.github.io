@@ -11,6 +11,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Providers } from "./providers";
 import ErrorFallback from "@/components/ErrorFallback";
+import { desc } from "framer-motion/client";
 
 // Define metadata for better SEO
 export const metadata: Metadata = {
@@ -20,10 +21,20 @@ export const metadata: Metadata = {
     default: "Ngô Hoàng Tuấn | Portfolio",
   },
   description:
-    "Backend Engineer specializing in scalable microservices, Node.js, NestJS, GraphQL, and cloud infrastructure with AWS.",
+    "Rickie Lukas (Ngô Hoàng Tuấn) - Student, Backend Developer specializing in scalable microservices, Node.js, NestJS, GraphQL, and cloud infrastructure with AWS.",
   keywords: [
+    // Name variations
+    "rlukas",
     "rlukas2",
+    "rickie lukas",
+    "lukas",
+    "rickie",
+    "ngo hoang tuan", // Without diacritics
     "ngô hoàng tuấn",
+    "hoang tuan ngo",
+    "xborickie",
+    "xbrk",
+    // Professional roles and skills
     "software engineer",
     "backend developer",
     "node.js",
@@ -34,6 +45,10 @@ export const metadata: Metadata = {
     "web3",
     "typescript",
     "cloud architecture",
+    // Personal branding
+    "portfolio",
+    "personal website",
+    "software developer portfolio",
   ],
   authors: [{ name: "Ngo Hoang Tuan" }],
   creator: "Ngo Hoang Tuan",
@@ -43,10 +58,10 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://rlukas2.github.com",
+    url: "https://rlukas2.github.io",
     title: "Ngo Hoang Tuan | Portfolio",
     description:
-      "Backend Engineer with expertise in Node.js, NestJS, GraphQL, and microservices architecture",
+      "Student, Backend Developer with expertise in Node.js, NestJS, GraphQL, and microservices architecture",
     siteName: "Ngo Hoang Tuan Portfolio",
     images: [
       {
@@ -61,7 +76,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Ngo Hoang Tuan | Portfolio",
     description:
-      "Backend Engineer with expertise in Node.js, NestJS, GraphQL, and microservices architecture",
+      "Student, Backend Developer with expertise in Node.js, NestJS, GraphQL, and microservices architecture",
     images: ["/og-image.jpg"],
     creator: "@rickielukas",
   },
@@ -93,6 +108,37 @@ export const viewport: Viewport = {
   userScalable: true,
 };
 
+// Define the JSON-LD structured data for SEO
+export const JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: "Ngo Hoang Tuan",
+  alternateName: "Rickie Lukas",
+  url: "https://rlukas2.github.io",
+  description:
+    "Rickie Lukas (Ngô Hoàng Tuấn) is a Backend Engineer specializing in scalable microservices, Node.js, NestJS, GraphQL, and cloud infrastructure with AWS.",
+  sameAs: [
+    "https://github.com/rlukas2",
+    "https://twitter.com/rickielukas",
+    "https://linkedin.com/in/xbrk",
+  ],
+  jobTitle: "Backend Engineer",
+  worksFor: {
+    "@type": "Organization",
+    name: "Freelance",
+  },
+  knowsAbout: [
+    "Node.js",
+    "NestJS",
+    "GraphQL",
+    "Microservices",
+    "AWS",
+    "Web3",
+    "TypeScript",
+  ],
+};
+
+// The root layout component
 export default function RootLayout({
   children,
 }: {
@@ -121,7 +167,15 @@ export default function RootLayout({
           name="apple-mobile-web-app-title"
           content="Ngo Hoang Tuan Portfolio"
         />
+        <script
+          type="application/ld+json"
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(JSON_LD),
+          }}
+        />
       </head>
+
       <body className="text-foreground bg-background font-sans antialiased flex flex-col min-h-screen">
         <ErrorBoundary FallbackComponent={ErrorFallback}>
           <Providers>
