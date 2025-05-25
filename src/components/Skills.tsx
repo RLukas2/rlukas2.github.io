@@ -222,11 +222,11 @@ const Skills: React.FC = () => {
 
     // Search filter with multiple criteria
     if (searchQuery) {
-      const query = searchQuery.toLowerCase();
+      const query = searchQuery.toLowerCase().trim();
       filtered = filtered.filter(
         (skill) =>
           skill.name.toLowerCase().includes(query) ||
-          skill.category.toLowerCase().includes(query)
+          skill.category.toLowerCase() === query
       );
     }
 

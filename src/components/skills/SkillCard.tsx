@@ -32,8 +32,11 @@ const SkillCard: React.FC<SkillCardProps> = ({
     onMouseEnter={onHoverStart}
     onMouseLeave={onHoverEnd}
     onClick={onClick}
-    whileHover={{ y: -6, scale: 1.02 }}
-    whileTap={{ scale: 0.98 }}
+    whileHover={{
+      y: -8,
+      scale: 1.05,
+      transition: { duration: 0.2 },
+    }}
     role="button"
     tabIndex={0}
     aria-label={`View details for ${skill.name}`}
@@ -45,18 +48,16 @@ const SkillCard: React.FC<SkillCardProps> = ({
     }}
   >
     <motion.div
-      className="mb-4 flex items-center justify-center"
-      whileHover={{ scale: 1.1, rotate: 5 }}
-      transition={{ duration: 0.2 }}
+      className="mb-4 transform transition-transform duration-300"
+      whileHover={{ rotate: 360 }}
+      transition={{ duration: 0.5 }}
     >
       {skill.iconComponent}
     </motion.div>
     <h3 className="font-semibold text-gray-800 dark:text-gray-200 text-sm">
       {skill.name}
     </h3>
-    {skill.proficiency && (
-      <ProficiencyIndicator level={skill.proficiency} />
-    )}
+    {skill.proficiency && <ProficiencyIndicator level={skill.proficiency} />}
   </motion.div>
 );
 
