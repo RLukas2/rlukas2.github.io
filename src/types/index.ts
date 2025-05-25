@@ -2,15 +2,11 @@
 
 import { JSX } from "react";
 
-export interface ProjectInfo {
-  name: string;
-  description: string;
-}
-
-export interface DetailedInfo {
-  technologies: string[];
-  keySkills: string[];
-  projects: ProjectInfo[];
+// Section: About
+export interface TabContentData {
+  professional: JSX.Element;
+  education: JSX.Element;
+  personal: JSX.Element;
 }
 
 export interface Expertise {
@@ -23,18 +19,13 @@ export interface Expertise {
   detailedInfo?: DetailedInfo | null;
 }
 
-export interface TabContentData {
-  professional: JSX.Element;
-  education: JSX.Element;
-  personal: JSX.Element;
-}
-
 export interface CoreValue {
   icon: JSX.Element;
   title: string;
   description: string;
 }
 
+// Section: Experience
 export interface Experience {
   id: number;
   company: string;
@@ -45,6 +36,7 @@ export interface Experience {
   technologies: string[];
 }
 
+// Section: Projects
 export interface Project {
   id: number;
   title: string;
@@ -60,6 +52,24 @@ export interface Project {
   estimatedTime?: string;
 }
 
+export interface ProjectInfo {
+  name: string;
+  description: string;
+}
+
+export interface DetailedInfo {
+  technologies: string[];
+  keySkills: string[];
+  projects: ProjectInfo[];
+}
+
+// Section: Skills
+export interface SkillCategory {
+  id: string;
+  name: string;
+  icon: React.ReactNode;
+  description: string;
+}
 export interface Skill {
   id: number;
   name: string;
@@ -69,6 +79,12 @@ export interface Skill {
   description?: string;
 }
 
+export interface SkillWithIcon extends Skill {
+  iconComponent: React.ReactNode;
+  category: "frontend" | "backend" | "database" | "devops" | "other";
+}
+
+// Section: Navigation (Header/Footer)
 export interface NavLink {
   name: string;
   href: string;
