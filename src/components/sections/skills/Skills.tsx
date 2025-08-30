@@ -13,7 +13,6 @@ import {
   FiX,
 } from "react-icons/fi";
 
-
 import { skills as skillsData } from "@/data/skills";
 import { SkillWithIcon } from "@/types";
 import { SKILL_CATEGORIES, SKILL_ICON_MAP } from "@/lib/skills-config";
@@ -23,6 +22,137 @@ import SkillCard from "./SkillCard";
 import SkillModal from "./SkillModal";
 
 const { container, item, modal, section, skill } = SKILL_ANIMATION_VARIANTS;
+
+// Extract search component for better organization
+const SearchBar: React.FC<{
+  searchQuery: string;
+  onSearchChange: (value: string) => void;
+  onClear: () => void;
+}> = React.memo(({ searchQuery, onSearchChange, onClear }) => (
+  <motion.div
+    className="max-w-md mx-auto mb-8"
+    variants={item}
+  >
+    <div className="relative">
+      <input
+        type="text"
+        value={searchQuery}
+        onChange={(e) => onSearchChange(e.target.value)}
+        placeholder="Search skills..."
+        className="w-full px-4 py-3 pl-12 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+        aria-label="Search skills by name, category, or description"
+        aria-describedby="search-description"
+      />
+      <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+      {searchQuery && (
+        <button
+          onClick={onClear}
+          className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+          aria-label="Clear search query"
+        >
+          <FiX />
+        </button>
+      )}
+    </div>
+    <div id="search-description" className="sr-only">
+      Search through all skills by name, category, or description
+    </div>
+  </motion.div>
+));
+
+// Extract skills grid component
+const SkillsGrid: React.FC<{
+  skills: SkillWithIcon[];
+  onSkillClick: (skill: SkillWithIcon) => void;
+  hoveredSkill: number | null;
+  onHoverStart: (index: number) => void;
+  onHoverEnd: () => void;
+  containerRef: React.RefObject<HTMLDivElement | null>;
+}> = React.memo(({ 
+  skills, 
+  onSkillClick, 
+  hoveredSkill, 
+  onHoverStart, 
+  onHoverEnd, 
+  containerRef 
+}) => (
+  <div className="relative min-h-[400px]" ref={containerRef}>
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={`skills-${skills.length}`}
+        className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 lg:gap-6"
+        variants={container}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+      >
+        {skills.length > 0 ? (
+          skills.map((skill, index) => (
+            <SkillCard
+              key={`${skill.name}-${skill.category}`}
+              skill={skill}
+              onClick={() => onSkillClick(skill)}
+              isHovered={hoveredSkill === index}
+              onHoverStart={() => onHoverStart(index)}
+              onHoverEnd={onHoverEnd}
+              variants={skill}
+            />
+          ))
+        ) : (
+          <motion.div
+            className="col-span-full text-center py-16 text-gray-500 dark:text-gray-400"
+            variants={item}
+            initial="hidden"
+            animate="visible"
+          >
+            <div className="text-5xl mb-4 opacity-30 flex justify-center">
+              <FiCode />
+            </div>
+            <p>No skills found matching your search.</p>
+            <p className="text-sm mt-2">Try adjusting your search terms or category filter.</p>
+          </motion.div>
+        )}
+      </motion.div>
+    </AnimatePresence>
+  </div>
+));
+
+// Extract section header component
+const SectionHeader: React.FC<{
+  activeCategory: string;
+}> = React.memo(({ activeCategory }) => {
+  const categoryInfo = useMemo(() => 
+    SKILL_CATEGORIES.find((cat) => cat.id === activeCategory), 
+    [activeCategory]
+  );
+
+  return (
+    <motion.div
+      variants={item}
+      className="text-center mb-16"
+    >
+      <span className="inline-block px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-sm font-medium rounded-full mb-3">
+        My Expertise
+      </span>
+      <motion.h2
+        className="text-5xl font-bold text-gray-900 dark:text-white mb-4"
+        variants={item}
+      >
+        Technical Skills
+      </motion.h2>
+      <motion.div
+        className="h-1 w-20 bg-blue-500 mx-auto mb-6"
+        variants={item}
+      />
+      <motion.p
+        className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto"
+        variants={item}
+      >
+        {categoryInfo?.description}
+      </motion.p>
+    </motion.div>
+  );
+});
 
 const Skills: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState<string>("all");
@@ -72,9 +202,13 @@ const Skills: React.FC = () => {
     return filtered;
   }, [processedSkills, activeCategory, searchQuery]);
 
-  // Debounced search handler
-  const debouncedSetSearchQuery = useCallback((value: string) => {
+  // Optimized search handlers
+  const handleSearchChange = useCallback((value: string) => {
     setSearchQuery(value);
+  }, []);
+
+  const handleClearSearch = useCallback(() => {
+    setSearchQuery("");
   }, []);
 
   // Keyboard navigation for modal
@@ -105,6 +239,22 @@ const Skills: React.FC = () => {
     setSelectedSkill(null);
   }, []);
 
+  const handleCategoryChange = useCallback((categoryId: string) => {
+    setActiveCategory(categoryId);
+    // Clear search when changing categories for better UX
+    if (searchQuery) {
+      setSearchQuery("");
+    }
+  }, [searchQuery]);
+
+  const handleHoverStart = useCallback((index: number) => {
+    setHoveredSkill(index);
+  }, []);
+
+  const handleHoverEnd = useCallback(() => {
+    setHoveredSkill(null);
+  }, []);
+
   return (
     <section
       id="skills"
@@ -120,57 +270,14 @@ const Skills: React.FC = () => {
           className="max-w-6xl mx-auto"
         >
           {/* Section Header */}
-          <motion.div
-            variants={item}
-            className="text-center mb-16"
-          >
-            <span className="inline-block px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-sm font-medium rounded-full mb-3">
-              My Expertise
-            </span>
-            <motion.h2
-              className="text-5xl font-bold text-gray-900 dark:text-white mb-4"
-              variants={item}
-            >
-              Technical Skills
-            </motion.h2>
-            <motion.div
-              className="h-1 w-20 bg-blue-500 mx-auto mb-6"
-              variants={item}
-            />
-            <motion.p
-              className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto"
-              variants={item}
-            >
-              {SKILL_CATEGORIES.find((cat) => cat.id === activeCategory)?.description}
-            </motion.p>
-          </motion.div>
+          <SectionHeader activeCategory={activeCategory} />
 
           {/* Search Bar */}
-          <motion.div
-            className="max-w-md mx-auto mb-8"
-            variants={item}
-          >
-            <div className="relative">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => debouncedSetSearchQuery(e.target.value)}
-                placeholder="Search skills..."
-                className="w-full px-4 py-3 pl-12 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
-                aria-label="Search skills"
-              />
-              <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
-              {searchQuery && (
-                <button
-                  onClick={() => setSearchQuery("")}
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                  aria-label="Clear search"
-                >
-                  <FiX />
-                </button>
-              )}
-            </div>
-          </motion.div>
+          <SearchBar
+            searchQuery={searchQuery}
+            onSearchChange={handleSearchChange}
+            onClear={handleClearSearch}
+          />
 
           {/* Category Filters */}
           <motion.div
@@ -182,48 +289,20 @@ const Skills: React.FC = () => {
                 key={category.id}
                 category={category}
                 isActive={activeCategory === category.id}
-                onClick={() => setActiveCategory(category.id)}
+                onClick={() => handleCategoryChange(category.id)}
               />
             ))}
           </motion.div>
 
           {/* Skills Grid */}
-          <div className="relative min-h-[400px]" ref={containerRef}>
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeCategory}
-                className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 lg:gap-6"
-                variants={container}
-                initial="hidden"
-                animate="visible"
-                exit="exit"
-              >
-                {filteredSkills.length > 0 ? (
-                  filteredSkills.map((skill, index) => (
-                    <SkillCard
-                      key={skill.name}
-                      skill={skill}
-                      onClick={() => handleSkillClick(skill)}
-                      isHovered={hoveredSkill === index}
-                      onHoverStart={() => setHoveredSkill(index)}
-                      onHoverEnd={() => setHoveredSkill(null)}
-                      variants={skill}
-                    />
-                  ))
-                ) : (
-                  <motion.div
-                    className="col-span-full text-center py-16 text-gray-500 dark:text-gray-400"
-                    variants={item}
-                  >
-                    <div className="text-5xl mb-4 opacity-30 flex justify-center">
-                      <FiCode />
-                    </div>
-                    <p>No skills found matching your search.</p>
-                  </motion.div>
-                )}
-              </motion.div>
-            </AnimatePresence>
-          </div>
+          <SkillsGrid
+            skills={filteredSkills}
+            onSkillClick={handleSkillClick}
+            hoveredSkill={hoveredSkill}
+            onHoverStart={handleHoverStart}
+            onHoverEnd={handleHoverEnd}
+            containerRef={containerRef}
+          />
         </motion.div>
       </div>
 
@@ -232,7 +311,7 @@ const Skills: React.FC = () => {
         {selectedSkill && (
           <SkillModal
             skill={selectedSkill}
-            onClose={() => setSelectedSkill(null)}
+            onClose={handleCloseModal}
             variants={modal}
           />
         )}

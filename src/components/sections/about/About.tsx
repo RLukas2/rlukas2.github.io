@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useMemo, Suspense, lazy } from "react";
+import { useState, useRef, useEffect, useMemo, Suspense, lazy, useCallback } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import {
   FiBookOpen,
@@ -20,6 +20,29 @@ const { fadeIn, staggerContainer, tabVariants, modalVariants, backdropVariants }
 // Lazy load the modal content
 const ModalContent = lazy(() => import('./ModalContent'));
 
+// Extract tab configuration
+const TAB_CONFIG = [
+  {
+    id: "professional",
+    label: "Professional",
+    icon: <FiTrendingUp className="mr-2" />,
+  },
+  {
+    id: "education",
+    label: "Education",
+    icon: <FiBookOpen className="mr-2" />,
+  },
+  {
+    id: "personal",
+    label: "Personal",
+    icon: <FiAward className="mr-2" />,
+  },
+] as const;
+
+// Extract common class combinations
+const CARD_CLASSES = "bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-all duration-300";
+const BUTTON_BASE_CLASSES = "flex items-center px-4 py-2 text-sm font-medium rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-blue-500";
+
 const About: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>("professional");
   const [isHovered, setIsHovered] = useState<string | null>(null);
@@ -33,6 +56,30 @@ const About: React.FC = () => {
   const memoizedExpertiseData = useMemo(() => ExpertiseData, []);
   const memoizedCoreValues = useMemo(() => CoreValues, []);
   const memoizedTabContent = useMemo(() => TabContent, []);
+
+  // Memoize event handlers to prevent unnecessary re-renders
+  const handleTabChange = useCallback((tabId: string) => {
+    setActiveTab(tabId);
+  }, []);
+
+  const handleExpertiseSelect = useCallback((expertise: typeof ExpertiseData[0]) => {
+    setIsLoading(true);
+    setSelectedExpertise(expertise);
+    // Simulate loading for better UX
+    setTimeout(() => setIsLoading(false), 300);
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    setSelectedExpertise(null);
+  }, []);
+
+  const handleHoverStart = useCallback((itemId: string) => {
+    setIsHovered(itemId);
+  }, []);
+
+  const handleHoverEnd = useCallback(() => {
+    setIsHovered(null);
+  }, []);
 
   // Track tab changes for analytics
   useEffect(() => {
@@ -86,16 +133,6 @@ const About: React.FC = () => {
     }
   }, [selectedExpertise]);
 
-  // Handle expertise selection with loading state
-  const handleExpertiseSelect = (expertise: typeof ExpertiseData[0]) => {
-    setIsLoading(true);
-    setSelectedExpertise(expertise);
-    // Simulate loading for better UX
-    setTimeout(() => setIsLoading(false), 300);
-  };
-
-
-
   return (
     <section
       id="about"
@@ -126,33 +163,17 @@ const About: React.FC = () => {
             />
           </motion.div>
 
-          {/* Enhanced Tab Navigation with better animations */}
+          {/* Tab Navigation */}
           <motion.div className="flex justify-center mb-8" variants={fadeIn}>
             <div className="inline-flex bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
-              {[
-                {
-                  id: "professional",
-                  label: "Professional",
-                  icon: <FiTrendingUp className="mr-2" />,
-                },
-                {
-                  id: "education",
-                  label: "Education",
-                  icon: <FiBookOpen className="mr-2" />,
-                },
-                {
-                  id: "personal",
-                  label: "Personal",
-                  icon: <FiAward className="mr-2" />,
-                },
-              ].map((tab) => (
+              {TAB_CONFIG.map((tab) => (
                 <motion.button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center px-4 py-2 text-sm font-medium rounded-md transition-all ${activeTab === tab.id
+                  onClick={() => handleTabChange(tab.id)}
+                  className={`${BUTTON_BASE_CLASSES} ${activeTab === tab.id
                       ? "bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm"
                       : "text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
-                    } focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                    }`}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   aria-selected={activeTab === tab.id}
@@ -166,7 +187,7 @@ const About: React.FC = () => {
             </div>
           </motion.div>
 
-          {/* Enhanced Tab Content with smooth transitions */}
+          {/* Tab Content */}
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
@@ -183,7 +204,7 @@ const About: React.FC = () => {
             </motion.div>
           </AnimatePresence>
 
-          {/* Enhanced Core Values Section with better animations */}
+          {/* Core Values Section */}
           <motion.div variants={fadeIn} className="mb-16">
             <h3 className="text-2xl font-bold text-center mb-8 text-gray-900 dark:text-white">
               Core Values
@@ -192,11 +213,11 @@ const About: React.FC = () => {
               {memoizedCoreValues.map((value, index) => (
                 <motion.div
                   key={index}
-                  className="bg-white dark:bg-gray-800 p-6 rounded-lg text-center shadow-sm hover:shadow-md transition-all duration-300"
+                  className={CARD_CLASSES}
                   variants={fadeIn}
                   whileHover={{ y: -5, scale: 1.02 }}
-                  onHoverStart={() => setIsHovered(value.title)}
-                  onHoverEnd={() => setIsHovered(null)}
+                  onHoverStart={() => handleHoverStart(value.title)}
+                  onHoverEnd={handleHoverEnd}
                 >
                   <motion.div
                     className="inline-flex items-center justify-center w-12 h-12 mb-4 bg-blue-100 dark:bg-blue-900/30 rounded-full"
@@ -220,7 +241,7 @@ const About: React.FC = () => {
             </div>
           </motion.div>
 
-          {/* Enhanced Key Expertise Areas with better animations */}
+          {/* Key Expertise Areas */}
           <motion.h3
             className="text-2xl font-bold text-center mb-8 text-gray-900 dark:text-white"
             variants={fadeIn}
@@ -235,12 +256,12 @@ const About: React.FC = () => {
             {memoizedExpertiseData.map((item) => (
               <motion.div
                 key={item.id}
-                className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer active:scale-95"
+                className={`${CARD_CLASSES} cursor-pointer active:scale-95`}
                 variants={fadeIn}
                 whileHover={{ y: -5, scale: 1.02 }}
                 onClick={() => handleExpertiseSelect(item)}
-                onHoverStart={() => setIsHovered(item.id)}
-                onHoverEnd={() => setIsHovered(null)}
+                onHoverStart={() => handleHoverStart(item.id)}
+                onHoverEnd={handleHoverEnd}
                 role="button"
                 tabIndex={0}
                 aria-label={`Learn more about ${item.title}`}
@@ -281,7 +302,7 @@ const About: React.FC = () => {
         </motion.div>
       </div>
 
-      {/* Enhanced Modal with loading state and accessibility */}
+      {/* Modal*/}
       <AnimatePresence>
         {selectedExpertise && (
           <>
@@ -291,7 +312,7 @@ const About: React.FC = () => {
               initial="hidden"
               animate="visible"
               exit="exit"
-              onClick={() => setSelectedExpertise(null)}
+              onClick={handleCloseModal}
               aria-hidden="true"
             />
             <motion.div
@@ -318,7 +339,7 @@ const About: React.FC = () => {
                   </h3>
                 </div>
                 <button
-                  onClick={() => setSelectedExpertise(null)}
+                  onClick={handleCloseModal}
                   className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
                   aria-label="Close modal"
                 >

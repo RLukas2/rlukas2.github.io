@@ -223,7 +223,7 @@ const Projects: React.FC = () => {
     [visibleItems]
   );
 
-  // Project card component with enhanced animations
+  // Project card component
   const ProjectCard = useCallback(
     ({ project }: { project: Project }) => (
       <motion.div

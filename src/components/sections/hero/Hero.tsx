@@ -22,22 +22,25 @@ import Link from "next/link";
 import { useRef, useState, JSX, useCallback, useMemo } from "react";
 
 import PDFViewer from "./PDFViewer";
-import ErrorFallback from "../../error/ErrorFallback";
-import { ErrorBoundary } from "react-error-boundary";
 import { HERO_ANIMATION_VARIANTS } from "@/lib/animations";
 import { SOCIAL_LINKS, TECH_ICONS } from "@/lib/hero-config";
 
 const { container, item, image } = HERO_ANIMATION_VARIANTS;
 
-// Floating orb component
-const FloatingTechOrb = ({
+// Extract floating orb component with better typing
+interface FloatingOrbProps {
+  className: string;
+  icon: JSX.Element;
+  animateProps: {
+    animate: any;
+    transition: any;
+  };
+}
+
+const FloatingTechOrb: React.FC<FloatingOrbProps> = ({
   className,
   icon,
   animateProps,
-}: {
-  className: string;
-  icon: JSX.Element;
-  animateProps: any;
 }) => (
   <motion.div
     className={`absolute bg-white dark:bg-gray-800 rounded-full border-2 border-gray-300 dark:border-gray-700 flex items-center justify-center shadow-lg ${className}`}
@@ -47,36 +50,83 @@ const FloatingTechOrb = ({
   </motion.div>
 );
 
-const Hero: React.FC = () => {
-  const [error, setError] = useState<Error | null>(null);
-  const [ref, inView] = useInView({
-    triggerOnce: true,
-    threshold: 0.1,
-  });
+// Extract technology pills component
+const TechnologyPills: React.FC = () => (
+  <motion.div
+    variants={item}
+    className="flex flex-wrap gap-3 mb-8 justify-center lg:justify-start"
+    role="list"
+    aria-label="Technologies I work with"
+  >
+    {TECH_ICONS.map((tech, index) => (
+      <motion.span
+        key={index}
+        className={`px-3 py-1.5 flex items-center gap-2 text-sm ${tech.color} text-gray-800 dark:text-gray-200 rounded-full shadow-sm hover:shadow transition-all hover:-translate-y-1 border border-gray-300 dark:border-gray-700`}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        role="listitem"
+      >
+        {tech.icon}
+        {tech.name}
+      </motion.span>
+    ))}
+  </motion.div>
+);
 
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end start"],
-  });
+// Extract CTA buttons component
+const CTAButtons: React.FC<{ onOpenPDF: () => void }> = ({ onOpenPDF }) => (
+  <motion.div
+    variants={item}
+    className="flex flex-wrap gap-4 justify-center lg:justify-start mb-8"
+  >
+    <Link
+      href="#contact"
+      className="group px-6 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium flex items-center gap-2 shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
+      aria-label="Get in touch"
+    >
+      <FiMail className="text-lg" />
+      <span>Get in Touch</span>
+      <FiArrowRight className="ml-1 group-hover:translate-x-1 transition-transform" />
+    </Link>
+    <button
+      onClick={onOpenPDF}
+      className="group px-6 py-3 rounded-lg bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-800 dark:text-white font-medium flex items-center gap-2 shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1"
+      aria-label="View CV"
+    >
+      <FiDownload className="text-lg text-blue-600 group-hover:scale-110 transition-transform" />
+      <span>View CV</span>
+    </button>
+  </motion.div>
+);
 
-  // Parallax effects
-  const y = useTransform(scrollYProgress, [0, 1], [0, 100]);
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+// Extract social icons component
+const SocialIcons: React.FC = () => (
+  <motion.div
+    variants={item}
+    className="flex gap-4 justify-center lg:justify-start"
+    role="list"
+    aria-label="Social media links"
+  >
+    {SOCIAL_LINKS.map((social, index) => (
+      <motion.a
+        key={index}
+        href={social.href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="p-3 rounded-full bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 shadow-md hover:shadow-lg border border-gray-300 dark:border-gray-700 transition-all hover:scale-110 hover:-translate-y-1"
+        aria-label={social.label}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        role="listitem"
+      >
+        {social.icon}
+      </motion.a>
+    ))}
+  </motion.div>
+);
 
-  // Memoize scroll handler
-  const scrollToNext = useCallback(() => {
-    const aboutSection = document.getElementById("about");
-    aboutSection?.scrollIntoView({ behavior: "smooth" });
-  }, []);
-
-  const [isPDFViewerOpen, setIsPDFViewerOpen] = useState(false);
-
-  // Memoize PDF viewer handlers
-  const openPDFViewer = useCallback(() => setIsPDFViewerOpen(true), []);
-  const closePDFViewer = useCallback(() => setIsPDFViewerOpen(false), []);
-  const resetError = useCallback(() => setError(null), []);
-
+// Extract profile image component
+const ProfileImage: React.FC = () => {
   // Memoize floating orbs data to prevent recreation
   const floatingOrbs = useMemo(
     () => [
@@ -118,19 +168,115 @@ const Hero: React.FC = () => {
     []
   );
 
-  if (error) {
-    return (
-      <ErrorBoundary
-        FallbackComponent={ErrorFallback}
-        onReset={() => setError(null)}
-      >
-        <ErrorFallback
-          error={error}
-          resetErrorBoundary={() => setError(null)}
+  return (
+    <motion.div
+      variants={image}
+      className="lg:w-1/2 flex justify-center"
+    >
+      <div className="relative w-72 h-72 md:w-96 md:h-96">
+        {/* Glow effects */}
+        <motion.div
+          className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 opacity-30 blur-3xl"
+          animate={{
+            scale: [1, 1.1, 1],
+            opacity: [0.3, 0.4, 0.3],
+          }}
+          transition={{
+            duration: 4,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
         />
-      </ErrorBoundary>
-    );
-  }
+        <motion.div
+          className="absolute inset-2 rounded-full bg-gradient-to-r from-indigo-400 to-blue-400 opacity-20 blur-2xl"
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.2, 0.3, 0.2],
+          }}
+          transition={{
+            duration: 5,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 1,
+          }}
+        />
+
+        {/* Profile image */}
+        <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-white dark:border-gray-800 shadow-xl select-none pointer-events-none">
+          <Image
+            src="/images/profile.jpg"
+            alt="Ngo Hoang Tuan - Backend Engineer"
+            fill
+            className="object-cover"
+            priority
+            sizes="(max-width: 768px) 18rem, 24rem"
+            quality={90}
+          />
+        </div>
+
+        {/* Floating Orbs */}
+        {floatingOrbs.map((orb, index) => (
+          <FloatingTechOrb
+            key={index}
+            className={orb.className}
+            icon={orb.icon}
+            animateProps={orb.animateProps}
+          />
+        ))}
+      </div>
+    </motion.div>
+  );
+};
+
+// Extract scroll indicator component
+const ScrollIndicator: React.FC<{ onScroll: () => void }> = ({ onScroll }) => (
+  <motion.button
+    className="absolute bottom-2 lg:bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center cursor-pointer"
+    onClick={onScroll}
+    initial={{ opacity: 0, y: -10 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ delay: 2, duration: 0.5 }}
+    aria-label="Scroll to next section"
+  >
+    <span className="text-sm text-gray-700 dark:text-gray-400 mb-2 font-medium">
+      Scroll Down
+    </span>
+    <motion.div
+      animate={{ y: [0, 8, 0] }}
+      transition={{ repeat: Infinity, duration: 1.5 }}
+    >
+      <FiChevronDown className="text-blue-600 dark:text-blue-400 text-2xl" />
+    </motion.div>
+  </motion.button>
+);
+
+const Hero: React.FC = () => {
+  const [ref, inView] = useInView({
+    triggerOnce: true,
+    threshold: 0.1,
+  });
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end start"],
+  });
+
+  // Parallax effects
+  const y = useTransform(scrollYProgress, [0, 1], [0, 100]);
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+
+  // Memoize scroll handler
+  const scrollToNext = useCallback(() => {
+    const aboutSection = document.getElementById("about");
+    aboutSection?.scrollIntoView({ behavior: "smooth" });
+  }, []);
+
+  const [isPDFViewerOpen, setIsPDFViewerOpen] = useState(false);
+
+  // Memoize PDF viewer handlers
+  const openPDFViewer = useCallback(() => setIsPDFViewerOpen(true), []);
+  const closePDFViewer = useCallback(() => setIsPDFViewerOpen(false), []);
 
   return (
     <section
@@ -200,153 +346,21 @@ const Hero: React.FC = () => {
             </motion.p>
 
             {/* Technologies Pills with Icons */}
-            <motion.div
-              variants={item}
-              className="flex flex-wrap gap-3 mb-8 justify-center lg:justify-start"
-              role="list"
-              aria-label="Technologies I work with"
-            >
-              {TECH_ICONS.map((tech, index) => (
-                <motion.span
-                  key={index}
-                  className={`px-3 py-1.5 flex items-center gap-2 text-sm ${tech.color} text-gray-800 dark:text-gray-200 rounded-full shadow-sm hover:shadow transition-all hover:-translate-y-1 border border-gray-300 dark:border-gray-700`}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  role="listitem"
-                >
-                  {tech.icon}
-                  {tech.name}
-                </motion.span>
-              ))}
-            </motion.div>
+            <TechnologyPills />
 
             {/* CTA Buttons */}
-            <motion.div
-              variants={item}
-              className="flex flex-wrap gap-4 justify-center lg:justify-start mb-8"
-            >
-              <Link
-                href="#contact"
-                className="group px-6 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium flex items-center gap-2 shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
-                aria-label="Get in touch"
-              >
-                <FiMail className="text-lg" />
-                <span>Get in Touch</span>
-                <FiArrowRight className="ml-1 group-hover:translate-x-1 transition-transform" />
-              </Link>
-              <button
-                onClick={() => setIsPDFViewerOpen(true)}
-                className="group px-6 py-3 rounded-lg bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-800 dark:text-white font-medium flex items-center gap-2 shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1"
-                aria-label="View CV"
-              >
-                <FiDownload className="text-lg text-blue-600 group-hover:scale-110 transition-transform" />
-                <span>View CV</span>
-              </button>
-            </motion.div>
+            <CTAButtons onOpenPDF={openPDFViewer} />
 
             {/* Social Icons */}
-            <motion.div
-              variants={item}
-              className="flex gap-4 justify-center lg:justify-start"
-              role="list"
-              aria-label="Social media links"
-            >
-              {SOCIAL_LINKS.map((social, index) => (
-                <motion.a
-                  key={index}
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-3 rounded-full bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 shadow-md hover:shadow-lg border border-gray-300 dark:border-gray-700 transition-all hover:scale-110 hover:-translate-y-1"
-                  aria-label={social.label}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  role="listitem"
-                >
-                  {social.icon}
-                </motion.a>
-              ))}
-            </motion.div>
+            <SocialIcons />
           </motion.div>
 
           {/* Profile Image */}
-          <motion.div
-            variants={image}
-            className="lg:w-1/2 flex justify-center"
-          >
-            <div className="relative w-72 h-72 md:w-96 md:h-96">
-              {/* Glow effects */}
-              <motion.div
-                className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 opacity-30 blur-3xl"
-                animate={{
-                  scale: [1, 1.1, 1],
-                  opacity: [0.3, 0.4, 0.3],
-                }}
-                transition={{
-                  duration: 4,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-              />
-              <motion.div
-                className="absolute inset-2 rounded-full bg-gradient-to-r from-indigo-400 to-blue-400 opacity-20 blur-2xl"
-                animate={{
-                  scale: [1, 1.2, 1],
-                  opacity: [0.2, 0.3, 0.2],
-                }}
-                transition={{
-                  duration: 5,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: 1,
-                }}
-              />
-
-              {/* Profile image */}
-              <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-white dark:border-gray-800 shadow-xl select-none pointer-events-none">
-                <Image
-                  src="/images/profile.jpg"
-                  alt="Ngo Hoang Tuan - Backend Engineer"
-                  fill
-                  className="object-cover"
-                  priority
-                  sizes="(max-width: 768px) 18rem, 24rem"
-                  quality={90}
-                />
-              </div>
-
-              {/* Floating Orbs */}
-              {floatingOrbs.map((orb, index) => (
-                <FloatingTechOrb
-                  key={index}
-                  className={orb.className}
-                  icon={orb.icon}
-                  animateProps={orb.animateProps}
-                />
-              ))}
-            </div>
-          </motion.div>
+          <ProfileImage />
         </motion.div>
 
         {/* Scroll indicator */}
-        <motion.button
-          className="absolute bottom-2 lg:bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center cursor-pointer"
-          onClick={scrollToNext}
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 2, duration: 0.5 }}
-          aria-label="Scroll to next section"
-        >
-          <span className="text-sm text-gray-700 dark:text-gray-400 mb-2 font-medium">
-            Scroll Down
-          </span>
-          <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ repeat: Infinity, duration: 1.5 }}
-          >
-            <FiChevronDown className="text-blue-600 dark:text-blue-400 text-2xl" />
-          </motion.div>
-        </motion.button>
+        <ScrollIndicator onScroll={scrollToNext} />
       </div>
 
       <PDFViewer
