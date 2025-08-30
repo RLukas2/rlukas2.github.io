@@ -102,7 +102,7 @@ const Footer: React.FC = () => {
   ];
 
   return (
-    <footer className="py-20 bg-white dark:bg-gray-900 text-white py-12 relative">
+    <footer className="py-20 bg-white dark:bg-gray-900 text-white relative">
       <div className="container mx-auto px-4">
         {/* Main footer content */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">

@@ -15,8 +15,10 @@ import {
   FiSun,
   FiMoon,
 } from "react-icons/fi";
-import { NavLink } from "@/types";
 import { useTheme } from "next-themes";
+
+import { NavLink } from "@/types";
+import { HEADER_ANIMATION_VARIANTS } from "@/lib/animations";
 
 const Header: React.FC = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -29,20 +31,6 @@ const Header: React.FC = () => {
   useEffect(() => {
     setMounted(true);
   }, []);
-
-  // Header scroll effect and active section detection
-  // useEffect(() => {
-  //   const handleScroll = () => {
-  //     const scrollPosition = window.scrollY;
-  //     setIsScrolled(scrollPosition > 20); // Adjust this value to control when the effect triggers
-  //   };
-
-  //   window.addEventListener('scroll', handleScroll);
-  //   // Set initial state
-  //   handleScroll();
-
-  //   return () => window.removeEventListener('scroll', handleScroll);
-  // }, []);
 
   useEffect(() => {
     const sections = document.querySelectorAll("section[id]");
@@ -138,48 +126,6 @@ const Header: React.FC = () => {
     []
   );
 
-  // Animation variants
-  const mobileMenuVariants = {
-    closed: {
-      opacity: 0,
-      height: 0,
-      transition: {
-        duration: 0.3,
-        ease: "easeInOut",
-      },
-    },
-    open: {
-      opacity: 1,
-      height: "auto",
-      transition: {
-        duration: 0.3,
-        ease: "easeInOut",
-        staggerChildren: 0.07,
-        delayChildren: 0.1,
-      },
-    },
-  };
-
-  const menuItemVariants = {
-    closed: {
-      x: -20,
-      opacity: 0,
-    },
-    open: {
-      x: 0,
-      opacity: 1,
-      transition: {
-        duration: 0.3,
-      },
-    },
-  };
-
-  const logoVariants = {
-    initial: { scale: 1 },
-    hover: { scale: 1.05, transition: { duration: 0.2 } },
-    tap: { scale: 0.95 },
-  };
-
   // Progress bar for scroll position
   const [scrollProgress, setScrollProgress] = useState(0);
 
@@ -227,14 +173,6 @@ const Header: React.FC = () => {
           : "bg-transparent py-4"
       }`}
     >
-      {/* Progress bar 
-      <div
-        className="absolute bottom-0 left-0 h-0.5 bg-gray-200 transition-all duration-300"
-        style={{ width: `${scrollProgress}%` }}
-        aria-hidden="true"
-      />
-      */}
-
       <div className="container mx-auto px-4 flex justify-between items-center">
         {/* Logo */}
         <Link
@@ -245,7 +183,7 @@ const Header: React.FC = () => {
         >
           <motion.div
             className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-primary text-white font-extrabold text-xl"
-            variants={logoVariants}
+            variants={HEADER_ANIMATION_VARIANTS.logoVariants}
             initial="initial"
             whileHover="hover"
             whileTap="tap"
@@ -352,11 +290,11 @@ const Header: React.FC = () => {
               initial="closed"
               animate="open"
               exit="closed"
-              variants={mobileMenuVariants}
+              variants={HEADER_ANIMATION_VARIANTS.mobileMenuVariants}
             >
               <motion.div className="flex flex-col py-2">
                 {navLinks.map((link) => (
-                  <motion.div key={link.name} variants={menuItemVariants}>
+                  <motion.div key={link.name} variants={HEADER_ANIMATION_VARIANTS.menuItemVariants}>
                     <Link
                       href={link.href}
                       onClick={(e) => {

@@ -9,6 +9,12 @@ export interface TabContentData {
   personal: JSX.Element;
 }
 
+export interface DetailedInfo {
+  technologies: string[];
+  keySkills: string[];
+  projects: ProjectInfo[];
+}
+
 export interface Expertise {
   id: string;
   title: string;
@@ -55,12 +61,6 @@ export interface Project {
 export interface ProjectInfo {
   name: string;
   description: string;
-}
-
-export interface DetailedInfo {
-  technologies: string[];
-  keySkills: string[];
-  projects: ProjectInfo[];
 }
 
 // Section: Skills

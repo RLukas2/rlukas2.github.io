@@ -10,7 +10,7 @@ export const TableView: React.FC<TableViewProps> = ({ experiences }) => {
     return (
       <div className="text-center text-gray-500 dark:text-gray-400">
         <div className="flex flex-col bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg items-center">
-          <p className="text-2xl font-semibold mb-6 text-gray-900 dark:text-white mb-4">
+          <p className="text-2xl font-semibold mb-6 text-gray-900 dark:text-white">
             No experiences to showcase yet!
           </p>
           <p className="text-gray-700 dark:text-gray-300 max-w-md">

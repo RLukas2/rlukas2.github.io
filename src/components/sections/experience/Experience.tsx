@@ -4,11 +4,12 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, useScroll } from "framer-motion";
 import { FiClock, FiList, FiGrid } from "react-icons/fi";
 import { useInView } from "react-intersection-observer";
+
 import { experiences } from "@/data/experiences";
 import { Experience as ExperienceType } from "@/types";
-import { TimelineView } from "./experience/TimelineView";
-import { TableView } from "./experience/TableView";
-import { TabsView } from "./experience/TabsView";
+import { TimelineView } from "./TimelineView";
+import { TableView } from "./TableView";
+import { TabsView } from "./TabsView";
 
 // View modes
 type ViewMode = "tabs" | "timeline" | "table";

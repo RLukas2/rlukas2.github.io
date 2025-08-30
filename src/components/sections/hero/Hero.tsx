@@ -20,95 +20,12 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import Link from "next/link";
 import { useRef, useState, JSX, useCallback, useMemo } from "react";
+
 import PDFViewer from "./PDFViewer";
-import ErrorFallback from "./ErrorFallback";
+import ErrorFallback from "../../error/ErrorFallback";
 import { ErrorBoundary } from "react-error-boundary";
-
-interface SocialLink {
-  href: string;
-  icon: JSX.Element;
-  label: string;
-}
-
-interface TechIcon {
-  name: string;
-  icon: JSX.Element;
-  color: string;
-}
-
-const TECH_ICONS: TechIcon[] = [
-  {
-    name: "React",
-    icon: <SiReact className="text-blue-600" />,
-    color: "bg-blue-100 dark:bg-blue-900/30",
-  },
-  {
-    name: "Node.js",
-    icon: <SiNodedotjs className="text-green-600" />,
-    color: "bg-green-100 dark:bg-green-900/30",
-  },
-  {
-    name: "GraphQL",
-    icon: <SiGraphql className="text-pink-600" />,
-    color: "bg-pink-100 dark:bg-pink-900/30",
-  },
-  {
-    name: "AWS",
-    icon: <SiAmazonwebservices className="text-orange-500" />,
-    color: "bg-orange-100 dark:bg-orange-900/30",
-  },
-  {
-    name: "Docker",
-    icon: <SiDocker className="text-blue-500" />,
-    color: "bg-blue-100 dark:bg-blue-900/30",
-  },
-];
-
-const SOCIAL_LINKS: SocialLink[] = [
-  {
-    href: "https://github.com/RLukas2",
-    icon: <FiGithub size={20} />,
-    label: "GitHub",
-  },
-  {
-    href: "https://linkedin.com/in/xbrk",
-    icon: <FiLinkedin size={20} />,
-    label: "LinkedIn",
-  },
-  {
-    href: "mailto:iforgotmyemailwhatcanido@gmail.com",
-    icon: <FiMail size={20} />,
-    label: "Email",
-  },
-];
-
-const ANIMATION_VARIANTS = {
-  container: {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-      },
-    },
-  },
-  item: {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
-    },
-  },
-  image: {
-    hidden: { opacity: 0, scale: 0.8 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.3 },
-    },
-  },
-};
+import { HERO_ANIMATION_VARIANTS } from "@/lib/animations";
+import { SOCIAL_LINKS, TECH_ICONS } from "@/lib/hero-config";
 
 // Floating orb component
 const FloatingTechOrb = ({
@@ -122,8 +39,7 @@ const FloatingTechOrb = ({
 }) => (
   <motion.div
     className={`absolute bg-white dark:bg-gray-800 rounded-full border-2 border-gray-300 dark:border-gray-700 flex items-center justify-center shadow-lg ${className}`}
-    animate={animateProps.animate}
-    transition={animateProps.transition}
+    {...animateProps}
   >
     {icon}
   </motion.div>
@@ -233,15 +149,15 @@ const Hero: React.FC = () => {
       <div className="container mx-auto px-4 py-12">
         <motion.div
           ref={ref}
-          variants={ANIMATION_VARIANTS.container}
+          variants={HERO_ANIMATION_VARIANTS.container}
           initial="hidden"
           animate={inView ? "visible" : "hidden"}
           className="flex flex-col lg:flex-row items-center justify-between gap-10 lg:gap-16"
         >
-          {/* Text Content - Enhanced with better contrast for light mode */}
+          {/* Text Content */}
           <motion.div className="lg:w-1/2 text-center lg:text-left z-10">
             <motion.span
-              variants={ANIMATION_VARIANTS.item}
+              variants={HERO_ANIMATION_VARIANTS.item}
               className="inline-block px-4 py-1.5 mb-4 text-sm font-medium bg-blue-600 text-white rounded-full shadow-sm"
               role="text"
               aria-label="Role: Backend Engineer"
@@ -250,28 +166,28 @@ const Hero: React.FC = () => {
             </motion.span>
 
             <motion.h3
-              variants={ANIMATION_VARIANTS.item}
+              variants={HERO_ANIMATION_VARIANTS.item}
               className="text-xl mb-3 text-blue-600 dark:text-blue-400 font-medium tracking-wide"
             >
               Hello, I&apos;m
             </motion.h3>
 
             <motion.h1
-              variants={ANIMATION_VARIANTS.item}
+              variants={HERO_ANIMATION_VARIANTS.item}
               className="text-5xl md:text-6xl font-bold mb-4 text-gray-900 dark:text-white tracking-tight"
             >
               Ngô Hoàng Tuấn
             </motion.h1>
 
             <motion.h2
-              variants={ANIMATION_VARIANTS.item}
+              variants={HERO_ANIMATION_VARIANTS.item}
               className="text-2xl text-gray-800 dark:text-gray-300 mb-6 font-semibold"
             >
               Aspiring Backend Developer
             </motion.h2>
 
             <motion.p
-              variants={ANIMATION_VARIANTS.item}
+              variants={HERO_ANIMATION_VARIANTS.item}
               className="text-lg text-gray-700 dark:text-gray-400 mb-8 max-w-xl mx-auto lg:mx-0 leading-relaxed"
             >
               I&apos;m a third-year Computer Science student at HCMUS with
@@ -283,7 +199,7 @@ const Hero: React.FC = () => {
 
             {/* Technologies Pills with Icons */}
             <motion.div
-              variants={ANIMATION_VARIANTS.item}
+              variants={HERO_ANIMATION_VARIANTS.item}
               className="flex flex-wrap gap-3 mb-8 justify-center lg:justify-start"
               role="list"
               aria-label="Technologies I work with"
@@ -304,7 +220,7 @@ const Hero: React.FC = () => {
 
             {/* CTA Buttons */}
             <motion.div
-              variants={ANIMATION_VARIANTS.item}
+              variants={HERO_ANIMATION_VARIANTS.item}
               className="flex flex-wrap gap-4 justify-center lg:justify-start mb-8"
             >
               <Link
@@ -328,7 +244,7 @@ const Hero: React.FC = () => {
 
             {/* Social Icons */}
             <motion.div
-              variants={ANIMATION_VARIANTS.item}
+              variants={HERO_ANIMATION_VARIANTS.item}
               className="flex gap-4 justify-center lg:justify-start"
               role="list"
               aria-label="Social media links"
@@ -353,7 +269,7 @@ const Hero: React.FC = () => {
 
           {/* Profile Image */}
           <motion.div
-            variants={ANIMATION_VARIANTS.image}
+            variants={HERO_ANIMATION_VARIANTS.image}
             className="lg:w-1/2 flex justify-center"
           >
             <div className="relative w-72 h-72 md:w-96 md:h-96">

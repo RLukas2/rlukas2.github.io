@@ -54,9 +54,11 @@ const SkillCard: React.FC<SkillCardProps> = ({
     >
       {skill.iconComponent}
     </motion.div>
+    
     <h3 className="font-semibold text-gray-800 dark:text-gray-200 text-sm">
       {skill.name}
     </h3>
+
     {skill.proficiency && <ProficiencyIndicator level={skill.proficiency} />}
   </motion.div>
 );

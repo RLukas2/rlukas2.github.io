@@ -7,82 +7,62 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ErrorBoundary } from "react-error-boundary";
 import "./globals.css";
 
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
 import { Providers } from "./providers";
-import ErrorFallback from "@/components/ErrorFallback";
-import { desc } from "framer-motion/client";
+import ErrorFallback from "@/components/error/ErrorFallback";
 
 // Define metadata for better SEO
 export const metadata: Metadata = {
   metadataBase: new URL("https://rlukas2.github.io"),
   title: {
     template: "%s | Ngo Hoang Tuan",
-    default: "Ngô Hoàng Tuấn | Portfolio",
+    default: "Ngo Hoang Tuan | Portfolio - Backend Developer",
   },
-  description:
-    "Rickie Lukas (Ngô Hoàng Tuấn) - Student, Backend Developer specializing in scalable microservices, Node.js, NestJS, GraphQL, and cloud infrastructure with AWS.",
+  description: "Ngo Hoang Tuan (Rickie Lukas) - Backend Developer specializing in Node.js, NestJS, GraphQL, and microservices. Passionate about scalable cloud architecture and modern web technologies.",
   keywords: [
-    // Name variations
-    "rlukas",
-    "rlukas2",
-    "rickie lukas",
-    "lukas",
-    "rickie",
-    "ngo hoang tuan", // Without diacritics
-    "ngô hoàng tuấn",
-    "hoang tuan ngo",
-    "xborickie",
-    "xbrk",
-    // Professional roles and skills
-    "software engineer",
-    "backend developer",
-    "node.js",
-    "nestjs",
-    "graphql",
-    "microservices",
-    "aws",
-    "web3",
-    "typescript",
-    "cloud architecture",
-    // Personal branding
-    "portfolio",
-    "personal website",
-    "software developer portfolio",
+    "Ngo Hoang Tuan", "Rickie Lukas", "rlukas2", "Backend Developer",
+    "Node.js", "NestJS", "GraphQL", "TypeScript", "Microservices",
+    "AWS", "Cloud Architecture", "Software Engineer", "Portfolio"
   ],
-  authors: [{ name: "Ngo Hoang Tuan" }],
+  authors: [{ name: "Ngo Hoang Tuan", url: "https://rlukas2.github.io" }],
   creator: "Ngo Hoang Tuan",
   publisher: "Ngo Hoang Tuan",
-  themeColor: "#0d1117",
   category: "technology",
+  alternates: {
+    canonical: "https://rlukas2.github.io",
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
     url: "https://rlukas2.github.io",
-    title: "Ngo Hoang Tuan | Portfolio",
-    description:
-      "Student, Backend Developer with expertise in Node.js, NestJS, GraphQL, and microservices architecture",
+    title: "Ngo Hoang Tuan | Portfolio - Backend Developer",
+    description: "Backend Developer specializing in Node.js, NestJS, GraphQL, and microservices architecture. Building scalable solutions with modern technologies.",
     siteName: "Ngo Hoang Tuan Portfolio",
     images: [
       {
-        url: new URL("https://rlukas2.github.io/og-image.jpg"),
+        url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Ngo Hoang Tuan Portfolio",
+        alt: "Ngo Hoang Tuan - Backend Developer Portfolio",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Ngo Hoang Tuan | Portfolio",
-    description:
-      "Student, Backend Developer with expertise in Node.js, NestJS, GraphQL, and microservices architecture",
-    images: ["/og-image.jpg"],
+    site: "@rickielukas",
     creator: "@rickielukas",
+    title: "Ngo Hoang Tuan | Portfolio - Backend Developer",
+    description: "Backend Developer specializing in Node.js, NestJS, GraphQL, and microservices architecture.",
+    images: ["/og-image.jpg"],
   },
   robots: {
     index: true,
     follow: true,
+    noarchive: false,
+    nosnippet: false,
+    noimageindex: false,
+    nocache: false,
     googleBot: {
       index: true,
       follow: true,
@@ -93,6 +73,10 @@ export const metadata: Metadata = {
   },
   verification: {
     google: "UZjg3rLNvmdngjzZyQOlUSFmQHAh1XV-SsdN8g7ut_E",
+  },
+  other: {
+    "msapplication-TileColor": "#2563eb",
+    "theme-color": "#2563eb",
   },
 };
 
@@ -106,37 +90,42 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 5,
   userScalable: true,
+  viewportFit: "cover",
 };
 
 // Define the JSON-LD structured data for SEO
-export const JSON_LD = {
+const JSON_LD = {
   "@context": "https://schema.org",
   "@type": "Person",
   name: "Ngo Hoang Tuan",
-  alternateName: "Rickie Lukas",
+  alternateName: ["Rickie Lukas", "rlukas2"],
   url: "https://rlukas2.github.io",
-  description:
-    "Rickie Lukas (Ngô Hoàng Tuấn) is a Backend Engineer specializing in scalable microservices, Node.js, NestJS, GraphQL, and cloud infrastructure with AWS.",
+  image: "https://rlukas2.github.io/profile.jpg",
+  description: "Backend Developer specializing in Node.js, NestJS, GraphQL, and microservices architecture.",
+  jobTitle: "Backend Developer",
+  worksFor: {
+    "@type": "Organization",
+    name: "Student & Freelance Developer"
+  },
   sameAs: [
     "https://github.com/rlukas2",
     "https://twitter.com/rickielukas",
     "https://linkedin.com/in/xbrk",
   ],
-  jobTitle: "Backend Engineer",
-  worksFor: {
-    "@type": "Organization",
-    name: "Freelance",
-  },
   knowsAbout: [
-    "Node.js",
-    "NestJS",
-    "GraphQL",
-    "Microservices",
-    "AWS",
-    "Web3",
-    "TypeScript",
+    "Node.js", "NestJS", "GraphQL", "TypeScript", "Microservices",
+    "AWS", "Cloud Architecture", "Backend Development", "API Design"
   ],
+  alumniOf: {
+    "@type": "EducationalOrganization",
+    name: "Student"
+  },
+  skills: [
+    "Backend Development", "API Design", "Microservices Architecture",
+    "Cloud Computing", "Database Design", "DevOps"
+  ]
 };
+
 
 // The root layout component
 export default function RootLayout({
@@ -151,40 +140,53 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        <link rel="icon" href="/favicon.ico" sizes="any" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#3b82f6" />
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1, maximum-scale=1"
-        />
-        <meta name="format-detection" content="telephone=no" />
-        <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta
-          name="apple-mobile-web-app-title"
-          content="Ngo Hoang Tuan Portfolio"
-        />
+        {/* Structured Data for SEO */}
         <script
           type="application/ld+json"
-          // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(JSON_LD),
           }}
         />
+
+        {/* Preconnect to external domains for performance */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link rel="preconnect" href="https://vercel.live" />
+
+        {/* Favicon and app icons */}
+        <link rel="icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+        <link rel="manifest" href="/site.webmanifest" />
+
+        {/* DNS prefetch for performance */}
+        <link rel="dns-prefetch" href="//vercel.live" />
+        <link rel="dns-prefetch" href="//vitals.vercel-analytics.com" />
       </head>
 
+
       <body className="text-foreground bg-background font-sans antialiased flex flex-col min-h-screen">
-        <ErrorBoundary FallbackComponent={ErrorFallback}>
+        <ErrorBoundary
+          FallbackComponent={ErrorFallback}
+        >
           <Providers>
-            <Header />
-            <main className="flex-grow">{children}</main>
-            <Footer />
+            <div className="flex flex-col min-h-screen">
+              <Header />
+              <main className="flex-grow">
+                {children}
+              </main>
+              <Footer />
+            </div>
+
+            {/* Analytics - only in production */}
+            {process.env.NODE_ENV === 'production' && (
+              <>
+                <Analytics />
+                <SpeedInsights />
+              </>
+            )}
           </Providers>
-          <Analytics />
-          <SpeedInsights />
         </ErrorBoundary>
       </body>
     </html>
