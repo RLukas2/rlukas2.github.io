@@ -15,34 +15,14 @@ import {
 } from "react-icons/fi";
 import { IoIosSend } from "react-icons/io";
 
+import { CONTACT_ANIMATION_VARIANTS } from "@/lib/animations";
+const { fadeIn, staggerContainer } = CONTACT_ANIMATION_VARIANTS;
 interface FormData {
   name: string;
   email: string;
   subject: string;
   message: string;
 }
-
-// Animation variants moved outside component
-const fadeIn = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.5,
-    },
-  },
-};
-
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-    },
-  },
-};
 
 // Social links moved outside component
 const socialLinks = [
@@ -374,11 +354,10 @@ const Contact: React.FC = () => {
                       <input
                         type="text"
                         id="name"
-                        className={`w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white border ${
-                          errors.name
+                        className={`w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white border ${errors.name
                             ? "border-red-500"
                             : "border-gray-300 dark:border-gray-600"
-                        } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
+                          } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
                         placeholder="John Doe"
                         {...register("name", memoizedValidationRules.name)}
                         aria-invalid={errors.name ? "true" : "false"}
@@ -408,11 +387,10 @@ const Contact: React.FC = () => {
                       <input
                         type="email"
                         id="email"
-                        className={`w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white border ${
-                          errors.email
+                        className={`w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white border ${errors.email
                             ? "border-red-500"
                             : "border-gray-300 dark:border-gray-600"
-                        } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
+                          } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
                         placeholder="john@example.com"
                         {...register("email", memoizedValidationRules.email)}
                         aria-invalid={errors.email ? "true" : "false"}
@@ -443,11 +421,10 @@ const Contact: React.FC = () => {
                     <input
                       type="text"
                       id="subject"
-                      className={`w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white border ${
-                        errors.subject
+                      className={`w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white border ${errors.subject
                           ? "border-red-500"
                           : "border-gray-300 dark:border-gray-600"
-                      } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
+                        } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
                       placeholder="Example Subject"
                       {...register("subject", memoizedValidationRules.subject)}
                       aria-invalid={errors.subject ? "true" : "false"}
@@ -477,11 +454,10 @@ const Contact: React.FC = () => {
                     <textarea
                       id="message"
                       rows={6}
-                      className={`w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white border ${
-                        errors.message
+                      className={`w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white border ${errors.message
                           ? "border-red-500"
                           : "border-gray-300 dark:border-gray-600"
-                      } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
+                        } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
                       placeholder="Your message here..."
                       style={{ minHeight: "100px", resize: "vertical" }}
                       {...register("message", memoizedValidationRules.message)}
@@ -505,11 +481,10 @@ const Contact: React.FC = () => {
                   <motion.button
                     type="submit"
                     disabled={isSubmitting || isRateLimited}
-                    className={`w-full px-6 py-3 rounded-lg font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 ${
-                      (isSubmitting || isRateLimited)
+                    className={`w-full px-6 py-3 rounded-lg font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 ${(isSubmitting || isRateLimited)
                         ? "opacity-70 cursor-not-allowed"
                         : "cursor-pointer"
-                    }`}
+                      }`}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     aria-busy={isSubmitting}

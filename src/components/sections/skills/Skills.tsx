@@ -22,7 +22,7 @@ import CategoryButton from "./CategoryButton";
 import SkillCard from "./SkillCard";
 import SkillModal from "./SkillModal";
 
-
+const { container, item, modal, section, skill } = SKILL_ANIMATION_VARIANTS;
 
 const Skills: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState<string>("all");
@@ -116,12 +116,12 @@ const Skills: React.FC = () => {
           ref={ref}
           initial="hidden"
           animate={inView ? "visible" : "hidden"}
-          variants={SKILL_ANIMATION_VARIANTS.section}
+          variants={section}
           className="max-w-6xl mx-auto"
         >
           {/* Section Header */}
           <motion.div
-            variants={SKILL_ANIMATION_VARIANTS.item}
+            variants={item}
             className="text-center mb-16"
           >
             <span className="inline-block px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-sm font-medium rounded-full mb-3">
@@ -129,17 +129,17 @@ const Skills: React.FC = () => {
             </span>
             <motion.h2
               className="text-5xl font-bold text-gray-900 dark:text-white mb-4"
-              variants={SKILL_ANIMATION_VARIANTS.item}
+              variants={item}
             >
               Technical Skills
             </motion.h2>
             <motion.div
               className="h-1 w-20 bg-blue-500 mx-auto mb-6"
-              variants={SKILL_ANIMATION_VARIANTS.item}
+              variants={item}
             />
             <motion.p
               className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto"
-              variants={SKILL_ANIMATION_VARIANTS.item}
+              variants={item}
             >
               {SKILL_CATEGORIES.find((cat) => cat.id === activeCategory)?.description}
             </motion.p>
@@ -148,7 +148,7 @@ const Skills: React.FC = () => {
           {/* Search Bar */}
           <motion.div
             className="max-w-md mx-auto mb-8"
-            variants={SKILL_ANIMATION_VARIANTS.item}
+            variants={item}
           >
             <div className="relative">
               <input
@@ -175,7 +175,7 @@ const Skills: React.FC = () => {
           {/* Category Filters */}
           <motion.div
             className="flex flex-wrap justify-center gap-4 mb-8"
-            variants={SKILL_ANIMATION_VARIANTS.item}
+            variants={item}
           >
             {SKILL_CATEGORIES.map((category) => (
               <CategoryButton
@@ -193,7 +193,7 @@ const Skills: React.FC = () => {
               <motion.div
                 key={activeCategory}
                 className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 lg:gap-6"
-                variants={SKILL_ANIMATION_VARIANTS.container}
+                variants={container}
                 initial="hidden"
                 animate="visible"
                 exit="exit"
@@ -207,13 +207,13 @@ const Skills: React.FC = () => {
                       isHovered={hoveredSkill === index}
                       onHoverStart={() => setHoveredSkill(index)}
                       onHoverEnd={() => setHoveredSkill(null)}
-                      variants={SKILL_ANIMATION_VARIANTS.skill}
+                      variants={skill}
                     />
                   ))
                 ) : (
                   <motion.div
                     className="col-span-full text-center py-16 text-gray-500 dark:text-gray-400"
-                    variants={SKILL_ANIMATION_VARIANTS.item}
+                    variants={item}
                   >
                     <div className="text-5xl mb-4 opacity-30 flex justify-center">
                       <FiCode />
@@ -233,7 +233,7 @@ const Skills: React.FC = () => {
           <SkillModal
             skill={selectedSkill}
             onClose={() => setSelectedSkill(null)}
-            variants={SKILL_ANIMATION_VARIANTS.modal}
+            variants={modal}
           />
         )}
       </AnimatePresence>

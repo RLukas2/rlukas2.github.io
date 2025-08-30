@@ -10,7 +10,12 @@ import {
   FiX,
   FiLoader,
 } from "react-icons/fi";
+
+import { ABOUT_ANIMATION_VARIANTS } from "@/lib/animations";
 import { ExpertiseData, TabContent, CoreValues } from "@/data/about";
+
+const { fadeIn, staggerContainer, tabVariants, modalVariants, backdropVariants } =
+  ABOUT_ANIMATION_VARIANTS;
 
 // Lazy load the modal content
 const ModalContent = lazy(() => import('./ModalContent'));
@@ -89,72 +94,7 @@ const About: React.FC = () => {
     setTimeout(() => setIsLoading(false), 300);
   };
 
-  const fadeIn = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.6,
-        ease: [0.22, 1, 0.36, 1],
-      },
-    },
-  };
 
-  const staggerContainer = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-      },
-    },
-  };
-
-  const tabVariants = {
-    hidden: { opacity: 0, x: -20 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: {
-        duration: 0.5,
-        ease: [0.22, 1, 0.36, 1],
-      },
-    },
-    exit: {
-      opacity: 0,
-      x: 20,
-      transition: {
-        duration: 0.3,
-      },
-    },
-  };
-
-  const modalVariants = {
-    hidden: { opacity: 0, scale: 0.8 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: {
-        duration: 0.3,
-        ease: "easeOut",
-      },
-    },
-    exit: {
-      opacity: 0,
-      scale: 0.8,
-      transition: {
-        duration: 0.2,
-        ease: "easeIn",
-      },
-    },
-  };
-
-  const backdropVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1 },
-    exit: { opacity: 0 },
-  };
 
   return (
     <section
@@ -209,11 +149,10 @@ const About: React.FC = () => {
                 <motion.button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center px-4 py-2 text-sm font-medium rounded-md transition-all ${
-                    activeTab === tab.id
+                  className={`flex items-center px-4 py-2 text-sm font-medium rounded-md transition-all ${activeTab === tab.id
                       ? "bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm"
                       : "text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
-                  } focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                    } focus:outline-none focus:ring-2 focus:ring-blue-500`}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   aria-selected={activeTab === tab.id}
@@ -371,7 +310,7 @@ const About: React.FC = () => {
                   <div className={`p-3 ${selectedExpertise.iconBg} rounded-full mr-4`}>
                     {selectedExpertise.icon}
                   </div>
-                  <h3 
+                  <h3
                     id="modal-title"
                     className={`text-2xl font-bold ${selectedExpertise.color}`}
                   >

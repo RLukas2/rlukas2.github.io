@@ -10,33 +10,11 @@ import { Experience as ExperienceType } from "@/types";
 import { TimelineView } from "./TimelineView";
 import { TableView } from "./TableView";
 import { TabsView } from "./TabsView";
+import { EXPERIENCE_ANIMATION_VARIANTS } from "@/lib/animations";
+const { containerVariants, itemVariants } = EXPERIENCE_ANIMATION_VARIANTS;
 
 // View modes
 type ViewMode = "tabs" | "timeline" | "table";
-
-// Animation variants moved outside component
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.2,
-      delayChildren: 0.3,
-    },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.5,
-      ease: [0.22, 1, 0.36, 1],
-    },
-  },
-};
 
 const Experience: React.FC = () => {
   const [activeTab, setActiveTab] = useState<number>(1);
@@ -142,41 +120,37 @@ const Experience: React.FC = () => {
             </motion.p>
 
             {/* View mode controls */}
-            <motion.div 
-              className={`flex justify-center gap-4 mt-8 ${
-                experiences.length === 0 ? "hidden" : ""
-              }`}
+            <motion.div
+              className={`flex justify-center gap-4 mt-8 ${experiences.length === 0 ? "hidden" : ""
+                }`}
               variants={itemVariants}
             >
               <button
                 onClick={() => setViewMode("tabs")}
-                className={`px-4 py-2 rounded-lg flex items-center gap-2 ${
-                  viewMode === "tabs"
+                className={`px-4 py-2 rounded-lg flex items-center gap-2 ${viewMode === "tabs"
                     ? "bg-blue-600 text-white"
                     : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300"
-                }`}
+                  }`}
               >
                 <FiList />
                 Tabs
               </button>
               <button
                 onClick={() => setViewMode("timeline")}
-                className={`px-4 py-2 rounded-lg flex items-center gap-2 ${
-                  viewMode === "timeline"
+                className={`px-4 py-2 rounded-lg flex items-center gap-2 ${viewMode === "timeline"
                     ? "bg-blue-600 text-white"
                     : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300"
-                }`}
+                  }`}
               >
                 <FiClock />
                 Timeline
               </button>
               <button
                 onClick={() => setViewMode("table")}
-                className={`px-4 py-2 rounded-lg flex items-center gap-2 ${
-                  viewMode === "table"
+                className={`px-4 py-2 rounded-lg flex items-center gap-2 ${viewMode === "table"
                     ? "bg-blue-600 text-white"
                     : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300"
-                }`}
+                  }`}
               >
                 <FiGrid />
                 Table

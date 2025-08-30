@@ -24,9 +24,13 @@ import {
   FiCalendar,
   FiClock,
 } from "react-icons/fi";
+
 import { projects } from "@/data/projects";
 import { useInView } from "react-intersection-observer";
 import { Project } from "@/types";
+import { PROJECTS_ANIMATION_VARIANTS } from "@/lib/animations";
+
+const { containerVariants, fadeIn, modalVariants } = PROJECTS_ANIMATION_VARIANTS;
 
 interface FilterState {
   search: string;
@@ -131,45 +135,6 @@ const Projects: React.FC = () => {
       return matchesSearch && matchesStatus && matchesTechnologies;
     });
   }, [filterState]);
-
-  // Animation variants
-  const fadeIn = useMemo(
-    () => ({
-      hidden: { opacity: 0, y: 20 },
-      visible: {
-        opacity: 1,
-        y: 0,
-        transition: {
-          duration: 0.5,
-        },
-      },
-    }),
-    []
-  );
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-      },
-    },
-  };
-
-  const modalVariants = {
-    hidden: { opacity: 0, scale: 0.95 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: { duration: 0.3, ease: "easeOut" },
-    },
-    exit: {
-      opacity: 0,
-      scale: 0.95,
-      transition: { duration: 0.2, ease: "easeIn" },
-    },
-  };
 
   // Update scroll position and max scroll
   useEffect(() => {
